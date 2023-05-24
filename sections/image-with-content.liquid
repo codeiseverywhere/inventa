@@ -1,0 +1,159 @@
+<section class="section m-0 bg-color" id="section-{{ section.id }}" data-section-id="{{ section.id }}" data-section-type="image-with-content">
+  <div class="container pt-5 mt-4 mt-md-0">
+    <div class="row">
+      <div class="d-none d-lg-block col-lg-5 text-center pb-5">
+        {%- if section.settings.image -%}
+          {%- capture supported_sizes -%}{%- render 'image-size', sizes: '300,400,500,600,700,800,900,1000,1100,1200', image: section.settings.image -%}{%- endcapture -%}
+          {%- assign image_url = section.settings.image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+
+          <img class="lazyload image--fade-in image--shadow border-radius-sm" data-src="{{ section.settings.image | img_url: '800x' }}" data-widths="[{{ supported_sizes }}]" data-sizes="auto" alt="{{ section.settings.image.alt | escape }}">
+
+          <noscript>
+            <img src="{{ section.settings.image | img_url: '800x' }}" alt="{{ section.settings.image.alt | escape }}">
+          </noscript>
+        {%- else -%}
+          {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+        {%- endif -%}
+      </div>
+      <div class="col-12 col-lg-7 pb-5 px-md-5 pt-0 pt-xl-5"> 
+        <h2 class="display-3 color-main-100">{{ section.settings.title | escape }}</h2>
+        <div class="row my-3">
+          {% for block in section.blocks %}
+            <div class="mb-3 mb-md-0 d-flex align-items-center col-md-4 step">
+              <span class="fs-2 d-flex justify-content-center align-items-center rounded-circle color-main-100">{{ forloop.index }}</span>
+              <p class="ms-3 d-flex align-items-center color-main-100">{{ block.settings.step_text }}</p>
+            </div>
+          {% endfor %}
+        </div>
+        <div class="pt-2 body-3-density-2 color-main-100">
+          {{ section.settings.content }}
+        </div>
+        <div class="pt-2 create_fornecedor">
+          {% if shop.name contains "DEV" %}
+            {% render "customer-fields", form_id: "GOtX8d" %}
+          {% else %}
+            {% render "customer-fields", form_id: "OLt89r" %}
+          {% endif %}
+        </div>
+        <div class="pt-2">
+          {{ section.settings.sub-content }}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .step span{
+    background-color: #E1E9EF;
+    width: 50px;
+    min-width: 50px;
+    height: 50px;
+  }
+  /*.step p{
+    font-family: 'Lato', sans-serif;
+  }*/
+  .bg-color {   
+    background-color: {{ section.settings.background }};
+    z-index: -1;
+    height: calc(100% - 50px);
+  }
+  .image--shadow{
+    -webkit-box-shadow: -22px 22px 0px -15px #FFD93D; 
+    box-shadow: -22px 22px 0px -15px #FFD93D;
+  }
+  @media(max-width: 767px){
+  	.cf-field-container{
+  		width: 100% !important;
+  	}
+  }
+  div.cf-field h1{
+    font-size: 3rem;
+  }
+  div.cf-field div p{
+    font-size: 1rem;
+  }
+
+  #create_customer input,
+  #create_customer select {
+    border-radius: 8px !important;
+    font-size: 16px !important;
+  }
+
+  #create_customer input,
+  #create_customer .cf-select-wrap select {
+    color: #777A7C;
+  }
+
+  #create_customer input.is-filled,
+  #create_customer .cf-select-wrap.is-filled select {
+    color: #1A1A1A !important;
+  }
+
+  #create_customer .cf-submit-form {
+    border-radius: 8px !important;
+    font-weight: bold;
+    background-color: #1A1A1A;
+  }
+
+</style>
+
+{% schema %}
+{
+  "name": "Image with content",
+  "max_blocks": 3,
+  "settings": [
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background color",
+      "default": "#abbfc2"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+      "info": "800 x 1200px .jpg recommended"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Your title"
+    },
+    {
+      "type": "text",
+      "id": "content",
+      "label": "Content",
+      "default": "Your content"
+    },
+    {
+      "type": "text",
+      "id": "sub-content",
+      "label": "Sub-content",
+      "default": "Subconcent"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Step",
+      "settings": [
+        {
+          "type": "text",
+          "id": "step_text",
+          "label": "Step text",
+          "default": "Step"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "category": "Custom Sections",
+      "name": "Image with content",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

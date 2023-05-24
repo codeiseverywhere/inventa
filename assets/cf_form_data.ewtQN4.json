@@ -1,0 +1,1198 @@
+{
+  "form": {
+    "id": "ewtQN4",
+    "name": "New Register Form - CPF [Diego]",
+    "handle": "new-register-form-cnpj-damian-copy",
+    "theme_id": "128078643407",
+    "settings": {
+      "locales": {
+        "back": "Voltar",
+        "next": "Próximo",
+        "cancel": "Cancelar",
+        "edit_link": "Edit account",
+        "fix_errors": "Verifique os erros para prosseguir",
+        "is_invalid": "{{label}} é inválido",
+        "email_taken": "E-mail já cadastrado",
+        "phone_taken": "Número de telefone já cadastrado",
+        "server_error": "Não foi possível salvar o formulário, tente novamente mais tarde",
+        "step_counter": "Paso {{current}} de {{total}}",
+        "verify_email": "Verifique seu e-mail para ativar sua conta clicando no link de verificação. Caso não encontre o email, cheque também as caixas de spam ou promoções.",
+        "not_available": "Ocorreu um erro ao salvar sua conta, tente novamente em alguns minutos.",
+        "create_account": "Confirmar",
+        "update_account": "Cadastre-se como lojista",
+        "recaptcha_error": "A verificação do captcha falhou, tente novamente!",
+        "creating_account": "Salvando...",
+        "updating_account": "Salvando...",
+        "invalid_email_domain": "E-mail com domínio inválido"
+      },
+      "whitelistedTags": "cpf-user, test_experiment_group",
+      "markRequiredFields": false,
+      "displayCancelButton": false,
+      "redirectAfterSubmit": true,
+      "goBackAfterSubmission": false,
+      "accountApprovalRequired": false,
+      "cancelButtonRedirectUrl": "\/account\/login",
+      "emailVerificationRequired": false,
+      "postSubmissionRedirectUrl": "\/collections\/venda-para-cpf",
+      "showSuccessStepAfterSubmit": false,
+      "goBackAfterCancelButtonClick": false
+    },
+    "install_locations": [
+      "manual"
+    ],
+    "created_at": "2022-08-25T18:08:29Z",
+    "updated_at": "2022-09-20T20:52:26Z",
+    "revision_ids": [
+      "OzT2YXr",
+      "AdTq782",
+      "p4TbExy",
+      "qYTY1GD",
+      "Y9TAqZx",
+      "3qTZXex",
+      "VNTz8B4",
+      "akT2Vnb",
+      "7kTo3rd",
+      "NMToAx1",
+      "vbTdaqa",
+      "VNTz8AN",
+      "orTMN46",
+      "B5TvGwO",
+      "9pTGe3E",
+      "l5TKbv3",
+      "B5Tvl4g",
+      "3qTZ2dV",
+      "xMTLVKZ",
+      "znTb1dK",
+      "VNTz8el",
+      "OzT27lL",
+      "nRTlN79",
+      "DRTYZvM",
+      "MDTA4px",
+      "9pTGeao",
+      "evTe2El",
+      "PnTl6a3",
+      "mLTgqpe",
+      "l5TK7z5",
+      "evTerao",
+      "06Taep2",
+      "akT2poy",
+      "l5TK1pL",
+      "PnTlGM0",
+      "akT2pyl",
+      "p4TbyPo",
+      "DRTYArg",
+      "boTp85P",
+      "gyTXp5n"
+    ]
+  },
+  "revision": {
+    "id": "VNTz8B4",
+    "created_at": "2022-09-20T20:24:11Z",
+    "updated_at": "2022-09-20T20:52:25Z",
+    "embed_version": "4.11.2",
+    "published_at": "2022-09-20T20:52:25Z",
+    "fields": [
+      {
+        "id": 178192,
+        "dataColumn": null,
+        "parentId": null,
+        "position": 0,
+        "type": "heading",
+        "stepId": 160622,
+        "default": "",
+        "label": "Account request sent heading",
+        "placeholder": null,
+        "description": "",
+        "enum": [
+
+        ],
+        "appearance": {
+          "width": 12,
+          "cssClass": "text-white",
+          "alignment": "center"
+        },
+        "settings": {
+          "size": 1,
+          "content": "Bem-vindo!",
+          "hideLabel": true,
+          "fontWeight": "bold"
+        },
+        "validations": [
+
+        ],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 828097,
+        "dataColumn": null,
+        "parentId": null,
+        "position": 1,
+        "type": "paragraph",
+        "stepId": 160622,
+        "default": "",
+        "label": "",
+        "placeholder": null,
+        "description": "",
+        "enum": [
+
+        ],
+        "appearance": {
+          "width": 12,
+          "cssClass": "text-light"
+        },
+        "settings": {
+          "content": "",
+          "fontSize": 14,
+          "hideLabel": true
+        },
+        "validations": [
+
+        ],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 194008,
+        "dataColumn": null,
+        "parentId": null,
+        "position": 2,
+        "type": "link",
+        "stepId": 160622,
+        "default": "",
+        "label": "Comece a comprar",
+        "placeholder": null,
+        "description": "",
+        "enum": [
+
+        ],
+        "appearance": {
+          "width": 12,
+          "cssClass": "text-white",
+          "alignment": "center"
+        },
+        "settings": {
+          "url": "\/pages\/bem-vindo",
+          "content": "Comece a comprar",
+          "fontSize": 14,
+          "hideLabel": true,
+          "fontWeight": "normal",
+          "openInNewTab": false
+        },
+        "validations": [
+
+        ],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 145435,
+        "dataColumn": {
+          "key": "email",
+          "label": "Email address",
+          "dataType": "email"
+        },
+        "parentId": null,
+        "position": 0,
+        "type": "email",
+        "stepId": 183879,
+        "default": "",
+        "label": "Email comercial",
+        "placeholder": "Email comercial",
+        "description": "",
+        "enum": [
+
+        ],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "hideLabel": true
+        },
+        "validations": [
+          {
+            "operator": "is_valid_email",
+            "comparand": null,
+            "errorMessage": "Forneça um e-mail válido."
+          },
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Insira um e-mail"
+          },
+          {
+            "metadata": {
+              "0": "P",
+              "1": "o",
+              "2": "l",
+              "3": "a",
+              "4": "r",
+              "5": "i",
+              "6": "s",
+              "7": "T",
+              "8": "e",
+              "9": "x",
+              "10": "t",
+              "11": "F",
+              "12": "i",
+              "13": "e",
+              "14": "l",
+              "15": "d",
+              "16": "3",
+              "17": "3"
+            },
+            "operator": "matches_regex",
+            "comparand": "^[\\w-\\.\\+]+@(([\\w-]{2,})+\\.)+[\\w-]{2,4}$",
+            "errorMessage": "Forneça um e-mail válido."
+          }
+        ],
+        "sensitive": null,
+        "preset": "email_address",
+        "autotag": null
+      },
+      {
+        "id": 720555,
+        "dataColumn": {
+          "key": "password",
+          "label": "Password",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 1,
+        "type": "password",
+        "stepId": 183879,
+        "default": "",
+        "label": "Password",
+        "placeholder": "Senha",
+        "description": "A senha deve ter no mínimo 8 dígitos",
+        "enum": [
+
+        ],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "hideLabel": true
+        },
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Este campo é obrigatório."
+          },
+          {
+            "metadata": {
+              "mandatory": true,
+              "staticOperator": true,
+              "comparandFieldProps": {
+                "min": 5
+              }
+            },
+            "operator": "longer_than",
+            "comparand": 7,
+            "errorMessage": "A senha deve ter no mínimo 8 "
+          }
+        ],
+        "sensitive": true,
+        "preset": "password",
+        "autotag": null
+      },
+      {
+        "id": 673662,
+        "dataColumn": {
+          "key": "termos_e_condicoes",
+          "label": "Aceito os ",
+          "dataType": "boolean"
+        },
+        "parentId": null,
+        "position": 2,
+        "type": "checkbox",
+        "stepId": 183879,
+        "default": "",
+        "label": "",
+        "placeholder": null,
+        "description": "Aceito os <a href=\"\/pages\/termos-e-condicoes-lojistas\" target=\"_blank\">Termos e condições<\/a>",
+        "enum": [
+
+        ],
+        "appearance": {
+          "width": 12,
+          "cssClass": "terms-container fw-bold"
+        },
+        "settings": {
+        },
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Para continuar, você precisa concordar com os Termos e condições"
+          }
+        ],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 969389,
+        "dataColumn": {
+          "key": "analise_de_credito",
+          "label": "Autorizo o uso dos meus dados para Análise de crédito de acordo com a Lei nº 13.709\/2018",
+          "dataType": "boolean"
+        },
+        "parentId": null,
+        "position": 3,
+        "type": "checkbox",
+        "stepId": 183879,
+        "default": true,
+        "label": "",
+        "placeholder": null,
+        "description": "Autorizo o uso dos meus dados para <a href=\"https:\/\/cdn.shopify.com\/s\/files\/1\/0507\/3226\/9775\/files\/INVENTA_-_TERMO_DE_AUTORIZACAO_SCR_LGPD.pdf\" target=\"_blank\">Análise de crédito<\/a> segundo a Lei n° 13.709\/2018 ",
+        "enum": [
+
+        ],
+        "appearance": {
+          "width": 12,
+          "cssClass": "terms-container fw-bold"
+        },
+        "settings": {
+        },
+        "validations": [
+
+        ],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 418012,
+        "dataColumn": {
+          "key": "recebiveis_de_cartoes",
+          "label": "Autorizo consultas referenciais a agenda de Recebíveis de cartões",
+          "dataType": "boolean"
+        },
+        "parentId": null,
+        "position": 4,
+        "type": "checkbox",
+        "stepId": 183879,
+        "default": true,
+        "label": "",
+        "placeholder": null,
+        "description": "Autorizo consultas referentes à <a href=\"https:\/\/cdn.shopify.com\/s\/files\/1\/0507\/3226\/9775\/files\/TEXTO_AUTORIZACAO_DE_CONSULTA_DE_AGENDA.pdf\" target=\"_blank\"> Recebíveis de cartões<\/a>",
+        "enum": [
+
+        ],
+        "appearance": {
+          "width": 12,
+          "cssClass": "terms-container fw-bold"
+        },
+        "settings": {
+        },
+        "validations": [
+
+        ],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 558450,
+        "dataColumn": {
+          "key": "tipo_de_conta",
+          "label": "Tipo de conta",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 0,
+        "type": "dropdown",
+        "stepId": 728274,
+        "default": "cpf-user",
+        "label": "Tipo de conta",
+        "placeholder": "Selecione um tipo de conta",
+        "description": "",
+        "enum": [
+          {
+            "label": "Fornecedor",
+            "value": "Fornecedor"
+          },
+          {
+            "label": "Lojista",
+            "value": "Lojista"
+          },
+          {
+            "label": "cpf-user",
+            "value": "cpf-user"
+          }
+        ],
+        "appearance": {
+          "width": 12,
+          "cssClass": "invisible position-absolute start-0"
+        },
+        "settings": {
+          "end": 10,
+          "start": 1,
+          "enumType": "list",
+          "hideLabel": true,
+          "separateValues": false
+        },
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Insira um tipo de conta"
+          }
+        ],
+        "sensitive": null,
+        "preset": null,
+        "autotag": true
+      },
+      {
+        "id": 288138,
+        "dataColumn": {
+          "key": "default_address.province_code",
+          "label": "Province code",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 1,
+        "type": "dropdown",
+        "stepId": 728274,
+        "default": "cpf-user",
+        "label": "province",
+        "placeholder": "UF",
+        "description": "",
+        "enum": [
+          {
+            "label": "estado:AC",
+            "value": "estado:AC"
+          },
+          {
+            "label": "estado:AL",
+            "value": "estado:AL"
+          },
+          {
+            "label": "estado:AM",
+            "value": "estado:AM"
+          },
+          {
+            "label": "estado:AP",
+            "value": "estado:AP"
+          },
+          {
+            "label": "estado:BA",
+            "value": "estado:BA"
+          },
+          {
+            "label": "estado:CE",
+            "value": "estado:CE"
+          },
+          {
+            "label": "estado:DF",
+            "value": "estado:DF"
+          },
+          {
+            "label": "estado:ES",
+            "value": "estado:ES"
+          },
+          {
+            "label": "estado:GO",
+            "value": "estado:GO"
+          },
+          {
+            "label": "estado:MA",
+            "value": "estado:MA"
+          },
+          {
+            "label": "estado:MG",
+            "value": "estado:MG"
+          },
+          {
+            "label": "estado:MS",
+            "value": "estado:MS"
+          },
+          {
+            "label": "estado:MT",
+            "value": "estado:MT"
+          },
+          {
+            "label": "estado:PA",
+            "value": "estado:PA"
+          },
+          {
+            "label": "estado:PB",
+            "value": "estado:PB"
+          },
+          {
+            "label": "estado:PE",
+            "value": "estado:PE"
+          },
+          {
+            "label": "estado:PI",
+            "value": "estado:PI"
+          },
+          {
+            "label": "estado:PR",
+            "value": "estado:PR"
+          },
+          {
+            "label": "estado:RJ",
+            "value": "estado:RJ"
+          },
+          {
+            "label": "estado:RN",
+            "value": "estado:RN"
+          },
+          {
+            "label": "estado:RS",
+            "value": "estado:RS"
+          },
+          {
+            "label": "estado:RO",
+            "value": "estado:RO"
+          },
+          {
+            "label": "estado:RR",
+            "value": "estado:RR"
+          },
+          {
+            "label": "estado:SC",
+            "value": "estado:SC"
+          },
+          {
+            "label": "estado:SE",
+            "value": "estado:SE"
+          },
+          {
+            "label": "estado:SP",
+            "value": "estado:SP"
+          },
+          {
+            "label": "estado:TO",
+            "value": "estado:TO"
+          }
+        ],
+        "appearance": {
+          "width": 12,
+          "cssClass": "invisible position-absolute start-0"
+        },
+        "settings": {
+          "end": 10,
+          "start": 1,
+          "enumType": "list",
+          "hideLabel": true,
+          "separateValues": false
+        },
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Insira um tipo de conta"
+          }
+        ],
+        "sensitive": null,
+        "preset": null,
+        "autotag": true
+      },
+      {
+        "id": 188448,
+        "dataColumn": {
+          "key": "cpf",
+          "label": "CPF",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 10,
+        "type": "text",
+        "stepId": 728274,
+        "default": "",
+        "label": "CPF",
+        "placeholder": "CPF",
+        "description": "",
+        "enum": [
+
+        ],
+        "appearance": {
+          "width": 6,
+          "cssClass": "register-cpf"
+        },
+        "settings": {
+          "hideLabel": true
+        },
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Este campo é obrigatório. "
+          },
+          {
+            "metadata": {
+              "0": "P",
+              "1": "o",
+              "2": "l",
+              "3": "a",
+              "4": "r",
+              "5": "i",
+              "6": "s",
+              "7": "T",
+              "8": "e",
+              "9": "x",
+              "10": "t",
+              "11": "F",
+              "12": "i",
+              "13": "e",
+              "14": "l",
+              "15": "d",
+              "16": "7",
+              "17": "0"
+            },
+            "operator": "matches_regex",
+            "comparand": "^[0-9]{3}[\\.]?[0-9]{3}[\\.]?[0-9]{3}[-\\.\\\/]?[0-9]{2}$",
+            "errorMessage": "Forneça um CPF válido."
+          }
+        ],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 129065,
+        "dataColumn": {
+          "key": "cep",
+          "label": "Postal code",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 11,
+        "type": "text",
+        "stepId": 728274,
+        "default": "",
+        "label": "CEP",
+        "placeholder": "CEP",
+        "description": "",
+        "enum": [
+
+        ],
+        "appearance": {
+          "width": 6,
+          "cssClass": "register-cpf"
+        },
+        "settings": {
+          "hideLabel": true
+        },
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Este campo é obrigatório. "
+          },
+          {
+            "metadata": {
+              "0": "P",
+              "1": "o",
+              "2": "l",
+              "3": "a",
+              "4": "r",
+              "5": "i",
+              "6": "s",
+              "7": "T",
+              "8": "e",
+              "9": "x",
+              "10": "t",
+              "11": "F",
+              "12": "i",
+              "13": "e",
+              "14": "l",
+              "15": "d",
+              "16": "3",
+              "17": "9"
+            },
+            "operator": "matches_regex",
+            "comparand": "^[0-9]{5}\\-[0-9]{3}$",
+            "errorMessage": "Forneça um CEP válido."
+          }
+        ],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 214488,
+        "dataColumn": {
+          "key": "default_address.address1",
+          "label": "Address",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 2,
+        "type": "text",
+        "stepId": 728274,
+        "default": "",
+        "label": "Address",
+        "placeholder": "Endereço",
+        "description": "",
+        "enum": [
+
+        ],
+        "appearance": {
+          "width": 12,
+          "cssClass": "invisible position-absolute start-0"
+        },
+        "settings": {
+          "hideLabel": true
+        },
+        "validations": [
+
+        ],
+        "sensitive": null,
+        "preset": "address1",
+        "autotag": null
+      },
+      {
+        "id": 180851,
+        "dataColumn": {
+          "key": "default_address.city",
+          "label": "City",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 3,
+        "type": "text",
+        "stepId": 728274,
+        "default": "",
+        "label": "City",
+        "placeholder": "Cidade",
+        "description": "",
+        "enum": [
+
+        ],
+        "appearance": {
+          "width": 12,
+          "cssClass": "invisible position-absolute start-0"
+        },
+        "settings": {
+          "hideLabel": true
+        },
+        "validations": [
+
+        ],
+        "sensitive": null,
+        "preset": "city",
+        "autotag": null
+      },
+      {
+        "id": 308935,
+        "dataColumn": {
+          "key": "default_address.address2",
+          "label": "Address line 2",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 4,
+        "type": "text",
+        "stepId": 728274,
+        "default": "",
+        "label": "Bairro",
+        "placeholder": "Bairro",
+        "description": "",
+        "enum": [
+
+        ],
+        "appearance": {
+          "width": 12,
+          "cssClass": "invisible position-absolute start-0"
+        },
+        "settings": {
+          "hideLabel": true
+        },
+        "validations": [
+
+        ],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 780061,
+        "dataColumn": {
+          "key": "default_address.country",
+          "label": "Country",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 5,
+        "type": "dropdown",
+        "stepId": 728274,
+        "default": "Brazil",
+        "label": "Country",
+        "placeholder": "Select a country...",
+        "description": "",
+        "enum": [
+          {
+            "label": "",
+            "value": ""
+          }
+        ],
+        "appearance": {
+          "width": 12,
+          "cssClass": "invisible position-absolute start-0"
+        },
+        "settings": {
+          "hideLabel": true,
+          "isCountryField": true,
+          "useAllCountries": true
+        },
+        "validations": [
+
+        ],
+        "sensitive": null,
+        "preset": "country",
+        "autotag": null
+      },
+      {
+        "id": 190472,
+        "dataColumn": {
+          "key": "default_address.zip",
+          "label": "Zip\/Postal code",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 6,
+        "type": "text",
+        "stepId": 728274,
+        "default": "",
+        "label": "Zip\/Postal code",
+        "placeholder": "zipcode",
+        "description": "",
+        "enum": [
+
+        ],
+        "appearance": {
+          "width": 12,
+          "cssClass": "invisible position-absolute start-0"
+        },
+        "settings": {
+          "hideLabel": true
+        },
+        "validations": [
+
+        ],
+        "sensitive": null,
+        "preset": "zip",
+        "autotag": null
+      },
+      {
+        "id": 178313,
+        "dataColumn": {
+          "key": "default_address.province",
+          "label": "Province code",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 7,
+        "type": "text",
+        "stepId": 728274,
+        "default": "",
+        "label": "province",
+        "placeholder": "province",
+        "description": "",
+        "enum": [
+
+        ],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "hideLabel": true
+        },
+        "validations": [
+
+        ],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 169897,
+        "dataColumn": {
+          "key": "first_name",
+          "label": "First name",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 8,
+        "type": "text",
+        "stepId": 728274,
+        "default": "",
+        "label": "First name",
+        "placeholder": "",
+        "description": "",
+        "enum": [
+
+        ],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+        },
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Este campo é obrigatório"
+          }
+        ],
+        "sensitive": null,
+        "preset": "first_name",
+        "autotag": null
+      },
+      {
+        "id": 170830,
+        "dataColumn": {
+          "key": "phone",
+          "label": "New single-line text field",
+          "dataType": "phone"
+        },
+        "parentId": null,
+        "position": 9,
+        "type": "text",
+        "stepId": 728274,
+        "default": "",
+        "label": "Telefone",
+        "placeholder": "WhatsApp com DDD",
+        "description": "",
+        "enum": [
+
+        ],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "hideLabel": true
+        },
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Este campo é obrigatório."
+          },
+          {
+            "metadata": {
+              "0": "P",
+              "1": "o",
+              "2": "l",
+              "3": "a",
+              "4": "r",
+              "5": "i",
+              "6": "s",
+              "7": "T",
+              "8": "e",
+              "9": "x",
+              "10": "t",
+              "11": "F",
+              "12": "i",
+              "13": "e",
+              "14": "l",
+              "15": "d",
+              "16": "2",
+              "17": "2",
+              "18": "0"
+            },
+            "operator": "matches_regex",
+            "comparand": "^\\+55\\s[1-9]{2}\\s(9[0-9]{4}|[1-9][0-9]{3})\\-[0-9]{4}$",
+            "errorMessage": "Forneça um número de telefone válido. "
+          }
+        ],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      }
+    ],
+    "steps": [
+      {
+        "id": 728274,
+        "title": "Step1",
+        "description": ""
+      },
+      {
+        "id": 183879,
+        "title": "Step 3",
+        "description": ""
+      },
+      {
+        "id": 160622,
+        "title": "Submission success",
+        "metadata": {
+          "isSuccessStep": true
+        },
+        "description": ""
+      }
+    ],
+    "rules": [
+      {
+        "id": 173833,
+        "title": "Análise de crédito true",
+        "actions": [
+          {
+            "id": 456303,
+            "effect": "tag_customer",
+            "metadata": {
+              "value": "analise_de_credito:true"
+            }
+          }
+        ],
+        "conditions": [
+          {
+            "operand": null,
+            "metadata": {
+              "column": {
+                "id": "2LFPQ9",
+                "key": "analise_de_credito",
+                "label": "Autorizo o uso dos meus dados para Análise de crédito de acordo com a Lei nº 13.709\/2018",
+                "dataType": "boolean",
+                "favorite": false,
+                "readOnly": false,
+                "createdAt": "2022-05-03T17:23:24.677Z",
+                "dedicated": false,
+                "archivedAt": null,
+                "expandedLabel": "Autorizo o uso dos meus dados para Análise de crédito de acordo com a Lei nº 13.709\/2018"
+              }
+            },
+            "operator": "is_true"
+          }
+        ],
+        "conditionChaining": "all"
+      },
+      {
+        "id": 199089,
+        "title": "Análise de crédito false",
+        "actions": [
+          {
+            "id": 154305,
+            "effect": "tag_customer",
+            "metadata": {
+              "value": "analise_de_credito:false"
+            }
+          }
+        ],
+        "conditions": [
+          {
+            "operand": null,
+            "metadata": {
+              "column": {
+                "id": "2LFPQ9",
+                "key": "analise_de_credito",
+                "label": "Autorizo o uso dos meus dados para Análise de crédito de acordo com a Lei nº 13.709\/2018",
+                "dataType": "boolean",
+                "favorite": false,
+                "readOnly": false,
+                "createdAt": "2022-05-03T17:23:24.677Z",
+                "dedicated": false,
+                "archivedAt": null,
+                "expandedLabel": "Autorizo o uso dos meus dados para Análise de crédito de acordo com a Lei nº 13.709\/2018"
+              }
+            },
+            "operator": "is_false"
+          }
+        ],
+        "conditionChaining": "all"
+      },
+      {
+        "id": 644635,
+        "title": "Recebíveis de cartões true",
+        "actions": [
+          {
+            "id": 193853,
+            "effect": "tag_customer",
+            "metadata": {
+              "value": "recebiveis_de_cartao:true"
+            }
+          }
+        ],
+        "conditions": [
+          {
+            "operand": null,
+            "metadata": {
+              "column": {
+                "id": "gGFzQz",
+                "key": "recebiveis_de_cartoes",
+                "label": "Autorizo consultas referenciais a agenda de Recebíveis de cartões",
+                "dataType": "boolean",
+                "favorite": false,
+                "readOnly": false,
+                "createdAt": "2022-05-03T17:23:24.693Z",
+                "dedicated": false,
+                "archivedAt": null,
+                "expandedLabel": "Autorizo consultas referenciais a agenda de Recebíveis de cartões"
+              }
+            },
+            "operator": "is_true"
+          }
+        ],
+        "conditionChaining": "all"
+      },
+      {
+        "id": 933612,
+        "title": "Recebíveis de cartões false",
+        "actions": [
+          {
+            "id": 139640,
+            "effect": "tag_customer",
+            "metadata": {
+              "value": "recebiveis_de_cartao:false"
+            }
+          }
+        ],
+        "conditions": [
+          {
+            "operand": null,
+            "metadata": {
+              "column": {
+                "id": "gGFzQz",
+                "key": "recebiveis_de_cartoes",
+                "label": "Autorizo consultas referenciais a agenda de Recebíveis de cartões",
+                "dataType": "boolean",
+                "favorite": false,
+                "readOnly": false,
+                "createdAt": "2022-05-03T17:23:24.693Z",
+                "dedicated": false,
+                "archivedAt": null,
+                "expandedLabel": "Autorizo consultas referenciais a agenda de Recebíveis de cartões"
+              }
+            },
+            "operator": "is_false"
+          }
+        ],
+        "conditionChaining": "all"
+      }
+    ]
+  }
+}

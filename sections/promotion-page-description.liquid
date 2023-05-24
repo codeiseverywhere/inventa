@@ -1,0 +1,270 @@
+<section id="promo_page_desc" data-section-id="{{ section.id }}" data-section-type="promotion-page-description" class="d-flex justify-content-center">
+    <div class="promotoin-page_inner min-height">
+        <div class="row promotoin-page_inner">
+            {% if section.settings.image %}
+              <div class="col-5 col-md-5 col-lg-3 promotion-page_icon-container {% if description == blank %}minimal-container{% endif %}">
+                  <div class="d-flex p-2 p-md-4 justify-content-center align-items-center m-auto promotion-page_icon-wrapper">
+                      {%- assign icon_img = section.settings.image -%}
+                      <img src="{% if icon_img != blank %}{{ icon_img | img_url: 'master' }}{% endif %}" alt="{{ icon_img.alt }}-icon">
+                  </div>
+              </div>
+            {% endif %}
+            <div class="promotion-page_info-container col-7 col-md-7 col-lg-9 pt-4">
+                <div class="d-md-flex">
+                  {%- assign promotionTitle = section.settings.title -%}  
+                  <h1 class="fw-bold mb-1 d-inline-block align-middle me-3">{% if promotionTitle !=blank %}{{promotionTitle}}{% else %} Promotoin Title{% endif %}</h1>
+                </div>
+                <div class="promotion-page_info-desc lato semi-black">
+                    {%- assign promotionContent = section.settings.content -%}
+                    <p class="fs-5 my-2 description-p ">
+                    {% if promotionContent != blank %}{{promotionContent}}{% else %} Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing.{% endif %}
+                     
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+  const sectionElement = document.querySelector('.promo_page_header_exist');
+  if(!sectionElement){
+     const descElement = document.getElementById("promo_page_desc");
+     descElement.classList.add("promo_page_desc");
+  }
+  
+</script>
+
+<style>
+    {% if section.settings.image %}
+    .promotoin-page_inner > .promotion-page_info-container {
+    }  
+    {% else %}
+    .promotoin-page_inner > .promotion-page_info-container {
+      max-width:100%;
+      width:100%;
+      padding-left:40px;
+      padding-right:40px;
+    }  
+    .mt-5{margin-top:0rem !important;}
+    {% endif %}
+    .promo_page_desc{
+          margin-top:55px;
+    }
+    [data-section-type="promotion-page-description"] h1{
+        font-size: 40px;
+        line-height: 45px;
+        color: #1A1A1A;
+    }
+
+    @media (min-width: 992px){
+        [data-section-type="promotion-page-description"] h1{
+            font-size: 54px;
+            line-height: 60px;
+        }
+    }
+
+    .noto-sans{
+        font-family: 'Noto sans';
+    }
+    .lato{
+        font-family: 'Lato';
+    }
+    .semi-black{
+        color: #666;
+    }
+    .semi-grey{
+        color: #999;
+    }
+
+    .promotion-page_info-desc{
+        max-width: 90%;
+    }
+    .promotion-page_info-desc p{
+        line-height: 1.3em;
+    }
+    
+    .promotoin-page_inner{
+        max-width: 1440px;
+        width: 100vw;
+        margin-bottom:20px;
+    }
+    .min-height{
+        min-height:200px;
+    }
+
+    .promotion-page_icon-wrapper{
+        width: 300px;
+        height: 300px;
+        background: #fff;
+        box-shadow: 0px 5px 25px rgba(0, 0, 0, 0.15);
+        position: relative;
+        top: -58px;
+    }
+
+    .promotion-page_icon-container {
+        height: 220px;
+        z-index: 1;
+    }
+
+    @media (min-width: 760px) {
+
+        .promotion-page_icon-container.minimal-container {
+            height: 120px !important;
+        }
+
+        /*
+        .promotion-page_icon-container.minimal-container .promotion-page_icon-wrapper {
+            top: -200px;
+        }*/
+    }
+
+    @media (max-width: 640px){
+        .promotoin-page_inner{
+            margin-bottom:10px;
+        }
+        .min-height{
+            min-height:0px;
+        }
+        .promotion-page_icon-container{
+            height: 180px;
+        }
+        .promotion-page_info-desc{
+            padding-bottom: 2rem;
+        }
+        .promotion-page_info-desc p{
+            max-height: 4.85rem;
+            overflow-y: hidden;
+            text-overflow: ellipsis;
+            position: relative;
+            pointer-events: none;
+        }
+        .promotion-page_info-desc p:after{
+            content: '...';
+            position: absolute;
+            right: 0;
+            top: 2.6em;
+            padding-right: 1rem;
+            padding-left: 4rem;
+            background: linear-gradient(to right, transparent, #fff);
+            pointer-events: all;
+        }
+        p.description-p.show-mobile{
+            animation-name: maxHeightOut;
+            animation-duration: 1s;
+            animation-timing-function: ease-in;
+            max-height: none;
+            overflow-y: visible;
+        }
+        p.description-p.show-mobile:after{
+            content: '...menos';
+            bottom: -1.3rem;
+            top: initial;
+        }
+    }
+    
+    @keyframes maxHeightOut{
+        0%{
+            max-height: 4.85rem !important;
+        }
+        100%{
+            max-height: 40rem !important;
+        }
+    }
+
+    @media (min-width: 1100px) and (max-width: 1200px){
+        .promotion-page_icon-container{
+            height: 330px !important;
+        }
+    }
+
+    @media (max-width: 1400px){
+        .promotion-page_info-desc{
+            max-width: none;
+        }
+        .promotion-page_icon-wrapper{
+            width: calc(100% - 1.5rem);
+            height: fit-content;
+        }
+        .promotion-page_icon-wrapper:after{
+            content: "";
+            display: block;
+            padding-bottom: 100%;
+        }
+    }
+
+    @media (max-width: 640px){
+        .promotion-page_icon-wrapper{
+            top: 12px;
+        }
+    }
+
+    @media (max-width: 640px){
+        .promotion-page_icon-container {
+            height: auto;
+        }
+    }
+   
+    .popover {
+        max-width: initial;
+    }
+</style>
+
+<script>
+
+initPromotionPage();
+
+function initPromotionPage(){
+        parseInfo();
+        const desc = document.querySelector('.description-p');
+        if(desc) desc.addEventListener('click', () => {
+            desc.classList.toggle('show-mobile');
+        })
+    }
+
+    function parseInfo(){
+        const desc = document.querySelector('.description-p');
+        if(desc){
+            const obj = {
+                desc: desc.innerText
+            }
+            const string = JSON.stringify(obj);
+            const parse = JSON.parse(string);
+            desc.innerText = unescape(parse.desc);
+            desc.classList.remove('d-none');
+        }
+    }
+</script>
+
+{% schema %}
+{
+  "name": "Promotion Description",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Título"
+    },
+    {
+      "type": "textarea",
+      "id": "content",
+      "label": "Content",
+      "default": "Conteúdo"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+      "info": "Imagem"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Custom Sections",
+      "name": "Text and Image",
+      "settings": {}
+    }
+  ],
+  "templates": ["page","collection"]
+}
+{% endschema %}

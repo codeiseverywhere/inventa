@@ -1,0 +1,109 @@
+<section class="position-fixed end-0 start-0 top-0 justify-content-center h-100 modal-banner d-none" open-popup="false" data-section-id="banner-modal" data-section-type="banner-modal">
+  {%- if section.settings.show_modal -%}
+    <div class="modal-inner-banner d-flex position-relative box-modal position-absolute">
+      <div class="w-100">
+        <div class="position-absolute modal-close-btn mb-3" onclick="closeModalBanner('.modal-banner')">
+          <svg class="modal-closer" width="23" height="21" viewBox="0 0 23 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M9.75806 10.2688L0 1.48659L1.33793 0L11.2529 8.92348L21.1679 0L22.5058 1.48659L12.7478 10.2688L22.5058 19.0511L21.1679 20.5377L11.2529 11.6142L1.33793 20.5377L2.08616e-06 19.0511L9.75806 10.2688Z" fill="white"/>
+          </svg>
+        </div>
+        <div class="box-content h-100">
+          <div class="container-modal-banner text-center">
+            {%- if section.settings.show_modal -%}
+            <img src="{{ section.settings.banner_image | img_url: '800x' }}">
+            {%- endif -%}
+          </div>
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
+</section>
+
+{%- if section.settings.show_modal -%}
+  <script>
+    const noShowBannerModal = window.localStorage.getItem("noShowBannerModal");
+
+    window.addEventListener("DOMContentLoaded", () => {
+      if (!noShowBannerModal) {
+        const modalBannerElement = document.querySelector(".modal-banner");
+
+        if (modalBannerElement) {
+          modalBannerElement.classList.remove("d-none");
+        }
+      }
+    });
+
+    function closeModalBanner(modal) {
+      const modalElement = document.querySelector(modal);
+
+      if (modalElement) {
+        window.localStorage.setItem("noShowBannerModal", true);
+        modalElement.classList.add("d-none");
+
+      }
+    }
+
+    document.addEventListener("click", (event) => {
+      if (!event.target.closest(".modal-inner-banner")) {
+        closeModalBanner('.modal-banner');
+      }
+    });
+
+  </script>
+
+  <style>
+    .modal-banner {
+      background-color: #373D43D1;
+      z-index: 100000;
+    }
+
+    .modal-banner .box-content {
+      background: linear-gradient(180deg,rgba(55,61,67,0) -80%,#373D43 100%);
+    }
+
+    .modal-banner .modal-inner-banner {
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      margin: auto;
+      min-width: 0;
+      overflow: hidden;
+      border: 1px solid #fff;
+      width: 90%;
+      max-width: 500px;
+      height: fit-content;
+    }
+
+    .modal-banner .modal-close-btn {
+      left: 1.5rem;
+      top: 1rem;
+    }
+  </style>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Banner Modal",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_modal",
+      "label": "Show banner modal",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "banner_image",
+      "label": "Banner image"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Custom Sections",
+      "name": "Banner Modal",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

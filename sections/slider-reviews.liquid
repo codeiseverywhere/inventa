@@ -1,0 +1,91 @@
+<section class="section" data-section-id="{{ section.id }}" data-section-type="slider-reviews">
+  <div class="container py-5">
+    <div class="row">
+      <div class="col-12 col-lg-6 offset-lg-3">
+        <h2 class="display-5 text-center">{{ section.settings.title }}</h2>
+      </div>
+    </div>
+    <div id="reviewsCarouselControls" class="carousel carousel-dark slide" data-bs-ride="carousel">
+      <div class="carousel-inner mt-5">
+        {%- for block in section.blocks -%}
+          <div class="carousel-item {% if forloop.first %}active{% endif %}">
+            <div class="col-md-8 offset-md-2 col-lg-6 offset-lg-3 text-center">
+              <p class="px-5 mx-auto">
+                <span>{{ block.settings.comment }}</span>
+              </p>
+            </div>
+            <div class="text-center mt-4">
+              <img src="{{ block.settings.profile-image | img_url: "100x" }}" class="profile-img rounded-circle lazyload image--fade-in" alt="{{ block.settings.profile-image.alt | escape }}">
+            </div>
+            <div class="text-center mt-2">
+              <span class="fw-bold">{{ block.settings.profile-name }}</span>
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#reviewsCarouselControls" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon w-25 h-100" aria-hidden="true"></span>
+        <span class="visually-hidden">Siguinte</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#reviewsCarouselControls" data-bs-slide="next">
+        <span class="carousel-control-next-icon w-25 h-100" aria-hidden="true"></span>
+        <span class="visually-hidden">Anterior</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .profile-img {
+    width: 75px;
+    height: 75px;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Slider reviews",
+  "max_blocks": 10,
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Título"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Item",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "comment",
+          "label": "Comment",
+          "default": "Comentário"
+        },
+        {
+          "type": "image_picker",
+          "id": "profile-image",
+          "label": "Image",
+          "info": "Profile image"
+        },
+        {
+          "type": "text",
+          "id": "profile-name",
+          "label": "Name",
+          "default": "Nome"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "category": "Custom Sections",
+      "name": "Slider reviews",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,139 @@
+{%- if collections[section.settings.collection-name].products.size > 0 -%}
+<section class="section mb-0 mt-5 welcome-slider-2" data-section-id="welcome-slider-2" data-section-type="welcome-products-slider-2" style="visibility: hidden;max-height: 1px!important;">
+  <div class="container">
+    <header class="section__header">
+      <h2 class="fs-3 fw-light">{{ collections[section.settings.collection-name].title }}</h2>
+    </header>
+
+    <div>
+      <button class="previous-slide_2">{%- render 'icon', icon: 'arrow-left' -%}</button>
+			<button class="next-slide_2">{%- render 'icon', icon: 'arrow-right' -%}</button>
+      <div class="collection-slider">
+        {% for product in collections[section.settings.collection-name].products %}
+          <div class="col-6 col-md-3 p-3">
+            <a href="{{ product.url }}" class="product-block">
+              <!-- product image block -->
+              <div class="mp-product-image-block img-thumbnail container-fluid d-flex justify-content-center align-items-center">
+                {%- capture supported_sizes -%}
+                  {%- render 'image-size', sizes: '200,300,400,500,600,700,800', image: product.featured_media.preview_image -%}
+                {%- endcapture -%}
+                {%- assign productQty = 1 -%}
+                {%- for tag in product.tags -%}
+                  {%- if tag contains "Pedido mínimo (produto)" -%}
+                    {%- assign productQty = tag | split: '_' | last | plus: 0 | at_least: 1 -%}
+                  {%- endif -%}
+                {%- endfor -%}
+                {%- assign image_url = product.featured_media | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+                <img class="img-fluid lazyload image--fade-in" data-media-id="{{ product.featured_media.id }}" data-src="{{ image_url }}" data-sizes="auto" data-widths="[{{ supported_sizes }}]" alt="{{ product.featured_media.alt | escape }}">
+              </div>
+              <div class="row mt-3 justify-content-center px-3">
+                <div class="col-8 product-name mp-color-gray p-0 text-start text-break">
+                  <span class="text-dark fs-5">{{ product.title }}</span>
+                </div>
+                <div class="col-4 text-md-end text-start p-0 ">
+                  <span class="text-muted fs-5 text-nowrap" data-currency-brl="R$42.20" data-currency="R$">{{ product.price | money }}</span>
+                </div>
+                <small class="d-block mb-3 p-0 mt-2 fst-italic text-secondary">Pedido mínimo {{productQty}} uni.</small>
+              </div>
+            </a>
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .welcome-slider-2 .mp-product-image-block img {
+    max-height: 225px;
+  }
+
+  .previous-slide_2,
+	.next-slide_2{
+		position: absolute;
+		padding: 0;
+    height: calc(25% - 25px);
+		z-index: 1;
+		font-size: 1.7rem;
+		width: 60px !important;
+	}
+	.previous-slide_2 svg,
+	.next-slide_2 svg{
+		background: #C4C4C4;
+		border-radius: 50%;
+		color: #FFF;
+		width: 43px;
+		height: 43px;
+		padding: 7px;
+	}
+	.previous-slide_2 svg path,
+	.next-slide_2 svg path{
+		stroke-width: 1;
+	}
+	.next-slide_2{
+		right: 0;
+	}
+	.previous-slide_2{
+		left: 0;
+	}
+</style>
+
+<script defer>
+  window.addEventListener('load', function() {
+    const welcomeSliderContainer2 = document.querySelector('.welcome-slider-2 .collection-slider');
+
+    welcomeSliderContainer2.addEventListener('glider-loaded', function() {
+      document.querySelector('section[data-section-type="welcome-products-slider-2"]').removeAttribute("style");
+    });
+
+    new Glider(welcomeSliderContainer2, {
+      type: 'carousel',
+      focusAt: 'center',
+      rewind: true,
+      slidesToShow: 1,
+      slidesToScroll: 1,
+      draggable: true,
+      arrows: {
+        prev: 'section[data-section-type="welcome-products-slider-2"] .previous-slide_2',
+        next: 'section[data-section-type="welcome-products-slider-2"] .next-slide_2'
+      },
+      responsive: [
+      {
+        breakpoint: 767,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 2
+        }
+      },
+      {
+        breakpoint: 1023,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 3
+        }
+      },
+      {
+        breakpoint: 1450,
+        settings: {
+          slidesToShow: 4,
+          slidesToScroll: 4
+        }
+      }
+      ]
+    })
+  })
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Collection slider 2",
+  "settings": [
+    {
+      "type": "text",
+      "id": "collection-name",
+      "label": "Collection name"
+    }
+  ]
+}
+{% endschema %}

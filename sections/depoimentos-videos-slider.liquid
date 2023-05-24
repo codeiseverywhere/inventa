@@ -1,0 +1,113 @@
+{% if section.blocks.size > 0 %}
+<section class="section mb-0" id="section-{{ section.id }}" data-section-id="{{ section.id }}" data-section-type="depoimentos-videos-slider" style="visibility: hidden;max-height: 1px!important;">
+    <div class="depoimentos-slider">
+        {% for video in section.blocks %}
+            <div class="row m-auto">
+                <div class="d-flex justify-content-center video-wrapper col-12 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+                    <div class="video" data-video="{{ video.settings.link }}"></div>
+                </div>
+                <div class="col-12 my-3 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+                    <p class="fs-2 noto text-center fst-italic fw-lighter">"{{ video.settings.title }}"</p>
+                </div>
+                <div class="col-12 mt-2 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+                    <p class="text-center noto fs-4">{{ video.settings.name }} da <strong>{{ video.settings.bussiness }}</strong></p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    {% if section.blocks.size > 1 %}
+    <div class="row mt-3">
+        <button class="col-1 text-secondary fs-4 offset-4 previous-slide">{%- render 'icon', icon: 'arrow-left' -%}</button>
+        <div class="depoimentos-dots col-2 m-0"></div>
+        <button class="col-1 text-secondary fs-4 next-slide">{%- render 'icon', icon: 'arrow-right' -%}</button>
+    </div>
+    {% endif %}
+</section>
+
+<script defer>
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+</script>
+
+<script defer>
+    function onYouTubeIframeAPIReady() {
+        const videos = document.querySelectorAll('.depoimentos-slider .video');
+        for(let i = 0; i < videos.length; i++){
+            const link = videos[i].getAttribute('data-video');
+            const a = link.split('/');
+            const videoId = a[a.length - 1];
+            const player = new YT.Player(videos[i], {
+                videoId
+            });
+        }
+    }
+    const depoimentos_initSlider = () => {
+        const slider = document.querySelector('.depoimentos-slider');
+        slider.addEventListener('glider-loaded', () => {
+            const slider_wrapper = document.querySelector('section[data-section-type="depoimentos-videos-slider"]');
+            if(slider_wrapper) slider_wrapper.removeAttribute('style');
+        })
+        if(slider){
+            new Glider(slider, {
+                type: 'carousel',
+                focusAt: 'center',
+                rewind: true,
+                slidesToShow: 1,
+                slidesToScroll: 1,
+                draggable: true,
+                arrows: {
+                    prev: 'section[data-section-type="depoimentos-videos-slider"] .previous-slide',
+                    next: 'section[data-section-type="depoimentos-videos-slider"] .next-slide'
+                },
+                dots: 'section[data-section-type="depoimentos-videos-slider"] .depoimentos-dots'
+            })
+        }
+    }
+
+    window.addEventListener("load", depoimentos_initSlider)
+</script>
+{% endif %}
+
+{% schema %}
+{
+    "name": "Depoimentos slider",
+    "max_blocks": 5,
+    "blocks": [
+        {
+            "type": "depoimento",
+            "name": "Depoimento",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Depoimento text or phrase"
+                },
+                {
+                    "type": "text",
+                    "id": "link",
+                    "label": "Link to video (youtube)"
+                },
+                {
+                    "type": "text",
+                    "id": "name",
+                    "label": "Name of the person"
+                },
+                {
+                    "type": "text",
+                    "id": "bussiness",
+                    "label": "Name of the bussiness"
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "category": "Custom Sections",
+            "name": "Depoimentos slider",
+            "settings": {}
+        }
+    ]
+}
+{% endschema %}

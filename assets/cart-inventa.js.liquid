@@ -1,0 +1,784 @@
+window.addEventListener("load", () => {
+  //const vendor_mins = [];
+  let lastCart;
+  let noMinProds = [];
+  document.getElementById("checkout-button").onclick = async (e) => {
+    const text = document.querySelector("#checkout-button .normal-text");
+    const spinner = document.querySelector("#checkout-button .spinner-border");
+    if (text && spinner) {
+      text.classList.add("d-none");
+      spinner.classList.remove("d-none");
+    }
+
+    const rejectedProducts = [];
+    for (let i = 0; i < vendor_mins.length; i++) {
+      const { minimum_purchase, seller_store_name, subtotal, impostos } =
+        vendor_mins[i];
+      if (subtotal + impostos < minimum_purchase) {
+        const { items } = lastCart;
+        for (let j = 0; j < items.length; j++) {
+          const { variant_id, quantity, vendor } = items[j];
+          if (seller_store_name.toLowerCase() == vendor.toLowerCase())
+            rejectedProducts.push({ variant_id, quantity, vendor });
+        }
+      }
+    }
+
+    let updates = {};
+    for (let i = 0; i < rejectedProducts.length; i++) {
+      const { variant_id } = rejectedProducts[i];
+      updates[variant_id] = 0;
+    }
+    for (let i = 0; i < noMinProds.length; i++) {
+      updates[noMinProds[i]] = 0;
+    }
+    await fetch("/cart/update.js", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        updates,
+      }),
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then((res) => {
+        const { token, items, original_total_price } = res;
+        if (original_total_price >= shop_general_min) {
+          window.sessionStorage.setItem(
+            "validCart",
+            JSON.stringify({ token, items, original_total_price })
+          );
+          /* window.dataLayer.push({
+            event: 'startCheckout',
+            userID: customer.id,
+            data: JSON.stringify({
+              url: window.location.pathname,
+              cartValue: original_total_price,
+              products: items
+            })
+          }) */
+          driver.pushEvent("startCheckout", {
+            data: {
+              url: window.location.pathname,
+              cartValue: original_total_price,
+              products: items,
+              shoppingCartToken: token
+            },
+          });
+        }
+      });
+
+    const alreadySaved = window.localStorage.getItem("noMinProds");
+    if (alreadySaved) {
+      try {
+        const savedParsed = JSON.parse(alreadySaved);
+        savedParsed.map(({ variant_id, quantity }) => {
+          if (!rejectedProducts.some((item) => variant_id == item.variant_id))
+            rejectedProducts.push({ variant_id, quantity });
+        });
+      } catch (error) {}
+    }
+    window.localStorage.setItem("noMinProds", JSON.stringify(rejectedProducts));
+    window.location.replace("/checkout");
+  };
+  document.getElementById("continueshop-button").onclick = () =>
+    window.location.replace("/collections/marcas");
+
+  const iconWarnings = document.querySelectorAll(".disabled_less-button");
+  for (let i = 0; i < iconWarnings.length; i++) {
+    new bootstrap.Tooltip(iconWarnings[i]);
+  }
+
+  getMultivendorAmounts().then(({ cart, frete_stimates }) => {
+    updateCart(cart, frete_stimates);
+  });
+
+  const updateCart = (cart, frete_stimates) => {
+    const totalHeigth = document.body.clientHeight;
+    document.querySelector(".finish-container").style.top = `-${
+      totalHeigth + 77
+    }px`;
+    document.querySelector(".finish-container_inner").style.height = `${
+      totalHeigth + 154 + 15
+    }px`;
+
+    const { items, item_count } = cart;
+    lastCart = cart;
+    if (!item_count) window.location.reload();
+    vendor_mins.map((vendor, i) => {
+      vendor_mins[i].subtotal = 0;
+      vendor_mins[i].items_quantity = 0;
+      vendor_mins[i].items_diversity = 0;
+      vendor_mins[i].impostos = 0;
+      vendor_mins[i].discount = 0;
+    });
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      const { properties } = item;
+      if (
+        vendor_mins.some(
+          (vendor) =>
+            vendor.seller_store_name.toLowerCase().includes(item.vendor.toLowerCase())
+        )
+      ) {
+        vendor_mins.map(({ seller_store_name }, i) => {
+          const vendorName = properties['_fornecedor']? properties['_fornecedor'] : item.vendor.toLowerCase();
+          if (seller_store_name.toLowerCase().includes(vendorName)) {
+            const inputElement = document.getElementById(
+              `quantity-${item.variant_id}`
+            );
+            const value = parseInt(inputElement.value);
+            const min = parseInt(inputElement.getAttribute("min"));
+            if (value >= min) {
+              vendor_mins[i].impostos += properties._imposto$
+                ? parseFloat(properties._imposto$) * 100
+                : 0;
+              vendor_mins[i].subtotal += properties._precoOriginal$
+                ? parseFloat(properties._precoOriginal$) * 100
+                : item.original_line_price;
+              vendor_mins[i].items_quantity += item.quantity;
+              vendor_mins[i].items_diversity++;
+              if(properties._descontoPorQuantidade) vendor_mins[i].discount += (parseFloat(properties._descontoPorQuantidade) * 100)
+            }
+          }
+        });
+      } else {
+        vendor_mins.push({
+          minimum_purchase: 0,
+          seller_store_name: item.vendor,
+          subtotal: properties._precoOriginal$
+            ? parseFloat(properties._precoOriginal$) * 100
+            : item.original_line_price,
+          items_quantity: item.quantity,
+          items_diversity: 1,
+          impostos: properties._imposto$
+            ? parseFloat(properties._imposto$) * 100
+            : 0,
+          discount: properties._descontoPorQuantidade ? (parseFloat(properties._descontoPorQuantidade) * 100) : 0
+        });
+      }
+    }
+
+    const minicart_count = document.querySelector(".header__cart-count");
+    if (minicart_count) minicart_count.innerHTML = item_count;
+    for (let i = 0; i < items.length; i++) {
+      const {
+        variant_id,
+        quantity,
+        final_line_price,
+        image,
+        title,
+        sku,
+        vendor,
+      } = items[i];
+      document.getElementById(`quantity-${variant_id}`).value = quantity;
+      document.getElementById(`quantity-${variant_id}__mobile`).value =
+        quantity;
+      const linePrice = document.getElementById(`lineprice-${variant_id}`);
+      if (
+        !linePrice.getAttribute("no-qty-min") == "true" ||
+        !linePrice.getAttribute("no-qty-min")
+      ) {
+        linePrice.innerText = formatPrice(final_line_price);
+      }
+      document.getElementById(`lineprice-${variant_id}__mobile`).innerText =
+        formatPrice(final_line_price);
+
+      const min = document
+        .getElementById(`quantity-${variant_id}`)
+        .getAttribute("min");
+      const lessButtons = document.querySelectorAll(
+        `.less-button[product-id="${variant_id}"]`
+      );
+      const warningIcon = document.querySelectorAll(
+        `.disabled_less-button[product-id="${variant_id}"]`
+      );
+      if (parseInt(quantity) == parseInt(min) && parseInt(min) > 1) {
+        for (let i = 0; i < lessButtons.length; i++) {
+          lessButtons[i].classList.add("d-none");
+        }
+        for (let i = 0; i < warningIcon.length; i++) {
+          warningIcon[i].classList.remove("d-none");
+        }
+      } else {
+        for (let i = 0; i < lessButtons.length; i++) {
+          lessButtons[i].classList.remove("d-none");
+        }
+        for (let i = 0; i < warningIcon.length; i++) {
+          warningIcon[i].classList.add("d-none");
+        }
+      }
+    }
+    let minNotReachedOverGeneral = false;
+    const reachedVendors = [];
+
+    for (let i = 0; i < vendor_mins.length; i++) {
+      const {
+        minimum_purchase,
+        seller_store_name,
+        subtotal,
+        items_quantity,
+        items_diversity,
+        impostos,
+        discount
+      } = vendor_mins[i];
+      const total = subtotal + impostos - discount;
+      const minTag = document.getElementById(
+        `min-${seller_store_name.toLowerCase().replace(/ /g, "_")}`
+      );
+      if (minTag) {
+        minTag.innerHTML =
+          total < minimum_purchase
+            ? `
+              , <strong style="white-space: nowrap;">faltam ${formatPrice(
+                minimum_purchase - total
+              )}</strong><span style="white-space: nowrap;"> de ${formatPrice(
+                minimum_purchase
+              )}</span>
+            `
+            : minimum_purchase > 0
+            ? `mínimo de ${formatPrice(minimum_purchase)}`
+            : "";
+      }
+
+      if (items_diversity) {
+        const table = document.getElementById(
+          `table-${seller_store_name.toLowerCase().replace(/ /g, "_").replace(/,/g, "")}`
+        );
+        if (table)
+          table.querySelector("thead tr th:first-of-type").innerText =
+            items_diversity > 1 ? "Produtos" : "Produto";
+      }
+
+      if (items_quantity) {
+        try {
+          document.getElementById(
+            `line_vendor-subtotal_${seller_store_name
+              .toLowerCase()
+              .replace(/ /g, "_")
+              .replace(/,/g, "")}`
+          ).innerText = formatPrice(total);
+          if (minimum_purchase > total) {
+            document
+              .getElementById(
+                `vendor-${seller_store_name.toLowerCase().replace(/ /g, "_").replace(/,/g, "")}`
+              )
+              .setAttribute("no-min", true);
+            if (shop_general_min <= minimum_purchase) {
+              minNotReachedOverGeneral = true;
+            }
+          } else {
+            reachedVendors.push({
+              seller_store_name,
+              subtotal,
+              items_quantity,
+              impostos,
+              discount
+            });
+            document
+              .getElementById(
+                `vendor-${seller_store_name.toLowerCase().replace(/ /g, "_").replace(/,/g, "")}`
+              )
+              .setAttribute("no-min", false);
+          }
+        } catch (error) {
+          console.log(error)
+        }
+      }
+    }
+
+    let reUpdate = false;
+    const noMinInputs = document.querySelectorAll(
+      "#rejected-items input.product-input"
+    );
+    for (let i = 0; i < noMinInputs.length; i++) {
+      const value = parseInt(noMinInputs[i].value);
+      const min = parseInt(noMinInputs[i].getAttribute("min"));
+      if (value >= min) {
+        const id = noMinInputs[i].getAttribute("product-id");
+        const node = document.getElementById(`lineprice-${id}`);
+        const vendor = node.getAttribute("vendor");
+        const oldNode = node.parentElement.removeChild(node);
+        const vendorTable = document.getElementById(`vendor-${vendor}`);
+        if (!vendorTable) {
+          createVendorTable(vendor);
+        }
+        document.getElementById(`tbody-${vendor}`).appendChild(oldNode);
+        reUpdate = true;
+      }
+    }
+    const tableNoMinProds = document.getElementById("items_no-min-reached");
+    if (!noMinInputs.length) {
+      tableNoMinProds.classList.add("d-none");
+      noMinProds = [];
+    } else {
+      tableNoMinProds.classList.remove("d-none");
+      noMinProds = [];
+      for (let i = 0; i < noMinInputs.length; i++) {
+        const variant_id = noMinInputs[i].getAttribute("product-id");
+        noMinProds.push(variant_id);
+      }
+    }
+
+    const subtotals = document.querySelectorAll('tr[row="subtotals"]');
+    for (let i = 0; i < subtotals.length; i++) {
+      subtotals[i].classList.add("d-none");
+    }
+
+    let discounts_availables;
+    try {
+      discounts_availables = JSON.parse(brands_discounts);
+    } catch (error) {}
+
+    let impostos = 0;
+    let subTotal = 0;
+    let discount = 0;
+    for (let i = 0; i < reachedVendors.length; i++) {
+      impostos += reachedVendors[i].impostos;
+      subTotal += reachedVendors[i].subtotal;
+      discount += reachedVendors[i].discount;
+      const vendorName = reachedVendors[i].seller_store_name
+        .toLowerCase()
+        .replace(/ /g, "_")
+        .replace(/,/g, "");
+      document.getElementById(`general-quantity_${vendorName}`).innerText =
+        reachedVendors[i].items_quantity > 1
+          ? `${reachedVendors[i].items_quantity} itens`
+          : "1 item";
+      document.getElementById(`general-money_${vendorName}`).innerText =
+        formatPrice(
+          parseInt(reachedVendors[i].subtotal) +
+            parseInt(reachedVendors[i].impostos)
+        );
+      if (
+        Array.isArray(discounts_availables) &&
+        discounts_availables.some(
+          (e) => e.brand == reachedVendors[i].seller_store_name.replaceAll("'", "")
+        )
+      ) {
+        const vendor_promo = discounts_availables.find(
+          (e) => e.brand == reachedVendors[i].seller_store_name.replaceAll("'", "")
+        );
+
+        if (vendor_promo) {
+          const highest_applied = { reached: 0, discount: 0 };
+          for (const subtotal_reached in vendor_promo.discounts) {
+            const reached =
+              parseInt(subtotal_reached) * 100 <
+              (parseInt(reachedVendors[i].subtotal) + parseInt(reachedVendors[i].impostos));
+            if (
+              reached &&
+              parseInt(subtotal_reached) > highest_applied.reached
+            ) {
+              highest_applied.reached = parseInt(subtotal_reached);
+              highest_applied.discount = parseInt(
+                vendor_promo.discounts[subtotal_reached]
+              );
+            }
+          }
+          const vendor_discount = document.getElementById(
+            `general-discount_${vendorName}`
+          );
+          if (highest_applied.discount) {
+            vendor_discount.classList.remove("d-none");
+            vendor_discount.classList.add("d-block");
+            vendor_discount.innerText = `-${
+              vendor_promo.discount_type == "money" ? "R$ " : ""
+            }${highest_applied.discount}${
+              vendor_promo.discount_type == "percentage" ? "%" : ""
+            } de desconto`;
+      document.getElementById(`general-money_${vendorName}`).classList.add("text-decoration-line-through");
+          } else {
+            vendor_discount.classList.add("d-none");
+            vendor_discount.classList.remove("d-block");
+            vendor_discount.innerText = "";
+      document.getElementById(`general-money_${vendorName}`).classList.remove("text-decoration-line-through");
+          }
+    }else document.getElementById(`general-money_${vendorName}`).classList.remove("text-decoration-line-through");
+      }
+      document
+        .getElementById(`general-subtotal_${vendorName}`)
+        .classList.remove("d-none");
+    }
+    document.getElementById("subtotal-total").innerText = formatPrice(subTotal);
+    document.getElementById("impostos-total").innerText = formatPrice(impostos);
+    document.getElementById("descontos-total").innerText = "- " + formatPrice(discount);
+    
+    const discount_line = document.querySelector('.descontos.disocunt-line');
+    if(discount_line) {
+      if(discount > 0) discount_line.classList.remove('d-none');
+      else discount_line.classList.add('d-none');
+    }
+    //subTotal + impostos - discount
+    if (reachedVendors.length != vendor_mins.length) {
+      const partialTotal = parseInt(subTotal) + parseInt(impostos) - parseInt(discount)
+      document.getElementById("general-total").innerText = formatPrice(partialTotal);
+    } else {
+      document.getElementById("general-total").innerText = formatPrice(cart.total_price);
+    }
+
+    const shippingInfo = {
+      remaining: 0,
+      message: 'Já tem 50%, só pouco mais para ganhar FRETE GRÁTIS',
+      percent: 100
+    }
+    if((discountShippingValue - (subTotal + impostos)) > 0){
+      shippingInfo.remaining = (discountShippingValue - (subTotal + impostos));
+      shippingInfo.percent = Math.round(
+        ((subTotal + impostos) * 100) / discountShippingValue
+      );
+      shippingInfo.message = 'Falta pouco para ganhar 50% em seu frete';
+    }else{
+      shippingInfo.remaining = (freeShippingValue - (subTotal + impostos));
+      shippingInfo.percent = Math.round(
+        ((subTotal + impostos) * 100) / freeShippingValue
+      );
+    }
+    if (typeof progressBar_update == "function")
+      progressBar_update(shippingInfo.percent, shippingInfo.remaining, shippingInfo.message);
+
+
+    const noMinContainer = document.getElementById("products-without-min");
+    const noMinReached = document.querySelectorAll(
+      '#products-with-min div[no-min="true"]'
+    );
+    for (let i = 0; i < noMinReached.length; i++) {
+      const node = noMinReached[i];
+      const oldNode = node.parentElement.removeChild(node);
+      noMinContainer.appendChild(oldNode);
+    }
+
+    const minReachedContainer = document.getElementById("products-with-min");
+    const minReached = document.querySelectorAll(
+      '#products-without-min div[no-min="false"]'
+    );
+    for (let i = 0; i < minReached.length; i++) {
+      const node = minReached[i];
+      const oldNode = node.parentElement.removeChild(node);
+      minReachedContainer.appendChild(oldNode);
+    }
+
+    if (document.querySelectorAll('div[no-min="true"]').length) {
+      noMinContainer.parentElement.classList.remove("d-none");
+      if (document.querySelectorAll('div[no-min="true"]').length > 1) {
+        noMinContainer.parentElement.querySelector("h3").innerText =
+          "Fornecedores abaixo do mínimo";
+      } else {
+        noMinContainer.parentElement.querySelector("h3").innerText =
+          "Fornecedor abaixo do mínimo";
+      }
+    } else noMinContainer.parentElement.classList.add("d-none");
+
+    const errorMessage = document.getElementById("customer_error-message");
+    if (
+      !noMinInputs.length &&
+      !document.querySelectorAll('div[no-min="true"]').length
+    )
+      errorMessage.classList.add("d-none");
+    else errorMessage.classList.remove("d-none");
+
+    const buyableVendors = document.querySelectorAll(
+      "#products-with-min .vendor_container-general"
+    );
+    if (buyableVendors.length) {
+      document.getElementById("products-with-min").classList.remove("d-none");
+      document.getElementById("checkout-button").removeAttribute("disabled");
+    } else {
+      document.getElementById("products-with-min").classList.add("d-none");
+      document
+        .getElementById("checkout-button")
+        .setAttribute("disabled", "true");
+    }
+
+    if ((subTotal + impostos) >= shop_general_min) {
+      document.getElementById("checkout-button").removeAttribute("disabled");
+      document.getElementById("no-min_error-message").classList.add("d-none");
+    } else {
+      document.getElementById("checkout-button").setAttribute("disabled", true);
+      if (!minNotReachedOverGeneral) {
+        document
+          .getElementById("no-min_error-message")
+          .classList.remove("d-none");
+      }
+    }
+
+    if (frete_stimates){
+      for(let i = 0; i < frete_stimates.length; i++){
+        const { shipping_estimate, vendor } = frete_stimates[i];
+        const element = document.getElementById(`frete_stimate-${vendor.toLowerCase().replace(/ /g, "_")}`);
+        const elementCPF = document.getElementById(`frete_stimate-${vendor.toLowerCase().replace(/ /g, "_")}-inventa_comércio`);
+        const date = new Date(shipping_estimate);
+        
+        if (element) UpdateEstimateShippingDate(element, date);
+        if (elementCPF) UpdateEstimateShippingDate(elementCPF, date);
+      }
+    }
+
+    if (reUpdate) updateCart(cart);
+  };
+
+  function UpdateEstimateShippingDate (element, date) {
+    if(element) element.innerText = `Entrega estimada até ${date.toLocaleDateString('pt-BR', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    })}`;
+  }
+
+  const addButtons = document.querySelectorAll(".add-button");
+  const minusButtons = document.querySelectorAll(".less-button");
+  const productInputs = document.querySelectorAll(".product-input");
+  const removeButtons = document.querySelectorAll(".remove-button");
+
+  for (let i = 0; i < addButtons.length; i++) {
+    addButtons[i].addEventListener("click", (event) => {
+      const id = event.target.getAttribute("product-id");
+      const input = document.getElementById(`quantity-${id}`);
+      const quantity = input.value;
+      const step = input.getAttribute("step-quantity");
+      const maxQty = input.getAttribute("max");
+      const newValue = parseInt(quantity) + (step ? parseInt(step) : 1);
+      const finalValue = maxQty
+        ? newValue > maxQty
+          ? maxQty
+          : newValue
+        : newValue;
+      postNewQuantity(id, finalValue)
+        .then((res) => res.json())
+        .then((res) => updateCart(res));
+    });
+  }
+
+  for (let i = 0; i < minusButtons.length; i++) {
+    minusButtons[i].addEventListener("click", (event) => {
+      const id = event.target.getAttribute("product-id");
+      const input = document.getElementById(`quantity-${id}`);
+      const quantity = input.value;
+      const step = input.getAttribute("step-quantity") || 1;
+      const min = input.getAttribute("min");
+      if (
+        !(parseInt(quantity) > parseInt(min)) ||
+        parseInt(quantity) - parseInt(step) < parseInt(min)
+      ) {
+        const line = document.getElementById(`line-${id}`);
+        const vendor = line.getAttribute("vendor");
+        line.parentElement.removeChild(line);
+        if (!document.querySelectorAll(`tr[vendor="${vendor}"]`).length) {
+          const vendorLine = document.getElementById(`vendor-${vendor}`);
+          vendorLine.parentElement.removeChild(vendorLine);
+        }
+        postNewQuantity(id, 0)
+          .then((res) => res.json())
+          .then((res) => updateCart(res));
+      } else
+        postNewQuantity(id, parseInt(quantity) - parseInt(step))
+          .then((res) => res.json())
+          .then((res) => updateCart(res));
+    });
+  }
+
+  for (let i = 0; i < productInputs.length; i++) {
+    let oldValue = parseInt(productInputs[i].getAttribute("min"));
+    productInputs[i].addEventListener("change", (event) => {
+      const id = event.target.getAttribute("product-id");
+      const newValue = parseInt(event.target.value);
+      const min = parseInt(event.target.getAttribute("min"));
+      const maxQty = parseInt(event.target.getAttribute("max"));
+      const step = event.target.getAttribute("step-quantity") || 1;
+      if (newValue < min) {
+        event.target.value = min;
+      } else if (parseInt(step) > 1 && newValue % parseInt(step) != 0) {
+        let upValue = newValue;
+        do upValue++;
+        while (upValue % parseInt(step) != 0);
+        event.target.value = upValue;
+      }
+      const value = parseInt(event.target.value);
+      const finalValue = maxQty ? (value > maxQty ? maxQty : value) : value;
+      postNewQuantity(id, finalValue)
+        .then((res) => res.json())
+        .then((res) => updateCart(res));
+    });
+    productInputs[i].addEventListener("keydown", (event) => {
+      const min = parseInt(event.target.getAttribute("min"));
+      if (event.target.value >= min) oldValue = event.target.value;
+      const newChar = event.key;
+      let validKey = false;
+      switch (newChar) {
+        case "Backspace":
+        case "ArrowRight":
+        case "ArrowLeft":
+        case "Delete":
+        case "Tab":
+          validKey = true;
+          break;
+        case "Enter":
+          validKey = true;
+          productInputs[i].blur();
+          break;
+      }
+      if (isNaN(newChar) && !validKey) {
+        event.preventDefault();
+      }
+    });
+    productInputs[i].addEventListener("keyup", (event) => {});
+  }
+
+  for (let i = 0; i < removeButtons.length; i++) {
+    removeButtons[i].addEventListener("click", (event) => {
+      const id = event.target.getAttribute("product-id");
+      const quantity = 0;
+      const line =
+        document.getElementById(`line-${id}`) ||
+        document.getElementById(`lineprice-${id}`);
+      const vendor = line.getAttribute("vendor");
+      line.parentElement.removeChild(line);
+      if (!document.querySelectorAll(`tr[vendor="${vendor}"]`).length) {
+        const vendorLine = document.getElementById(`vendor-${vendor}`);
+        vendorLine.parentElement.removeChild(vendorLine);
+      }
+      postNewQuantity(id, quantity)
+        .then((res) => res.json())
+        .then((res) => updateCart(res));
+    });
+  }
+});
+
+function postNewQuantity(id, quantity) {
+  return fetch("/cart/change.js", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      id,
+      quantity,
+    }),
+  });
+}
+
+async function getMultivendorAmounts() {
+  const promise = await fetch("/cart.json");
+  const response = await promise.json();
+  const { token, items } = response;
+  const frete_stimates = [];
+
+  fetch(`${corsUrl}${shopifyApiUrl}/data/shopify/assign_cart/${token}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      origin: "shopify",
+      "api-key": shopifyApiKey,
+      "secret-key": shopifyApiSecretKey,
+    },
+    body: JSON.stringify({ user_id: customerId }),
+  });
+
+  /* SHIPPING ESTIMATES REMOVED FROM CART PAGE
+  let raw;
+  try {
+    raw = await fetch(
+      `${corsUrl}${shopifyApiUrl}/data/shopify/estimate_shipping/checkout`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          origin: "shopify",
+          "api-key": shopifyApiKey,
+          "secret-key": shopifyApiSecretKey,
+        },
+        body: JSON.stringify({
+          items: vendor_mins.map((vendor) => {
+            const { origin, seller_store_name } = vendor;
+            const supplierName = seller_store_name.replace("-Inventa Comércio", "");
+            return {
+              origin: getStateCode(origin),
+              supplier: supplierName,
+              destination: customer_state_tag,
+            };
+          }),
+        }),
+      }
+    );
+  } catch (error) {
+    raw = {status: false};
+  }
+  const parsed_json = raw.status == 200 ? await raw.json() : [];
+
+  if(Array.isArray(parsed_json)){
+    for(let i = 0; i < parsed_json.length; i++){
+      const { supplier, shipping_estimate } = parsed_json[i];
+      const daysToAdd = shipping_estimate;
+      const local_date = new Date('{{ "now" | date: "%Y-%m-%d" }}' + 'T00:00:01');
+      const estimateShippingDate = local_date.setDate(local_date.getDate() + daysToAdd);
+
+      frete_stimates.push({
+        vendor: supplier, shipping_estimate: new Date(estimateShippingDate).getTime()
+      });
+    }
+  }
+  */
+
+  const arrayItems = [];
+  for (let i = 0; i < items.length; i++) {
+    const { product_id, quantity, variant_id, title, price, properties } =
+      items[i];
+    const product = {
+      product_title: title,
+      title: "",
+      quantity,
+      product_id,
+      variant_id,
+      price,
+      properties,
+    };
+    arrayItems.push(product);
+  }
+
+  return {
+    cart: response,
+    frete_stimates
+  };
+}
+
+function createVendorTable(vendorName) {
+  const containerGeneral = document.createElement("div");
+  containerGeneral.setAttribute("id", `vendor-${vendorName}`);
+  const header = document.createElement("div");
+  header.setAttribute("class", "d-flex mt-3");
+  header.setAttribute("id", `header-${vendorName}`);
+  header.innerHTML = `
+    <p class="ms-4"><strong>${vendorName.replace(
+      /_/g,
+      " "
+    )}</strong> total de <span id="line_vendor-subtotal_${vendorName}" >0</span> <span id="min-${vendorName}"></span>
+    <span class="frete-stimate" id="frete_stimate-${vendorName}"></span>
+    </p>
+    <a class="text-end ms-auto me-4 text-decoration-underline" href="/pages/fornecedores/${vendorName.replace(
+      /_/g,
+      "-"
+    )}">Comprar mais produtos</a>
+  `;
+  containerGeneral.appendChild(header);
+  const table = document.createElement("table");
+  table.setAttribute("class", "product-table");
+  table.setAttribute("id", `table-${vendorName}`);
+  table.innerHTML = `
+    <thead class="text-black-50">
+      <tr>
+        <th class="ps-4 col-6 pb-2">Produto</th>
+        <th class="col-2 pb-2">Qtd</th>
+        <th class="col-2 pb-2">Preço</th>
+        <th class="col-2 pb-2">Total</th>
+      </tr>
+    </thead>
+    <tbody class="product-body fs-5" id="tbody-${vendorName}">
+  `;
+  containerGeneral.appendChild(table);
+  document.getElementById("products-with-min").appendChild(containerGeneral);
+  return containerGeneral;
+}

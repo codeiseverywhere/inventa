@@ -1,0 +1,154 @@
+<form action="/" class="interest-category_wrapper mt-4 position-relative rounded-2 py-4 px-5" style="display: none;" onsubmit="event.preventDefault();handleSubmitInterestCategory();">
+    <div class="p-3 position-absolute close-interest_category" onclick="closeInterestCategory();">
+        <svg class="modal-closer" width="23" height="21" viewBox="0 0 23 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M9.75806 10.2688L0 1.48659L1.33793 0L11.2529 8.92348L21.1679 0L22.5058 1.48659L12.7478 10.2688L22.5058 19.0511L21.1679 20.5377L11.2529 11.6142L1.33793 20.5377L2.08616e-06 19.0511L9.75806 10.2688Z" fill="#999999"/>
+        </svg>
+    </div>
+    <div class="row gy-2 px-4 py-2 align-items-center">
+        <p class="col-12 col-sm-6 col-xl-3 fw-bold lh-1 mb-2 mb-sm-0">Qual tipo de produto você está procurando?</p>
+        <div class="col-12 col-xl-5 col-sm-6">
+            <select class="py-2 form-select" id="product-category" onchange="handleInteresSelectChange('product', event.target.value)" required>
+                <option value="">Escolha um tipo</option>
+                <option value="shampoo-condicionador">Shampoo e condicionadores</option>
+                <option value="maquiagem">Maquiagens</option>
+                <option value="perfume">Perfumes</option>
+                <option value="cuidados-com-a-pele">Cuidados com a pele</option>
+                {%- comment -%}
+                <option value="">Cosméticos veganos, orgânicos e naturais</option>
+                {%- endcomment -%}
+                <option value="mercearia-1">Mercearia</option>
+                {%- comment -%}
+                <option value="">Aromas e fragrâncias para casa</option>
+                {%- endcomment -%}
+                <option value="decoracao-de-casa">Decoração</option>
+                <option value="others">Outro</option>
+            </select>
+        </div>
+        <div id="product-category_others" class="d-none col-12 col-xl-4 col-sm-6 offset-sm-6 offset-xl-0">
+            <input type="text" class="form-control py-2" placeholder="Diga-nos aqui">
+        </div>
+    </div>
+    <div class="row gy-2 px-4 py-2 align-items-center">
+        <p class="col-12 col-sm-6 col-xl-3 fw-bold lh-1 mb-2 mb-sm-0">Qual o perfil da sua loja?</p>
+        <div class="col-12 col-sm-6 col-xl-5">
+            <select class="py-2 form-select" onchange="handleInteresSelectChange('store', event.target.value)" id="store-category" required>
+                <option value="">Escolha um perfil</option>
+                <option value="Salão de beleza">Salão de beleza</option>
+                <option value="Mercearia">Mercearia</option>
+                <option value="Produtos Naturais">Produtos Naturais</option>
+                <option value="Cosméticos orgânicos">Cosméticos orgânicos</option>
+                <option value="Perfumaria">Perfumaria</option>
+                <option value="Decoração">Decoração</option>
+                <option value="Maquiagem">Maquiagem</option>
+                <option value="Aromas e fragrâncias">Aromas e fragrâncias</option>
+                <option value="others">Outro</option>
+            </select>
+        </div>
+        <div id="store-category_others" class="d-none col-12 col-xl-4 col-sm-6 offset-sm-6 offset-xl-0">
+            <input type="text" class="form-control py-2" placeholder="Diga-nos aqui">
+        </div>
+    </div>
+    <div class="row px-4 mt-2">
+        <div class="col-12 col-xl-5 col-sm-6 offset-sm-6 offset-xl-3">
+            <button type="submit" id="interest_submit-btn" class="position-relative btn fw-bolder py-2 px-4">
+                <span class="buton-text">Recomendar produtos</span>
+            </button>
+        </div>
+    </div>
+</form>
+
+<style>
+    .interest-category_wrapper{
+        background-color: #F7FAFA;
+    }
+    .interest-category_wrapper button{
+        background-color: #FCF150;
+    }
+    .interest-category_wrapper .close-interest_category{
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+    #interest_submit-btn .spinner-border{
+        top: 5px;
+        position: absolute;
+        left: calc(50% - 1rem);
+    }
+</style>
+
+<script defer>
+    const corsUrl = "https://cors.inventashop.com.br/";
+    {% if shop.name contains 'DEV' %}
+    const shopifyShopUrl = "https://inventa-dev.myshopify.com";
+    const shopifyApiUrl = "https://api.inventa.dev.br";
+    const shopifyApiKey = "LMYzUdD0Wq";
+    const shopifyApiSecretKey = "GHrI6Xg0Qc";
+    {% else %}
+    const shopifyShopUrl = "https://inventa.shop";
+    const shopifyApiUrl = "https://api.inventa.tec.br";
+    const shopifyApiKey = "LmRkuO9OI9";
+    const shopifyApiSecretKey = "42Ipvjz39M";
+    {% endif %}
+
+    function handleSubmitInterestCategory() {
+        const productCategory = document.getElementById('product-category');
+        const storeCategory = document.getElementById('store-category');
+        if(productCategory && storeCategory){
+            const store = storeCategory.value;
+            const store_other = document.querySelector('#store-category_others input');
+            const product = productCategory.value;
+            const product_other = document.querySelector('#product-category_others input');
+            const submitBtn = document.getElementById('interest_submit-btn');
+            if(submitBtn) submitBtn.innerHTML += `
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden"></span>
+                </div>
+            `;
+            const text = document.querySelector('.buton-text');
+            if(text) text.classList.add('invisible');
+            fetch(`${corsUrl}${shopifyApiUrl}/data/shopify/categories/retailer`,{
+                method: 'POST',
+                body: JSON.stringify({
+                    id: '{{ customer.id }}',
+                    categories: [product && product != 'others' ? product : `others/${product_other.value}`],
+                    other_interests: [store && store != 'others' ? store : `others/${store_other.value}`]
+                }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'origin': 'shopify',
+                    'api-key': shopifyApiKey,
+                    'secret-key': shopifyApiSecretKey
+                }
+            }).then(res => {
+                if(res.status == 200){
+                    closeInterestCategory();
+                    if(product && product != 'others') window.location.replace(product);
+                    if(submitBtn) submitBtn.innerHTML = '<span class="buton-text">Recomendar produtos</span>';
+                }
+            });
+            
+        }
+    }
+
+    function handleInteresSelectChange(action, value) {
+        const select = document.getElementById(`${action}-category`);
+        const input = document.getElementById(`${action}-category_others`);
+        if(value == 'others'){
+            input.classList.remove('d-none');
+        }else{
+            input.classList.add('d-none');
+        }
+    }
+
+    function closeInterestCategory() {
+        window.sessionStorage.setItem('interest_category-closed', true);
+        const wrapper = document.querySelector('form.interest-category_wrapper');
+        if(wrapper) wrapper.classList.add('d-none');
+    }
+
+    window.addEventListener('load', () => {
+        const wrapper = document.querySelector('form.interest-category_wrapper');
+        const closed = window.sessionStorage.getItem('interest_category-closed');
+        if(!closed && wrapper) wrapper.removeAttribute('style');
+    })
+</script>

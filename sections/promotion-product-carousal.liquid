@@ -1,0 +1,114 @@
+{% if collections[section.settings.collection].products.length > 0 %}
+<div class="card destaques-slider_wrapper border-0 container mb-0">
+	<button class="previous-slide">
+		{%- render 'icon', icon: 'arrow-left' -%}
+	</button>
+	<button class="next-slide">
+		{%- render 'icon', icon: 'arrow-right' -%}
+	</button>
+	<div class="row justify-content-center mt-5">
+		<h2 class="collection__title fs-2 mt-2 mb-3 fw-light">
+      {% assign collectionTitle = collections[section.settings.collection] %}
+	   	{% if section.settings.title %}
+        {{section.settings.title}}
+      {% else %}  
+        {{collectionTitle.title}}
+      {% endif %}
+      
+		</h2>
+		<div class="destaque-slider col-12">
+      {%- assign destaques_has_slides = false -%}
+			{% for product in collections[section.settings.collection].products %}
+				{%- render 'brand-item', product: product, grid_classes: '', show_add_to_cart: true -%}
+        {%- assign destaques_has_slides = true -%}
+			{%- endfor -%}
+		</div>
+	</div>
+</div>
+{% endif %}
+
+<link rel="stylesheet" href="{{ 'collection.css' | asset_url }}">
+<style>
+.border-0 {
+    border: 0!important;
+}
+</style>
+<script defer>
+
+  
+  $( document ).ready(function() {
+
+    {%- if destaques_has_slides -%}
+    
+    const destaquesContainerWrapper = document.querySelector('.destaque-slider');
+
+    destaquesContainerWrapper.addEventListener('glider-loaded', function() {
+      document.querySelector('.destaques-slider_wrapper').removeAttribute("style");
+    });
+
+    new Glider(destaquesContainerWrapper, {
+      type: 'carousel',
+      focusAt: 'center',
+      rewind: true,
+      slidesToShow: 2,
+      slidesToScroll: 2,
+      draggable: true,
+      arrows: {
+        prev: '.destaques-slider_wrapper .previous-slide',
+        next: '.destaques-slider_wrapper .next-slide'
+      },
+      responsive: [
+      {
+        breakpoint: 650,
+        settings: {
+          slidesToShow: 4,
+          slidesToScroll: 4
+        }
+      },
+      {
+        breakpoint: 1150,
+        settings: {
+          slidesToShow: 5,
+          slidesToScroll: 5
+        }
+      },
+        {
+        breakpoint: 1500,
+        settings: {
+          slidesToShow: 7,
+          slidesToScroll: 7
+        }
+      }
+      ]
+    });
+    {%- endif -%}
+
+    
+  })
+</script>
+
+{% schema %}
+{
+  "name": "Priority Collection",
+  "settings": [
+  	{
+      	"type": "checkbox",
+      	"id": "show-priority-collection",
+      	"label": "Show Priority Collection",
+      	"default": true
+    },
+    {
+      	"type": "text",
+      	"id": "title",
+      	"label": "Collection Title",
+      	"default": "Título da coleção"
+    },
+    {
+        "type": "collection",
+        "id": "collection",
+        "label": "Collection"
+    }
+  ],
+  "templates": ["page","collection"]
+}
+{% endschema %}

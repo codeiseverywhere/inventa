@@ -1,0 +1,379 @@
+{%- layout none -%}
+
+<!DOCTYPE html>
+
+<html class="no-js p-0" lang="{{ request.locale.iso_code }}">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, maximum-scale=5.0"
+    />
+    <link rel="stylesheet" href="{{ 'natal-landing.css' | asset_url }}" />
+
+    <!-- Google Optimize -->
+    {% if shop.permanent_domain == 'inventa-dev.myshopify.com' %}
+    <script src="https://www.googleoptimize.com/optimize.js?id=OPT-N2HNGRN"></script>
+    {% else %}
+    <script src="https://www.googleoptimize.com/optimize.js?id=OPT-N56DBVL"></script>
+    {% endif %}
+    <!-- End Google Optimize -->
+
+    {%- capture seo_page_title -%} {%- if request.page_type == 'search' and search.terms != blank -%}
+    {{ search.terms | split: " AND " | last | split: "product_type:" | last }}
+    -
+    {{ shop.name }}
+    {%- else -%}
+    {{ page_title }}
+    {% if current_tags %}
+    {% assign meta_tags = current_tags | join: ', ' %}
+    &ndash;
+    {{ "general.meta.tags" | t: tags:meta_tags }}
+    {% endif %}
+    {% if current_page != 1 %}
+    &ndash;
+    {{ "general.meta.page" | t: page:current_page }}
+    {% endif %}
+    {%- endif -%}
+    {%- endcapture -%}
+    {%- assign page_title = seo_page_title -%}
+    {%- if request.page_type == 'collection' -%}
+    {%- assign page_title = page_title | append: 'no Atacado' -%}
+    {%- elsif request.page_type == 'product' -%}
+    {%- assign page_title = page_title | append: ' no Atacado' -%}
+    {%- elsif request.page_type == 'index' or page.url contains 'lojista' or page.url == '/pages/fornecedor' or page.url contains 'sobre-inventa' or page.url contains 'contato' or request.page_type contains 'login' or request.path contains 'politica-de-privacidade' or page.url == '/pages/termos-e-condicoes-fornecedores' -%}
+    {%- assign page_title = 'Inventa - Compre no atacado' -%}
+    {%- endif -%}
+
+    <title>{{- page_title | capitalize -}}</title>
+
+    {%- if page_description -%}
+    <meta name="description" content="{{ page_description | escape }}" />
+    {%- else -%} {%- if request.page_type == 'collection' -%}
+    <meta
+      name="description"
+      content="Compre os melhores produtos {% unless request.path contains 'collections/all' %}de {{ seo_page_title | capitalize }} {% endunless %}para o varejo, com entrega para todo Brasil."
+    />
+    {%- endif -%}
+    {%- endif -%}
+    
+    {% render 'social-meta-tags' %}
+
+    <link rel="canonical" href="{{ canonical_url }}" />
+
+    {%- if settings.favicon -%}
+    <link
+      rel="shortcut icon"
+      href="{{ settings.favicon | img_url: '96x96' }}"
+      type="image/png"
+    />
+    {%- endif -%}
+  </head>
+
+  <body>
+    <header>
+      <!--HEADER MOBILE-->
+      <div class="header-mobile">
+        <div class="hm-row-1">
+          <div class="hm-raminho">
+            {% render 'natal-svg', icon_name: 'raminho' %}
+          </div>
+          <div class="hm-logo">
+            <a href="/">
+              <p class="inventa">INVENTA</p>
+            </a>
+          </div>
+          <div class="hm-dots">
+            {% render 'natal-svg', icon_name: 'dots' %}
+          </div>
+        </div>
+
+        <div class="hm-row-2">
+          <div class="hm-title">
+            <h1 class="noto-sanz">
+              Compre <span class="title-bg-white">agora</span> e pague só<br />
+              <span class="title-bg-red">ano que vem!</span>
+            </h1>
+          </div>
+        </div>
+
+        <div class="hm-row-3">
+          <div class="hm-presente">
+            <img src="{{ 'presente-1.png' | file_img_url: 'master' }}" alt="" />
+          </div>
+        </div>
+
+        <div class="hm-row-4">
+          <div class="hm-text">
+            <p class="lato">
+              Prepare seus estoques de natal<br />com a
+              <span class="inventa">INVENTA</span>
+            </p>
+          </div>
+        </div>
+      </div>
+      <!--HEADER DESKTOP-->
+      <div class="header-desktop">
+        <div class="hd-row-1">
+          <div class="hd-raminho">
+            {% render 'natal-svg', icon_name: 'raminho' %}
+          </div>
+          <div class="hd-presente">
+            <img src="{{ 'presente-1.png' | file_img_url: 'master' }}" alt="" />
+          </div>
+          <div class="hd-title">
+            <h1 class="noto-sanz">
+              Compre <span class="title-bg-white">agora</span> e pague só<br />
+              <span class="title-bg-red">ano que vem!</span>
+            </h1>
+          </div>
+          <div class="hd-arbol">
+            {% render 'natal-svg', icon_name: 'arvore' %}
+          </div>
+          <div class="hd-dots">
+            {% render 'natal-svg', icon_name: 'dots' %}
+          </div>
+        </div>
+        <div class="hd-row-2">
+          <div class="hd-text">
+            <p class="lato">
+              Prepare seus estoques de natal com a
+              <a href="https://inventa.shop" target="_blank">
+              	<span class="inventa">INVENTA</span>
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    {%- comment -%}
+    <section class="vantagens">
+      <!--VANTAGENS SECTION MOBILE-->
+      <div class="vantagens-mobile">
+        <div class="vm-row-1">
+          <div class="vm-product-1">
+            <img src="{{ 'product-1-natal.png' | file_img_url: 'master' }}" alt="produto-natal" />
+          </div>
+          <div class="vm-items-credito">
+            <div class="vm-items-icon">
+                {% render 'natal-svg', icon_name: 'icon-1' %}
+            </div>
+            <div class="vm-items-text">
+              <p class="vm-items-title">Crédito para voce</p>
+              <p class="vm-items-paragraph">
+                crescer o seu negócio!<br />Pague em até 90 dias no boleto.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="vm-row-2">
+          <div class="vm-items-frete">
+            <div class="vm-items-icon">
+                {% render 'natal-svg', icon_name: 'icon-2' %}
+            </div>
+            <div class="vm-items-text">
+              <p class="vm-items-title">Frete grátis</p>
+              <p class="vm-items-paragraph">
+                em todos os pedidos<br />Válido para todos produtos e marcas.
+              </p>
+            </div>
+          </div>
+          <div class="vm-product-2">
+            <img src="{{ 'product-2-natal.png' | file_img_url: 'master' }}" alt="produto-natal" />
+          </div>
+        </div>
+        <div class="vm-row-3">
+          <div class="vm-items-desconto">
+            <div class="vm-items-text">
+              <p class="vm-items-title">20% de desconto</p>
+              <p class="vm-items-paragraph">na primeria compra!</p>
+            </div>
+            <div class="vm-items-icon">
+                {% render 'natal-svg', icon_name: 'icon-3' %}
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--VANTAGENS SECTION DESKTOP-->
+      <div class="vantagens-desktop">
+        <div class="vd-row-1">
+          <div class="vd-title">
+            <h2>VANTAGENS DE COMPRAR COM A INVENTA</h2>
+          </div>
+          <div class="vd-presente-icon">
+            <img src="{{ 'presente-2.png' | file_img_url: 'master' }}" alt="Presente" />
+          </div>
+        </div>
+        <div class="vd-row-2">
+          <div class="vd-product-1">
+            <img src="{{ 'product-1-natal.png' | file_img_url: 'master' }}" alt="produto-natal" />
+          </div>
+          <div class="vd-items">
+            <!--CREDIOT-->
+            <div class="vd-items-credito">
+              <div class="vd-items-text">
+                <p class="vd-items-title">Crédito para voce</p>
+                <p class="vd-items-paragraph">
+                  crescer o seu negócio!<br />Pague em até 90 dias no boleto.
+                </p>
+              </div>
+              <div class="vd-items-icon">
+                {% render 'natal-svg', icon_name: 'icon-1' %}
+              </div>
+            </div>
+            <!--FRETE-->
+            <div class="vd-items-frete">
+              <div class="vd-items-icon">
+                {% render 'natal-svg', icon_name: 'icon-2' %}
+              </div>
+              <div class="vd-items-text">
+                <p class="vd-items-title">Frete grátis</p>
+                <p class="vd-items-paragraph">
+                  em todos os pedidos. Válido<br />para todos produtos e marcas.
+                </p>
+              </div>
+            </div>
+            <!--DESCONTO-->
+            <div class="vd-items-credito">
+              <div class="vd-items-text">
+                <p class="vd-items-title">20% de desconto</p>
+                <p class="vd-items-paragraph">na primeria compra!</p>
+              </div>
+              <div class="vd-items-icon">
+                {% render 'natal-svg', icon_name: 'icon-3' %}
+              </div>
+            </div>
+          </div>
+          <div class="vd-product-2">
+            <img src="{{ 'product-2-natal.png' | file_img_url: 'master' }}" alt="produto-natal" />
+          </div>
+        </div>
+      </div>
+    </section>
+    {%- endcomment -%}
+    <!--VANTAGENS-->
+    <section class="u-full-width vantagen-mobile lato">
+        <div class="row credito-row-mb">
+          <div class="five columns">
+            <img src="{{ 'product-1-natal.png' | file_img_url: 'master' }}" alt="" />
+          </div>
+          <div class="seven columns text-right">
+            {% render 'natal-svg', icon_name: 'icon-1' %}
+            <p class="vantagem-title" style="direction: rtl;">Crédito para você</p>
+            <p class="vantagem-paragraph">
+              crescer o seu negócio!<br />Pague em até 90 dias no boleto.
+            </p>
+          </div>
+        </div>
+        <div class="row frete-row-mb">
+          <div class="seven columns">
+            {% render 'natal-svg', icon_name: 'icon-2' %}
+            <p class="vantagem-title">Frete grátis!</p>
+            <p class="vantagem-paragraph">
+              em todos os pedidos.<br />Válido para todos produtos e marcas.
+            </p>
+          </div>
+          <div class="five columns">
+            <img src="{{ 'product-2-natal.png' | file_img_url: 'master' }}" alt="" />
+          </div>
+        </div>
+        <div class="row" style="margin-top: -2rem;margin-bottom: 2rem;">
+          <div class="twelve columns desconto-mb">
+            <div class="text-right">
+              <p class="vantagem-title">20% de desconto</p>
+              <p class="vantagem-paragraph">na primeira compra!</p>
+            </div>
+            {% render 'natal-svg', icon_name: 'icon-3' %}
+          </div>
+        </div>
+      </section>
+      <section class="u-full-width vantagen lato">
+        <div class="row">
+          <div class="twelve columns align-center">
+            <h3 class="text-center">VANTAGENS DE COMPRAR COM A INVENTA</h3>
+            <img src="{{ 'presente-2.png' | file_img_url: 'master' }}" alt="" class="vantagen-presente" />
+          </div>
+        </div>
+        <div class="row align-items-center">
+          <div class="two columns vantagen-pd-1">
+            <img src="{{ 'product-1-natal.png' | file_img_url: 'master' }}" alt="" />
+          </div>
+          <div class="eight columns">
+            <div class="container">
+              <div class="row align-items-center mb-20">
+                <div class="nine columns text-right">
+                  <p class="vantagem-title">Crédito para você</p>
+                  <p class="vantagem-paragraph">
+                    crescer o seu negócio!<br />Pague em até 90 dias no boleto.
+                  </p>
+                </div>
+                <div class="three columns">
+                    {% render 'natal-svg', icon_name: 'icon-1' %}
+                </div>
+              </div>
+              <div class="row align-items-center mb-20">
+                <div class="three columns">
+                    {% render 'natal-svg', icon_name: 'icon-2' %}
+                </div>
+                <div class="nine columns">
+                  <p class="vantagem-title">Frete grátis!</p>
+                  <p class="vantagem-paragraph">
+                    em todos os pedidos.<br />Válido para todos produtos e marcas.
+                  </p>
+                </div>
+              </div>
+              <div class="row align-items-center mb-20">
+                <div class="nine columns text-right">
+                  <p class="vantagem-title">20% de desconto</p>
+                  <p class="vantagem-paragraph">na primeira compra!</p>
+                </div>
+                <div class="three columns m-0">
+                    {% render 'natal-svg', icon_name: 'icon-3' %}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="two columns vantagen-pd-2 m-0">
+            <img src="{{ 'product-2-natal.png' | file_img_url: 'master' }}" alt="" />
+          </div>
+        </div>
+      </section>
+
+    
+      <!-- OPCOES -->
+    <section class="opcoes">
+      <h3 class="lato">
+        +6000 opções de presentes para<br />atrair seus clientes neste natal!
+      </h3>
+      <p class="lato">Compre de fornecedores de todo o Brasil</p>
+      <a href="https://inventa.shop" target="_blank" class="button roboto access-shop"
+        >Clique e acesse a nossa loja</a
+      >
+    </section>
+    <section class="gallery">
+      <div>
+        <img src="{{ 'image-1-natal.png' | file_img_url: 'master' }}" alt="" />
+      </div>
+      <div>
+        <img src="{{ 'image-2-natal.png' | file_img_url: 'master' }}" alt="" />
+      </div>
+      <div>
+        <img src="{{ 'image-3-natal.png' | file_img_url: 'master' }}" alt="" class="hidden-img" />
+      </div>
+      <div>
+        <img src="{{ 'image-4-natal.png' | file_img_url: 'master' }}" alt="" class="hidden-img" />
+      </div>
+      <div>
+        <img src="{{ 'image-5-natal.png' | file_img_url: 'master' }}" alt="" class="hidden-img" />
+      </div>
+    </section>
+    <footer>
+      <a href="https://inventa.shop" target="_blank" class="inventa">
+        INVENTA
+      </a>
+      <small class="copyright">@ 2021</small>
+    </footer>
+  </body>
+</html>

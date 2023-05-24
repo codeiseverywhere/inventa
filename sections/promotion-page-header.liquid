@@ -1,0 +1,192 @@
+{% if section.settings.show-promo-banner %}
+  <section class="maxw-1440 position-relative m-auto {% if section.settings.show-promo-banner %} promo_page_header_exist {% endif %}" data-section-id="{{ section.id }}" data-section-type="promotion-banners" style="visibility: hidden;max-height: 1px!important;">
+    <button class="previous-slide">
+      {%- render 'icon', icon: 'arrow-left' -%}</button>
+    <button class="next-slide">
+      {%- render 'icon', icon: 'arrow-right' -%}</button>
+    <div role="tablist" class="dots"></div>
+    <div class="promo-banners-slider">
+      {% for block in section.blocks %}
+          <div class="promos-banner-slide{{ forloop.index }} promo-banner-container">
+            <div>
+              {% capture bannerImage %}
+                <img src="{{ block.settings.promotion-banner-image | img_url: 'master' }}" alt="banner-{{ block.settings.banner_title }}">
+              {% endcapture %}
+
+            {% capture imageWithLink %}
+              <a href="{{ block.settings.banner_link }}">
+                {{ bannerImage }}
+              </a>
+            {% endcapture %}
+
+            {% if block.settings.banner_link %}
+              {{ imageWithLink }}
+            {% else %}
+              {{ bannerImage }}
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <style>
+    section[data-section-type="promotion-banners"] .next-slide svg,
+    section[data-section-type="promotion-banners"] .previous-slide svg {
+      background: #c4c4c4;
+      border-radius: 50%;
+      color: #fff;
+      width: 2rem;
+      height: 2rem;
+      padding: 0.5rem;
+    }
+
+    section[data-section-type="promotion-banners"] .next-slide,
+    section[data-section-type="promotion-banners"] .previous-slide {
+      position: absolute;
+      z-index: 2;
+      height: 100%;
+    }
+
+    section[data-section-type="promotion-banners"] .next-slide {
+      right: 0;
+      padding-left: 0.75rem;
+    }
+
+    section[data-section-type="promotion-banners"] .previous-slide {
+      left: 0;
+      padding-right: 0.75rem;
+    }
+
+    section[data-section-type="promotion-banners"] .dots {
+      position: absolute;
+      bottom: -5px;
+      margin: auto;
+      left: 0;
+      right: 0;
+      z-index: 1;
+    }
+
+    section[data-section-type="promotion-banners"] .dots .glider-dot.active {
+      background: #ffd93d;
+    }
+
+    .promo-banner-container {
+      overflow: hidden;
+    }
+
+    .promo-banner-container img {
+      max-width: 100%;
+    }
+
+    @media (min-width: 1024px) {
+      .promo-banners-slider {
+        max-height: 460px;
+      }
+    }
+
+    /*
+    @media (max-width: 768px) {
+      section[data-section-type="promotion-banners"] {
+        display: none !important;
+      }
+    }*/
+
+    {% if section.blocks.size == 1 %}
+      section[data-section-type="promotion-banners"] .previous-slide,
+      section[data-section-type="promotion-banners"] .next-slide,
+      section[data-section-type="promotion-banners"] .glider-dots {
+        display: none !important;
+      }
+    {% endif %}
+  </style>
+
+  <script defer>
+    window.addEventListener('DOMContentLoaded', function() {
+      const promotionBannersContainer = document.querySelector('.promo-banners-slider');
+
+      promotionBannersContainer.addEventListener('glider-loaded', function() {
+        document.querySelector('section[data-section-type="promotion-banners"]').removeAttribute("style");
+      });
+
+      
+      {% if section.settings.autoplay-promo-banner %}gliderAutoplay( {% endif %}
+      new Glider(promotionBannersContainer, {
+        type: 'carousel',
+        focusAt: 'center',
+        rewind: true,
+        dots: '.dots',
+        arrows: {
+          prev: 'section[data-section-type="promotion-banners"] .previous-slide',
+          next: 'section[data-section-type="promotion-banners"] .next-slide'
+        }
+      })
+      {% if section.settings.autoplay-promo-banner %},
+        {
+            interval: {{ section.settings.autoplay-time }}000,          
+        }
+        );
+      {% endif %}
+    })
+  </script>
+{% endif %}
+
+
+{% schema %}
+{
+  "name": "Promotion Banners",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show-promo-banner",
+      "label": "Show Promotion Banners",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay-promo-banner",
+      "label": "Autoplay",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay-time",
+      "min": 3,
+      "max": 8,
+      "step": 1,
+      "unit": "ms",
+      "label": "Autoplay Time",
+      "default": 3
+    }
+  ],
+  "max_blocks": 5,
+  "blocks": [
+     {
+       "name": "Banner",
+       "type": "banner",
+       "settings": [
+         {
+           "type": "image_picker",
+           "id": "promotion-banner-image",
+           "label": "Image",
+           "info": "Imagem"
+         },
+         {
+          "type": "url",
+          "id": "banner_link",
+          "label": "Banner link",
+          "info": "if it is empty, the banner will not be clickable"
+        }
+       ]
+     }
+  ],
+  "presets": [
+    {
+      "category": "Custom Sections",
+      "name": "Image",
+      "settings": {}
+    }
+  ],
+  "templates": ["page","collection"]
+}
+{% endschema %}

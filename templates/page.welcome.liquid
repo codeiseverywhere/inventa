@@ -1,0 +1,13 @@
+{%- if customer -%}
+  {%- section "welcome-slider" -%}
+  {%- section "welcome-products-slider-1" -%}
+  {%- section "image-banner" -%}
+  {%- section "seller-slider" -%}
+  {%- section "text-banner" -%}
+  {%- section "welcome-products-slider-2" -%}
+  {%- section "recommendation-section" -%}
+{%- else -%} 
+  <script type="text/javascript">
+    window.location.replace("/collections/marcas");
+  </script>
+{%- endif -%} 

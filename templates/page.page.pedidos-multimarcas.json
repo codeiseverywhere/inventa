@@ -1,0 +1,64 @@
+{
+  "sections": {
+    "header": {
+      "type": "promotion-page-header",
+      "blocks": {
+        "22027e22-5190-449b-a130-dfd1525fefa0": {
+          "type": "banner",
+          "settings": {
+            "promotion-banner-image": "shopify:\/\/shop_images\/InventaBLZ_Multimarcas_4e01e385-7581-4a26-9e41-d810e406c77f.png",
+            "banner_link": ""
+          }
+        }
+      },
+      "block_order": [
+        "22027e22-5190-449b-a130-dfd1525fefa0"
+      ],
+      "settings": {
+        "show-promo-banner": true
+      }
+    },
+    "description": {
+      "type": "promotion-page-description",
+      "settings": {
+        "title": "Pedido Multimarcas",
+        "content": "Todos os produtos dessa página podem ser comprados em um único pedido com Marcas Variadas. 😍 Pedido mínimo apenas R$200,00. Aproveite para aumentar a variedade de produtos em sua loja! Temos box e também kits de quantidades menores.🙂",
+        "image": "shopify:\/\/shop_images\/capa_perfil_06f9f184-7a4a-4a9c-a350-0abf89fb9867.png"
+      }
+    },
+    "carousal": {
+      "type": "promotion-product-carousal",
+      "settings": {
+        "show-priority-collection": false,
+        "title": "",
+        "collection": ""
+      }
+    },
+    "collections": {
+      "type": "promotion-page-collections",
+      "blocks": {
+        "eea8c18e-a684-4573-a50c-c5a137c9958e": {
+          "type": "collection",
+          "settings": {
+            "promotion-collections": "pedido-multi-marcas"
+          }
+        }
+      },
+      "block_order": [
+        "eea8c18e-a684-4573-a50c-c5a137c9958e"
+      ],
+      "settings": {
+        "show-promotion-collections": true,
+        "products_per_row": "4",
+        "default_products_per_page": 24,
+        "default_view_layout": "grid"
+      }
+    }
+  },
+  "order": [
+    "header",
+    "description",
+    "carousal",
+    "collections"
+  ]
+}

@@ -1,0 +1,101 @@
+<div class="discount_popup-wrapper" onclick="clickOutDiscount(event);" style="display: none;">
+    <div class="discount_popup-innner">
+        <div class="discount_popup-elements_wrapper">
+            <img onclick="saveDiscount('{{ discount_code }}')" src="{{ discount_image | img_url: 'master' }}" alt="">
+            <div class="discount_popup-close" onclick="event.stopPropagation();closeDiscountPopup();">
+                <svg class="modal-closer" width="23" height="21" viewBox="0 0 23 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M9.75806 10.2688L0 1.48659L1.33793 0L11.2529 8.92348L21.1679 0L22.5058 1.48659L12.7478 10.2688L22.5058 19.0511L21.1679 20.5377L11.2529 11.6142L1.33793 20.5377L2.08616e-06 19.0511L9.75806 10.2688Z" fill="white"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .discount_popup-wrapper{
+        width: 100vw;
+        background: rgba(34, 34, 34, 0.8);
+        position: absolute;
+        height: 100vh;
+        z-index: 500;
+        top: 0;
+        left: 0;
+        display: none;
+        justify-content: center;
+        align-items: center;
+    }
+    .discount_popup-innner{
+        max-width: 45vw;
+    }
+    .discount_popup-innner img{
+        max-width: 100%;
+        max-height: 100%;
+    }
+    @media (max-width: 650px){
+        .discount_popup-innner{
+            max-width: none;
+            width: 80vw;
+            display: flex !important;
+            justify-content: center;
+        }
+    }
+    .discount_popup-elements_wrapper{
+        position: relative;
+        box-sizing: border-box;
+        border-radius: 12px;
+        box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+        background: #fff;
+        height: 100%;
+        width: fit-content;
+        cursor: pointer;
+    }
+    .discount_popup-open{
+        display: flex;
+        animation: fadeIn forwards 1.2s;
+    }
+    @keyframes discount_fadeIn{
+        from{
+            opacity: 0;
+        }
+        to{
+            opacity: 1;
+        }
+    }
+    .discount_popup-close{
+        position: absolute;
+        top: -12px;
+        right: -42px;
+        padding: 10px;
+    }
+</style>
+
+<script defer>
+    setTimeout(() => {
+        const popup = document.querySelector('.discount_popup-wrapper');
+        if(popup) popup.removeAttribute('style');
+    }, 500);
+</script>
+<script defer>
+    function saveDiscount(discountCode){
+        if(discountCode){
+            window.sessionStorage.setItem('discountToApply', JSON.stringify({code: discountCode}));
+        }
+        closeDiscountPopup();
+    }
+    function closeDiscountPopup(){
+        const popup = document.querySelector('.discount_popup-wrapper.discount_popup-open');
+        if(popup) popup.classList.remove('discount_popup-open');
+        window.sessionStorage.setItem('user-closedDiscount', true);
+    }
+    function openDiscountPopup(){
+        const popup = document.querySelector('.discount_popup-wrapper');
+        if(popup) popup.classList.add('discount_popup-open');
+    }
+    function clickOutDiscount(e){
+        const popup_inner = document.querySelector('.discount_popup-innner');
+        if(!popup_inner.contains(e.target)) closeDiscountPopup();
+    }
+    window.addEventListener('load', () => {
+        const wasClosed = window.sessionStorage.getItem('user-closedDiscount');
+        if(!wasClosed) openDiscountPopup();
+    });
+</script>

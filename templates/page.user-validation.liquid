@@ -1,0 +1,26 @@
+{% layout none %}
+
+<style type="text/css">
+	#user-validation-container .loader-wrapper {
+		display: flex !important;
+		padding: 0 !important;
+	}
+</style>
+
+<section id="user-validation-container">
+	{% render 'inventa-loader' %}
+</section>
+
+{% if customer %}
+	<script id="validate-login-redirect">
+		const USER_TAGS = `{{ customer.tags | downcase }}`;
+		const DEFAULT_URL = "https://inventa.shop/collections/marcas";
+		const CPF_URL = "https://inventa.shop/collections/venda-para-cpf"
+
+		if (USER_TAGS.includes("cpf-user")) {
+			window.location.replace(CPF_URL);
+		} else {
+			window.location.replace(DEFAULT_URL);
+		}
+	</script>
+{% endif %}

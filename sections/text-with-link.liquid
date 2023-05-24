@@ -1,0 +1,94 @@
+<section class="container-fluid" data-section-id="{{ section.id }}" data-section-type="text-with-link">
+  <div class="row">
+    {%- for block in section.blocks -%}
+      <div class="col-md-6 p-5 textwithlink index{{forloop.index}}">
+        <div class="py-3">
+          <h2 class="display-5 mb-5 w-75 text-white">{{ block.settings.title }}</h2>
+          <a href="{{ block.settings.link }}" class="fw-bolder fs-5 p-3 border-radius-sm">{{ block.settings.button }}</a>
+        </div>
+      </div>
+    {%- endfor -%}
+  </div>
+</section>
+
+<style>
+  {%- for block in section.blocks -%}
+  .textwithlink.index{{forloop.index}}{
+    --font-{{forloop.index}}: {{ block.settings.font-color }};
+    --background-{{forloop.index}}: {{ block.settings.background-color }};
+    color: var(--font-{{forloop.index}});
+    background-color: var(--background-{{forloop.index}});
+    {%- if block.settings.image -%}
+        background-image: url({{ block.settings.image | img_url: 'master' }});
+        background-size: cover;
+    {%- endif -%}
+  }
+  .textwithlink.index{{forloop.index}} a{
+    border: var(--font-{{forloop.index}}) 1px solid;
+    border-radius: 5px;
+    transition: all 0.5s;
+  }
+  .textwithlink.index{{forloop.index}} a:hover{
+    background-color: var(--font-{{forloop.index}});
+    color: var(--background-{{forloop.index}});
+  }
+  {%- endfor -%}
+</style>
+
+{% schema %}
+{
+  "name": "Texts with links",
+  "max_blocks": 2,
+  "settings": [],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Item",
+      "settings": [
+        {
+          "type": "color",
+          "id": "background-color",
+          "label": "Background color",
+          "default": "#F2F2F2"
+        },
+        {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image",
+            "info": "Imagem"
+        },
+        {
+          "type": "color",
+          "id": "font-color",
+          "label": "Font color",
+          "default": "#222222"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Título"
+        },
+        {
+          "type": "text",
+          "id": "button",
+          "label": "Button",
+          "default": "Button text"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "category": "Custom Sections",
+      "name": "Text with link",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

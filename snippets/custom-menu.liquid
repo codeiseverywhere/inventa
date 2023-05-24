@@ -1,0 +1,280 @@
+{%- assign navigation_menu_handle = section.settings.navigation_menu | default: 'menu-principal-rebranding' -%}
+{%- assign navigation_menu = linklists[navigation_menu_handle] -%}
+
+<nav class="navbar navbar-expand-lg navbar w-100 py-0">
+  <div class="container px-0 px-md-3 pt-1 pt-lg-0">
+    <div class="row w-100 pt-2 position-relative {%unless customer%}pe-4{%endunless%}">
+      <button class="d-lg-none navbar-toggler px-3 pt-0 border-0 col-2 col-sm-1 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <div class="burguer m-auto">
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      </button>
+      <a class="px-0 pt-1 pt-lg-2 text-center logo" href="{% if customer %}/collections/marcas?sort_by=best-selling{% else %}/{% endif %}">
+        {% render 'logo-icon' %}
+      </a>
+      <div class="search-bar-button-mobile d-lg-none fs-4 col-2 col-sm-1 position-absolute end-0 text-end color-main-100">
+        <button type="button">
+          {%- render 'icon', icon: 'search' -%}
+        </button>
+        <form action="{{ routes.search_url }}" method="get" role="search" class="search-bar-mobile">
+            <input class="search-bar__input font-family-02" type="text" name="q" autocomplete="off" autocorrect="off" aria-label="{{ 'header.search.input_placeholder' | t }}" placeholder="{{ 'header.search.input_placeholder' | t }}">
+          </form>
+      </div>
+      <!-- <a class="col-4 col-sm-4 d-lg-none offset-sm-1 px-0 d-flex justify-content-center justify-content-sm-end align-items-center landingPage-loginBtn" href="#">
+        <div class="btn yellow-btn py-2 fw-bold mx-0 mx-lg-3 mb-3 mb-sm-0 landingPage-loginBtn mt-1 p-1 p-sm-3">
+          <span>Acesso Lojista</span>
+        </div>
+      </a> -->
+      <div class="navbar-collapse ms-xl-2 collapse flex-shrink-1 justify-content-between col-lg-9 pe-0" id="navbarNav">
+        <div class="header__search-bar-wrapper ms-5 pe-4 d-none d-md-block {% if customer %}pt-md-2{% endif %}">
+          <form action="{{ routes.search_url }}" method="get" role="search" class="search-bar">
+            {%- assign search_menu = linklists[section.settings.search_menu] -%}
+
+            <div class="search-bar__top-wrapper">
+              <div class="search-bar__top">
+                <input type="hidden" name="type" value="product">
+                <input type="hidden" name="options[prefix]" value="last">
+                <input type="hidden" name="options[unavailable_products]" value="{{ settings.search_unavailable_products }}">
+
+                <div class="search-bar__input-wrapper">
+                  <input class="search-bar__input font-family-02" type="text" name="q" autocomplete="off" autocorrect="off" aria-label="{{ 'header.search.input_placeholder' | t }}" placeholder="{{ 'header.search.input_placeholder' | t }}">
+                  <button type="button" class="search-bar__input-clear hidden-lap-and-up" data-action="clear-input">
+                    <span class="visually-hidden">{{ 'header.search.clear' | t }}</span>
+                    {% render 'icon', icon: 'close' %}
+                  </button>
+                </div>
+
+                {%- assign has_at_least_one_type = false -%}
+                {%- for product_type in shop.types -%}
+                  {%- if product_type != blank -%}
+                    {%- assign has_at_least_one_type = true -%}
+                    {%- break -%}
+                  {%- endif -%}
+                {%- endfor -%}
+
+                <button type="submit" class="search-bar__submit" aria-label="{{ 'header.search.submit' | t }}">
+                  {%- render 'icon', icon: 'search' -%}
+                  {%- render 'icon', icon: 'search-loader' -%}
+                </button>
+              </div>
+
+              <button type="button" class="search-bar__close-button hidden-tablet-and-up" data-action="unfix-search">
+                <span class="search-bar__close-text">{{ 'header.search.close_search' | t }}</span>
+              </button>
+            </div>
+          </form>
+        </div>
+        <ul class="navbar-nav justify-content-between d-flex ps-lg-4">
+          <li class="me-lg-3 d-none d-lg-block d-xxl-none color-main-100">
+            <button type="button" class="search-bar-button fs-5 mt-3">
+              {%- render 'icon', icon: 'search' -%}
+            </button>
+            <button type="button" class="close-search-bar-button small mt-2 pt-2 d-none">
+              {%- render 'icon', icon: 'close' -%}
+            </button>
+          </li>
+          {%- assign pageUrlInfo = content_for_header | split:'"pageurl":"' | last | split:'"' | first | split: request.host | last -%}
+
+          {% comment %}
+          {%- for link in navigation_menu.links -%}
+            {%- assign linkName = link.title | downcase -%}
+            <li class="nav-item me-xl-2">
+              <a class="nav-link text-nowrap fw-bold p-3 body-3-density-3 {% if link.current or page.url contains linkName %}border-bottom border-primary border-2 color-blue-accent {% else %} color-main-100 {% endif %}" href="{% if linkName == "lojista" and customer %} /collections/marcas {% else %} {{ link.url }} {% endif %}">{{- link.title -}}</a>
+           </li>
+          {%- endfor -%}
+          {% endcomment %}
+          <li>
+            <a style="color:#0d6efd;" href="https://docs.google.com/forms/d/e/1FAIpQLSfTw4B_5_2_7KiLykeuUTdSsHLt6T_slpsvlWxdLtAqmnSvhg/viewform" target="_blank">Não encontrou uma marca? Sugira quantas quiser!</a>
+          </li>
+        </ul>
+        {% if customer %}
+          <div class="ps-4 pe-0 header__action-item header__action-item--account d-none d-lg-inline-block">
+            <div class="header__action-item-content">
+               <a href="{{ routes.account_url }}" class="fw-bold py-2 px-3 my-account_dropdown js-login-popup header__action-item-link hidden-pocket" aria-controls="account-popover" aria-expanded="false" data-action="toggle-popover">{{ 'header.general.welcome' | t: first_name: customer.first_name | truncate: 15 }} {% render 'icon', icon: 'arrow-bottom' %}</a>
+
+              <div id="account-popover" class="popover popover--logged" aria-hidden="true">
+                {%- render 'icon', icon: 'nav-triangle-borderless' -%} 
+
+                  <div class="popover__inner popover__inner--no-padding p-0">
+                    <div class="popover__linklist">
+                      <a class="popover__link-item px-3 py-2" href="{{ routes.account_url }}">{{ 'customer.general.orders' | t }}</a>
+                      <a class="popover__link-item px-3 py-2" href="{{ routes.account_addresses_url }}">{{ 'customer.general.addresses' | t }}</a>
+                      <a class="popover__link-item px-3 py-2" onclick="openPagamentoPopup();" href="#">Prazo sem juros</a>
+                      <a class="popover__link-item px-3 py-2" href="{{ routes.account_logout_url }}" data-no-instant>{{ 'customer.general.logout' | t }}</a>
+                    </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+        {% else %}
+          <div class="col-7 col-md-3 col-lg-5 col-xl-4 text-center text-md-end">
+            <a id="header_fornecedor-panel" href="/account/login" onclick="openLogin(event);closeMenuMobile();" class="btn transparent-btn py-2 px-lg-2 px-xl-3 fw-bold my-3 mb-sm-0 d-block d-lg-none mt-lg-0">
+              <span>Entrar</span>
+            </a>
+            <a id="header_fornecedor-panel" href="/pages/cadastro" class="btn yellow-btn py-2 px-lg-2 px-xl-3 fw-bold my-3 mb-sm-0 d-block d-lg-none mt-lg-0">
+              <span>Criar conta</span>
+            </a>
+            <a id="header_fornecedor-panel" href="https://fornecedor.inventa.{%- if shop.name contains "DEV" -%}dev{%- else -%}app{%- endif -%}.br/" class="btn transparent-btn py-2 px-lg-2 px-xl-3 fw-bold my-3 mb-sm-0 d-block d-lg-inline-block mt-lg-0">
+              <span>Painel Fornecedor</span>
+            </a>
+            {%- if customer -%}
+              <a href="/collections/marcas" class="btn yellow-btn py-2 fw-bold mx-0 mx-lg-3 mb-3 mb-sm-0 d-none d-lg-inline-block landingPage-loginBtn">
+                <span>Começar a comprar</span>
+              </a>
+            {%- else -%}
+              <a href="#" class="btn yellow-btn py-2 px-lg-2 px-xl-3 fw-bold mx-0 ms-lg-1 ms-xl-3 mb-3 mb-sm-0 d-none d-lg-inline-block landingPage-loginBtn">
+                <span>Acesso Lojista</span>
+              </a>
+            {%- endif -%}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {%- comment -%}
+  {% unless customer %}
+    {% render "login-register-popup" %}
+  {% endunless %}
+  {% render 'pagamento-popup' %}
+  {%- endcomment -%}
+</nav>
+
+<style type="text/css">
+  {% unless customer %}
+  #shopify-section-header .navbar{
+    padding-top: 40px;
+  }
+  {% endunless %}
+  #shopify-section-header .logo {
+    display: inline-block;
+    max-width: 115px;
+  }
+
+  #shopify-section-header .logo > svg{
+    max-width: 115px;
+    padding-top: 4px;
+  }
+
+  .burguer {
+    width: 20px;
+  }
+
+  .navbar-nav a:hover {
+    color: #1472E4 !important;
+  }
+
+  .burguer div {
+    background-color: #1A1A1A;
+    border-radius: 2px;
+    height: 3px;
+    margin: 4px auto;
+  }
+
+  .navbar .search-bar__input-wrapper {
+    background-color: #F7F9FC;
+    font-size: 16px;
+    border-radius: 18px 0 0 18px;
+  }
+
+  .navbar .search-bar__submit {
+    background-color: #FFD93D !important;
+    color: #1A1A1A !important;
+    border-radius: 0 18px 18px 0;
+  }
+
+  .header__search-bar-wrapper.show {
+    display: block !important;
+    position: absolute;
+    width: 500px;
+  }
+
+  #navbarNav.not-show-items .nav-item {
+    visibility: hidden;
+  }
+
+  .search-bar-mobile {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    top:0;
+    right: 0;
+  }
+
+  #shopify-section-header .nav-bar__item .icon--arrow-bottom path,
+  #shopify-section-header .nav-bar__item .icon--arrow-right path {
+    stroke-width: 1px;
+  }
+
+  @media (max-width: 1024px) {
+    #shopify-section-header .logo > svg {
+      max-width: 110px;
+    }
+
+    .navbar .header__search-bar-wrapper {
+      display: none;
+    }
+  }
+
+  @media (max-width: 900px) {
+    #shopify-section-header .logo {
+      margin-top: -10px!important;
+      margin: auto;
+    }
+
+    #navbarNav {
+      position: absolute;
+      background-color: #fff;
+      top: 50px;
+    }
+
+    .nav-bar__item > a > span {
+      font-size: 14px !important;
+    }
+
+    .search-bar-button-mobile {
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+      top: -0.3rem;
+      z-index: 100000 !important;
+    }
+  }
+</style>
+
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    const searchButton = document.querySelector(".search-bar-button");
+    const searchInputContainer = document.querySelector(".header__search-bar-wrapper");
+    const menuItemsContainer = document.querySelector("#navbarNav");
+    const closeButton = document.querySelector(".close-search-bar-button");
+    const searchMobileButton = document.querySelector(".search-bar-button-mobile");
+    const searchInput = document.querySelector(".header__search-bar-wrapper .search-bar__input");
+  
+    searchButton.addEventListener("click", () => {
+      searchButton.classList.add("d-none");
+      if (searchInputContainer) searchInputContainer.classList.add("show");
+      if (menuItemsContainer) menuItemsContainer.classList.add("not-show-items");
+      if (closeButton) closeButton.classList.remove("d-none");
+    });
+  
+    closeButton.addEventListener("click", () => {
+      closeButton.classList.add("d-none");
+      if (searchButton) searchButton.classList.remove("d-none");
+      if (searchInputContainer) searchInputContainer.classList.remove("show");
+      if (menuItemsContainer) menuItemsContainer.classList.remove("not-show-items");
+      if (closeButton) closeButton.classList.add("d-none");
+    });
+  
+    searchMobileButton.addEventListener("click", () => {
+      const inputSearchWrapper = document.querySelector(".navbar .search-bar-mobile .search-bar__input");
+      if (inputSearchWrapper) inputSearchWrapper.focus();
+    });
+  })
+  
+  function closeMenuMobile() {
+    const btnMenuMobile = document.querySelector(".navbar-toggler");
+
+    if (btnMenuMobile) btnMenuMobile.click();
+  }
+</script>

@@ -1,0 +1,88 @@
+<div class="about-section">
+  {% section 'title-background' %}
+  {% section 'section-text-image' %}
+  {% section 'slider-images-with-title-2' %}
+  {% section 'section-text-image-2' %}
+  {% section 'section-text-and-list' %}
+  {% section 'text-with-link' %}
+  {% section 'title-with-details-list' %}
+  {% section 'benefits-slider' %}
+
+  {% comment %}
+  <section class="py-5 my-5 container-fluid">
+    <h1 class="display-2 text-center py-5">Nossos investidores</h1>
+    <div class="offset-md-2 col-md-8 static-sponsors">
+      <div class="row justify-content-center">
+        <div class="col-md-4 centered-container d-flex align-items-center justify-content-center">
+          <img src="{{ 'rappi.jpg' | asset_img_url: "master" }}" alt="rappi.jpg">
+        </div>
+        <div class="col-md-4 centered-container d-flex align-items-center justify-content-center">
+          <img src="{{ 'sequoia.jpg' | asset_img_url: "master" }}" alt="sequoia.jpg">
+        </div>
+        <div class="col-md-4 centered-container d-flex align-items-center justify-content-center">
+          <img src="{{ 'yicon.jpg' | asset_img_url: "master" }}" alt="yicon.jpg">
+        </div>
+      </div>
+      <div class="row justify-content-center"> 
+        <div class="col-md-4 centered-container d-flex align-items-center justify-content-center">
+          <img src="{{ 'yicon.jpg' | asset_img_url: "master" }}" alt="yicon.jpg">
+        </div>
+        <div class="col-md-4 centered-container d-flex align-items-center justify-content-center">
+          <img src="{{ 'rappi.jpg' | asset_img_url: "master" }}" alt="rappi.jpg">
+        </div>
+        <div class="col-md-4 centered-container d-flex align-items-center justify-content-center">
+          <img src="{{ 'sequoia.jpg' | asset_img_url: "master" }}" alt="sequoia.jpg">
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-md-4 centered-container d-flex align-items-center justify-content-center">
+          <img src="{{ 'sequoia.jpg' | asset_img_url: "master" }}" alt="sequoia.jpg">
+        </div>
+        <div class="col-md-4 centered-container d-flex align-items-center justify-content-center">
+          <img src="{{ 'yicon.jpg' | asset_img_url: "master" }}" alt="yicon.jpg">
+        </div>
+        <div class="col-md-4 centered-container d-flex align-items-center justify-content-center">
+          <img src="{{ 'rappi.jpg' | asset_img_url: "master" }}" alt="rappi.jpg">
+        </div>
+      </div>
+    </div>
+    <div class="slider-sponsors row mt-5 d-flex align-items-center justify-content-center">
+      <div class="centered-container mx-2 d-flex align-items-center justify-content-center">
+        <img src="{{ 'rappi.jpg' | asset_img_url: "master" }}" alt="rappi.jpg">
+      </div>
+      <div class="centered-container mx-2 d-flex align-items-center justify-content-center">
+        <img src="{{ 'sequoia.jpg' | asset_img_url: "master" }}" alt="sequoia.jpg">
+      </div>
+      <div class="centered-container mx-2 d-flex align-items-center justify-content-center">
+        <img src="{{ 'yicon.jpg' | asset_img_url: "master" }}" alt="yicon.jpg">
+      </div>
+    </div>
+  </section>
+  {% endcomment %}
+
+  <style>
+    .img-icon {
+      padding-top: 0;
+      height: auto;
+    }
+
+    @media(max-width: 1023px){
+      .static-sponsors{
+        display: none;
+      }
+      .centered-container{
+        width: 200px;
+        height: 200px;
+      }
+    }
+    @media(min-width: 1024px){
+      .slider-sponsors{
+        display: none !important;
+      }
+    }
+    .slider-sponsors{
+      width: 100%;
+      height: 200px;
+    }
+  </style>
+</div>

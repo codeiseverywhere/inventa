@@ -1,0 +1,114 @@
+{
+  "sections": {
+    "header": {
+      "type": "promotion-page-header",
+      "blocks": {
+        "92734a75-7531-4904-a615-9ff8f2e8ec8c": {
+          "type": "banner",
+          "disabled": true,
+          "settings": {
+            "promotion-banner-image": "shopify:\/\/shop_images\/Novas_Marcas_Novidades_6.png",
+            "banner_link": "https:\/\/inventa.shop\/collections\/novidades-banner"
+          }
+        },
+        "ffaa805c-9df7-4bd2-84d5-614641e5bb2a": {
+          "type": "banner",
+          "disabled": true,
+          "settings": {
+            "promotion-banner-image": "shopify:\/\/shop_images\/Novas_Marcas_Novidades_10.png",
+            "banner_link": "https:\/\/inventa.shop\/collections\/novidades-banner-beleza-e-bem-estar"
+          }
+        },
+        "cc1ef10d-1b1d-4d78-9d1e-be747b5bba87": {
+          "type": "banner",
+          "disabled": true,
+          "settings": {
+            "promotion-banner-image": "shopify:\/\/shop_images\/Novas_Marcas_Novidades_9.png",
+            "banner_link": "https:\/\/inventa.shop\/collections\/novidades-banner-mercearia"
+          }
+        },
+        "671b7b3f-870e-46d6-9288-34930a1955c9": {
+          "type": "banner",
+          "disabled": true,
+          "settings": {
+            "promotion-banner-image": "shopify:\/\/shop_images\/Novas_Marcas_Novidades_11.png",
+            "banner_link": "https:\/\/inventa.shop\/collections\/novidades-banner-casa-e-decoracao"
+          }
+        },
+        "10951f5c-2a10-412c-aacb-a011fcef7b46": {
+          "type": "banner",
+          "disabled": true,
+          "settings": {
+            "promotion-banner-image": "shopify:\/\/shop_images\/Slideshow_FLASH_PROMO_DESK.png",
+            "banner_link": ""
+          }
+        }
+      },
+      "block_order": [
+        "92734a75-7531-4904-a615-9ff8f2e8ec8c",
+        "ffaa805c-9df7-4bd2-84d5-614641e5bb2a",
+        "cc1ef10d-1b1d-4d78-9d1e-be747b5bba87",
+        "671b7b3f-870e-46d6-9288-34930a1955c9",
+        "10951f5c-2a10-412c-aacb-a011fcef7b46"
+      ],
+      "settings": {
+        "show-promo-banner": false,
+        "autoplay-promo-banner": true,
+        "autoplay-time": 3
+      }
+    },
+    "description": {
+      "type": "promotion-page-description",
+      "settings": {
+        "title": "Promoção Relâmpago",
+        "content": "Até o dia 20 de Novembro você compra os best-sellers de algumas de nossas marcas mais vendidas com descontos de até 60%!",
+        "image": "shopify:\/\/shop_images\/icone.png"
+      }
+    },
+    "carousal": {
+      "type": "promotion-product-carousal",
+      "settings": {
+        "show-priority-collection": true,
+        "title": "Principais Marcas",
+        "collection": "carrossel-relampago"
+      }
+    },
+    "main": {
+      "type": "collection-template",
+      "blocks": {
+        "bc29b24f-f099-44a7-aef9-ea648232e009": {
+          "type": "seller_priority",
+          "settings": {
+            "seller-name": "seller"
+          }
+        }
+      },
+      "block_order": [
+        "bc29b24f-f099-44a7-aef9-ea648232e009"
+      ],
+      "settings": {
+        "show_collection_image": false,
+        "collapse_collection_description": false,
+        "collection_image_size": "small",
+        "products_per_row": "4",
+        "default_products_per_page": 24,
+        "default_view_layout": "grid",
+        "show_quick_buy": "list",
+        "show_quick_view": "list",
+        "quick_links": "",
+        "quick_links_show_products_count": true,
+        "show_filters": true,
+        "show_filter_color_swatch": true,
+        "filter_type": "tag",
+        "open_group_filters_mode": "all_closed",
+        "filter_group_order": ""
+      }
+    }
+  },
+  "order": [
+    "header",
+    "description",
+    "carousal",
+    "main"
+  ]
+}

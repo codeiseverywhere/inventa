@@ -1,0 +1,453 @@
+{
+  "form": {
+    "id": "OLt89r",
+    "name": "Manufacturer compact form [com categoria]",
+    "handle": "manufacturer-compact-form-copy",
+    "theme_id": null,
+    "settings": {
+      "locales": {
+        "back": "Atrás",
+        "next": "Próximo",
+        "cancel": "Cancelar",
+        "edit_link": "Edit account",
+        "fix_errors": "Por favor corrija os erros antes de continuar",
+        "is_invalid": "{{label}} é inválido",
+        "email_taken": "O e-mail já foi tomado",
+        "phone_taken": "O número de telefone já foi escolhido",
+        "server_error": "Não foi possível salvar o formulário, tente novamente mais tarde",
+        "step_counter": "Paso {{current}} de {{total}}",
+        "verify_email": "Verifique seu e-mail para obter um link de verificação para ativar sua conta.",
+        "not_available": "Ocorreu um erro ao salvar sua conta, tente novamente em alguns minutos.",
+        "create_account": "Enviar",
+        "update_account": "Enviar",
+        "recaptcha_error": "Challenge verification failed, please try again",
+        "creating_account": "Salvando...",
+        "updating_account": "Salvando...",
+        "invalid_email_domain": "O e-mail contém um nome de domínio inválido"
+      },
+      "whitelistedTags": "",
+      "markRequiredFields": false,
+      "displayCancelButton": false,
+      "redirectAfterSubmit": false,
+      "goBackAfterSubmission": false,
+      "accountApprovalRequired": true,
+      "cancelButtonRedirectUrl": "\/account\/login",
+      "emailVerificationRequired": false,
+      "postSubmissionRedirectUrl": "\/account",
+      "showSuccessStepAfterSubmit": true,
+      "goBackAfterCancelButtonClick": false
+    },
+    "install_locations": [],
+    "created_at": "2022-05-23T19:07:13Z",
+    "updated_at": "2022-05-23T19:07:41Z",
+    "revision_ids": [
+      "NMTo2R3",
+      "VNTzgx6",
+      "OzT2bDY",
+      "3qTZO3w"
+    ]
+  },
+  "revision": {
+    "id": "NMTo2R3",
+    "created_at": "2022-05-23T19:23:33Z",
+    "updated_at": "2022-05-23T19:23:33Z",
+    "embed_version": "4.10.3",
+    "published_at": null,
+    "fields": [
+      {
+        "id": 186006,
+        "dataColumn": {
+          "key": "tipo_de_conta",
+          "label": "Tipo de conta",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 0,
+        "type": "dropdown",
+        "stepId": 144809,
+        "default": "Fornecedor",
+        "label": "Tipo de conta",
+        "placeholder": "Selecione um tipo de conta",
+        "description": "",
+        "enum": [
+          {
+            "label": "Fornecedor",
+            "value": "Fornecedor"
+          },
+          {
+            "label": "Lojista",
+            "value": "Lojista"
+          }
+        ],
+        "appearance": {
+          "width": 12,
+          "cssClass": "invisible position-absolute start-0"
+        },
+        "settings": {
+          "end": 10,
+          "start": 1,
+          "enumType": "list",
+          "hideLabel": true,
+          "separateValues": false
+        },
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Insira um tipo de conta"
+          }
+        ],
+        "sensitive": null,
+        "preset": null,
+        "autotag": true
+      },
+      {
+        "id": 171183,
+        "dataColumn": {
+          "key": "first_name",
+          "label": "First name",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 1,
+        "type": "text",
+        "stepId": 144809,
+        "default": "",
+        "label": "Nome",
+        "placeholder": "Nome",
+        "description": null,
+        "enum": null,
+        "appearance": {
+          "width": 6,
+          "cssClass": ""
+        },
+        "settings": {
+          "hideLabel": true
+        },
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Por favor forneça um nome válido"
+          }
+        ],
+        "sensitive": false,
+        "preset": "first_name",
+        "autotag": null
+      },
+      {
+        "id": 481471,
+        "dataColumn": {
+          "key": "phone",
+          "label": "Phone number",
+          "dataType": "phone"
+        },
+        "parentId": null,
+        "position": 2,
+        "type": "phone",
+        "stepId": 144809,
+        "default": "",
+        "label": "Phone number",
+        "placeholder": "Whatsapp",
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 6
+        },
+        "settings": {
+          "hideLabel": true,
+          "defaultCountryCode": "BR"
+        },
+        "validations": [
+          {
+            "operator": "is_valid",
+            "comparand": null,
+            "errorMessage": "O telefone tem um formato incorreto"
+          }
+        ],
+        "sensitive": null,
+        "preset": "phone_number",
+        "autotag": null
+      },
+      {
+        "id": 136272,
+        "dataColumn": {
+          "key": "clients_quantity",
+          "label": "clients_quantity",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 3,
+        "type": "dropdown",
+        "stepId": 144809,
+        "default": "",
+        "label": "Quantidade de lojistas que você atende\n",
+        "placeholder": "Quantidade de lojistas que você atende",
+        "description": "",
+        "enum": [
+          {
+            "label": "Nenhum, sou novo no atacado",
+            "value": "Nenhum, sou novo no atacado"
+          },
+          {
+            "label": "1-30",
+            "value": "1-30"
+          },
+          {
+            "label": "31-50",
+            "value": "31-50"
+          },
+          {
+            "label": "51-100",
+            "value": "51-100"
+          },
+          {
+            "label": "101-250",
+            "value": "101-250"
+          },
+          {
+            "label": "251-500",
+            "value": "251-500"
+          },
+          {
+            "label": "Mais de 500",
+            "value": "Mais de 500"
+          }
+        ],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "end": 10,
+          "start": 1,
+          "enumType": "list",
+          "hideLabel": true,
+          "separateValues": false
+        },
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Escolha uma opção"
+          }
+        ],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 188175,
+        "dataColumn": {
+          "key": "main_category",
+          "label": "Categoria primária",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 4,
+        "type": "dropdown",
+        "stepId": 144809,
+        "default": "",
+        "label": "Categoria primária",
+        "placeholder": "Categoria primária",
+        "description": "",
+        "enum": [
+          {
+            "label": "Cosméticos, beleza e bem-estar",
+            "value": "Cosméticos, beleza e bem-estar"
+          },
+          {
+            "label": "Alimentos e bebidas",
+            "value": "Alimentos e bebidas"
+          },
+          {
+            "label": "Casa e decoração",
+            "value": "Casa e decoração"
+          },
+          {
+            "label": "Pets",
+            "value": "Pets"
+          },
+          {
+            "label": "Vestuário",
+            "value": "Vestuário"
+          },
+          {
+            "label": "Acessórios de beleza",
+            "value": "Acessórios de beleza"
+          },
+          {
+            "label": "Jóias, semijóias e bijouterias",
+            "value": "Jóias, semijóias e bijouterias"
+          },
+          {
+            "label": "Papelaria",
+            "value": "Papelaria"
+          },
+          {
+            "label": "Infantil",
+            "value": "Infantil"
+          },
+          {
+            "label": "Outras",
+            "value": "Outras"
+          }
+        ],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "end": 10,
+          "start": 1,
+          "enumType": "list",
+          "hideLabel": true,
+          "separateValues": false
+        },
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Escolha uma opção"
+          }
+        ],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 234711,
+        "dataColumn": {
+          "key": "site_url",
+          "label": "site url",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 5,
+        "type": "text",
+        "stepId": 144809,
+        "default": "",
+        "label": "site url",
+        "placeholder": "Instagram ou site da sua marca",
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 6
+        },
+        "settings": {
+          "hideLabel": true
+        },
+        "validations": [],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 806942,
+        "dataColumn": {
+          "key": "cdigo_de_indicacao",
+          "label": "Código de indicação",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 6,
+        "type": "text",
+        "stepId": 144809,
+        "default": "",
+        "label": "Código de indicação",
+        "placeholder": "Código de indicação",
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 6
+        },
+        "settings": {
+          "hideLabel": true
+        },
+        "validations": [],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 120793,
+        "dataColumn": null,
+        "parentId": null,
+        "position": 0,
+        "type": "heading",
+        "stepId": 188311,
+        "default": "",
+        "label": "Account request sent heading",
+        "placeholder": null,
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12,
+          "cssClass": "mt-5",
+          "alignment": "center"
+        },
+        "settings": {
+          "size": 1,
+          "content": "Perfeito!",
+          "hideLabel": true,
+          "fontWeight": "bold"
+        },
+        "validations": [],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 220308,
+        "dataColumn": null,
+        "parentId": null,
+        "position": 1,
+        "type": "paragraph",
+        "stepId": 188311,
+        "default": "",
+        "label": "Reviewing submission explanation",
+        "placeholder": null,
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "content": "<p style=\"text-align: center;\">Um consultor entrar&aacute; em contato com voc&ecirc; em breve!<\/p>",
+          "fontSize": 14,
+          "hideLabel": true
+        },
+        "validations": [],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      }
+    ],
+    "steps": [
+      {
+        "id": 144809,
+        "title": "Step 1",
+        "description": ""
+      },
+      {
+        "id": 188311,
+        "title": "Submission success",
+        "metadata": {
+          "isSuccessStep": true
+        },
+        "description": ""
+      }
+    ],
+    "rules": []
+  }
+}

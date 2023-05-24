@@ -1,0 +1,94 @@
+<section id="home-cetegorias-section" class="section my-0 pt-4 pb-5" data-section-id="home-cetegorias-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <h2 class="h2 fw-bold pt-3 pb-1">Categorias em destaque</h2>
+        <a href="/collections/bebidas" class="category-pill d-inline-block rounded-pill p-2 me-3 my-2">
+          <img 
+            class="lazyload rounded-circle align-middle"
+            src="{{ 'home-category1.jpg' | file_img_url: '50x50', crop: 'bottom' }}"
+            alt="Categoria bebidas"
+            width="50"
+            height="50"
+          />
+          <span class="d-inline-block ps-3">Bebidas</span>
+        </a>
+        <a href="/collections/snacks" class="category-pill d-inline-block rounded-pill p-2 me-3 my-2">
+          <img 
+            class="lazyload rounded-circle align-middle"
+            src="{{ 'home-category2.jpg' | file_img_url: '50x50', crop: 'bottom' }}"
+            alt="Categoria bebidas"
+            width="50"
+            height="50" 
+          />
+          <span class="d-inline-block ps-3">Snacks</span>
+        </a>
+        <a href="/collections/perfumes" class="category-pill d-inline-block rounded-pill p-2 me-3 my-2">
+          <img 
+            class="lazyload rounded-circle align-middle"
+            src="{{ 'home-category3.jpg' | file_img_url: '50x50', crop: 'bottom' }}"
+            alt="Categoria bebidas"
+            width="50"
+            height="50"
+          />
+          <span class="d-inline-block ps-3">Perfumes</span>
+        </a>
+        <a href="/collections/aromaterapia" class="category-pill d-inline-block rounded-pill p-2 me-3 my-2">
+          <img 
+            class="lazyload rounded-circle align-middle"
+            src="{{ 'home-category4.jpg' | file_img_url: '50x50', crop: 'bottom' }}"
+            alt="Categoria bebidas"
+            width="50"
+            height="50"
+          />
+          <span class="d-inline-block ps-3">Aromaterapia</span>
+        </a>
+        <a href="/collections/cozinha-e-mesa" class="category-pill d-inline-block rounded-pill p-2 my-2">
+          <img 
+            class="lazyload rounded-circle align-middle"
+            src="{{ 'home-category5.png' | file_img_url: '50x50', crop: 'bottom' }}"
+            alt="Categoria bebidas"
+            width="50"
+            height="50"
+          />
+          <span class="d-inline-block ps-3">Cozinha e mesa</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  #home-cetegorias-section .category-pill {
+    border: 1px solid #E1E9EF;
+    cursor: pointer;
+  }
+
+  @media (min-width: 1400px) {
+    #home-cetegorias-section .category-pill {
+      width: 18%;
+      max-width: 280px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "home-cetegorias-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Título"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Custom Sections",
+      "name": "home-cetegorias-section",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

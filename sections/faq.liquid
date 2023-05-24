@@ -1,0 +1,96 @@
+<section id="faq" class="section my-0 faqs" data-section-id="{{ section.id }}" data-section-type="faq">
+  <div class="container py-5">
+    <div class="row">
+      <div class="col-12 col-lg-10 offset-lg-1">
+        <h2 class="fs-1 fw-bold pb-4">
+          <span>{{ section.settings.title }}</span>
+        </h2>
+        <div class="accordion accordion-flush" id="accordionFaq">
+          {%- for block in section.blocks -%}
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="flush-heading{{ block.id }}">
+                <button class="accordion-button collapsed py-4" type="button" data-bs-toggle="collapse" data-bs-target="#block{{ block.id }}" aria-expanded="false" aria-controls="block{{ block.id }}">
+                  <span class="fw-bold">{{ block.settings.title }}</span>
+                </button>
+              </h2>
+              <div id="block{{ block.id }}" class="accordion-collapse collapse border-0" aria-labelledby="flush-heading{{ block.id }}" data-bs-parent="#accordionFaq">
+                <div class="accordion-body text-secondary">
+                  {{ block.settings.content }}
+                </div>
+              </div>
+            </div>
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  section.faqs .accordion-button:not(.collapsed)::after {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23212529'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e")!important;
+  }
+
+  section.faqs .accordion-button:not(.collapsed){
+    background-color: #ffffff;
+    color: #000000;
+  }
+
+  section.faqs .accordion-button:focus{
+    box-shadow: none !important;
+  }
+
+  #faq .accordion-body {
+    background-color: #F7F9FC;
+  }
+
+  #faq .accordion-button {
+    background-color: #F7F9FC;
+  }
+
+  #faq .accordion-button.collapsed {
+    background-color: #FFF; 
+  }
+</style>
+
+{% schema %}
+{
+  "name": "FAQ",
+  "max_blocks": 100,
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Título"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Item",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "title",
+          "label": "Title",
+          "default": "Título"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content",
+          "default": "<p>Conteúdo</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "category": "Custom Sections",
+      "name": "FAQ",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

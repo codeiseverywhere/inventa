@@ -1,0 +1,519 @@
+<form method="post" action="{{ routes.cart_url }}" id="mini-cart" class="mini-cart" aria-hidden="true" novalidate="novalidate" data-item-count="{{ cart.item_count }}">
+  <style>
+    .product-min_warning{
+      cursor: pointer;
+      color: rgba(34, 34, 34, .25);
+      padding: 0 12px;
+    }
+  </style>
+  <input type="hidden" name="attributes[collection_products_per_page]" value="">
+  <input type="hidden" name="attributes[collection_layout]" value="">
+
+  {%- render 'icon', icon: 'nav-triangle-borderless' -%}
+
+  {% comment %}
+    {%- capture shipping_alert -%}
+      {%- if settings.cart_show_free_shipping_threshold -%}
+        {%- assign threshold_in_cents = settings.cart_free_shipping_threshold | times: 100 -%}
+
+        {%- if cart.total_price >= threshold_in_cents -%}
+          <p class="alert alert--tight alert--center text--strong">{{ 'cart.general.free_shipping' | t }}</p>
+        {%- else -%}
+          {%- capture remaining_amount -%}<span>{{ cart.total_price | minus: threshold_in_cents | abs | money }}</span>{%- endcapture -%}
+          <p class="alert alert--tight alert--center text--strong">{{ 'cart.general.free_shipping_remaining_html' | t: remaining_amount: remaining_amount }}</p>
+        {%- endif -%}
+      {%- endif -%}
+    {%- endcapture -%}
+  {% endcomment %}
+
+  {%- if cart.item_count == 0 -%}
+    <div class="mini-cart__content mini-cart__content--empty">
+      {%- if shipping_alert != blank -%}
+        {{- shipping_alert -}}
+      {%- endif -%}
+
+      <div class="mini-cart__empty-state">
+        {%- render 'icon', icon: 'big-cart' -%}
+        <p class="heading h4">{{ 'cart.general.empty' | t }}</p>
+      </div>
+
+      <a href="{{ settings.cart_empty_button_link }}" class="button button--primary button--full">{{ 'cart.general.empty_button' | t }}</a>
+    </div>
+  {%- else -%}
+      <div class="mini-cart__inner">
+        <div class="mini-cart__content">
+          {%- if shipping_alert != blank -%}
+            <div class="mini-cart__alert-wrapper">
+              {{- shipping_alert -}}
+            </div>
+          {%- endif -%}
+
+          <div class="mini-cart__line-item-list">
+            {% assign taxTotal = 0 %}
+            {% assign discountTotal = 0 %}
+            {%- for line_item in cart.items -%}
+              {%- assign productQty = 0 -%}
+              {%- assign stepQuantity = 1 -%}
+              {% assign productVendorName = line_item.vendor %}
+              {% if productVendorName == "Inventa Comércio" %}
+                {% assign productTags = line_item.product.tags | join: "|||" %}
+                {% assign productVendorIdentifier = "Fornecedor_" %}
+                {% if productTags contains "Marca_" %}
+                    {% assign productVendorIdentifier = "Marca_" %}
+                {% endif %}
+                {% assign productVendorName = productTags | split: productVendorIdentifier | last | strip | split: "|||" | first %}
+              {% endif %}
+              {%- for tag in line_item.product.tags -%}
+                {%- if tag contains "Pedido mínimo (produto)" -%}
+                  {%- assign productQty = tag | split: '_' | last | plus: 0 | at_least: 1 -%}
+                {%- endif -%}
+                {%- if tag contains "quantidade_aumento:" -%}
+                  {%- assign stepQuantity = tag | split: ':' | last | plus: 0 -%}
+                {%- endif -%}
+              {%- endfor -%}
+              <div class="mini-cart__line-item" id="{{ line_item.product.id }}" data-variant-id="{{ line_item.variant_id }}">
+                <div class="mini-cart__image-wrapper">
+                  {%- comment -%}For vertical images we force to contain them on a square ratio to avoid growing too large{%- endcomment -%}
+
+                  {%- if line_item.image.aspect_ratio < 1 -%}
+                    <div class="aspect-ratio aspect-ratio--square">
+                      <img src="{{ line_item.image | img_url: '180x' }}" alt="{{ line_item.image.alt | escape }}">
+                    </div>
+                  {%- else -%}
+                    <div class="aspect-ratio" style="padding-bottom: {{ 100.0 | divided_by: line_item.image.aspect_ratio }}%">
+                      <img src="{{ line_item.image | img_url: '180x' }}" alt="{{ line_item.image.alt | escape }}">
+                    </div>
+                  {%- endif -%}
+                </div>
+
+                <div class="mini-cart__item-wrapper">
+                  <div class="mini-cart__product-info">
+                    {%- unless line_item.product.tags contains '__gift' -%}
+                      {%- if settings.show_vendor -%}
+                        {%- assign vendor_handle = line_item.product.vendor | handle -%}
+                        {%- assign collection_for_vendor = collections[vendor_handle] -%}
+
+                        {%- unless collection_for_vendor.empty? -%}
+                          <a class="mini-cart__product-vendor link color-main-080 overline-1" href="{{ collection_for_vendor.url }}">{{ productVendorName }}</a>
+                          {%- else -%}
+                          <a class="mini-cart__product-vendor link color-main-080 overline-1" href="{{ productVendorName | url_for_vendor }}">{{ productVendorName }}</a>
+                        {%- endunless -%}
+                      {%- endif -%}
+                    {%- endunless -%}
+
+                    <p>
+                      <a href="{{ line_item.url }}" class="mini-cart__product-title text--strong link color-main-100 body-3-density-1">{{ line_item.title }}</a>
+                    </p>
+
+                    {%- if line_item.selling_plan_allocation -%}
+                      <p class="mini-cart__plan-allocation">{{ line_item.selling_plan_allocation.selling_plan.name }}</p>
+                    {%- endif -%}
+
+                    {%- unless line_item.properties == blank -%}
+                      <ul class="mini-cart__property-list" role="list">
+                        {%- for property in line_item.properties -%}
+                          {%- assign first_character_in_key = property.first | truncate: 1, '' -%}
+
+                          {%- if property.last == blank or first_character_in_key == '_' -%}
+                            {%- continue -%}
+                          {%- endif -%}
+
+                          <li class="mini-cart__property">{{ property.first }}: {{ property.last }}</li>
+                        {%- endfor -%}
+                      </ul>
+                    {%- endunless -%}
+
+                    {%- comment -%}If we have a Shopify Script, we use the reduced price here, otherwise we check the compare at price{%- endcomment -%}
+
+                    <div class="mini-cart__price-list">
+                      {% if customer %}
+                        {% assign linePrice = line_item.final_line_price %}
+                        {% for property in line_item.properties %}
+
+                          {% if property.first contains "imposto$" %}
+                            {% assign taxAmount = property.last | times: 100 %}
+                            {% assign taxTotal = taxTotal | plus: taxAmount %}
+                          {% endif %}
+                        {% endfor %}
+                        {%- if line_item.final_line_price < line_item.original_line_price -%}
+                          {% assign itemDiscounts = 0 %}
+                          {%- if line_item.line_level_discount_allocations != blank -%}
+                            {%- for discount_allocation in line_item.line_level_discount_allocations -%}
+                              {%- unless discount_allocation.discount_application.title contains "IMPOSTOS" -%}
+                                {% assign itemDiscounts = itemDiscount | plus: discount_allocation.discount_application.value | times: 100 %}
+                              {%- endunless -%}
+                            {%- endfor -%}
+                          {%- endif -%}
+                          {%- if line_item.final_price == 0 -%}
+                            <span class="price price--highlight color-main-080 body-3-density-1">{{ 'cart.general.free' | t }}</span>
+                          {%- else -%}
+                            <span class="price price--highlight color-main-080 body-3-density-1">{{ linePrice | money }}</span>
+                          {%- endif -%}
+
+                          {%- unless line_item.message contains "IMPOSTOS" -%}
+                            <span class="price price--compare color-main-080 body-3-density-1">{{ line_item.final_line_price | plus: itemDiscounts | money }}</span>
+                          {%- endunless -%}
+                        {%- elsif line_item.variant.compare_at_price > line_item.variant.price -%}
+                          {% assign currentPrice = line_item.variant.price | times: line_item.quantity %}
+                          <span class="price price--highlight color-main-080 body-3-density-1">{{ currentPrice | money }}</span>
+                          <span class="price price--compare color-main-080 body-3-density-1">{{ line_item.variant.compare_at_price | times: line_item.quantity | money }}</span>
+                        {%- else -%}
+                          <span class="price color-main-080 body-3-density-1" product-price="{{ line_item.final_line_price }}">{{ line_item.final_line_price | money }}</span>
+                        {%- endif -%}
+                      {% endif %}
+                    </div>
+
+                    {%- if line_item.unit_price_measurement -%}
+                      <div class="mini-cart__price-info">
+                        <div class="unit-price-measurement">
+                          <span class="unit-price-measurement__price">{{ line_item.unit_price | money }}</span>
+                          <span class="unit-price-measurement__separator">/ </span>
+
+                          {%- if line_item.unit_price_measurement.reference_value != 1 -%}
+                            <span class="unit-price-measurement__reference-value">{{ line_item.unit_price_measurement.reference_value }}</span>
+                          {%- endif -%}
+
+                          <span class="unit-price-measurement__reference-unit">{{ line_item.unit_price_measurement.reference_unit }}</span>
+                        </div>
+                      </div>
+                    {%- endif -%}
+
+                    {%- if line_item.line_level_discount_allocations != blank -%}
+                      {%- if customer -%}
+                        <ul class="mini-cart__discount-list" role="list">
+                          {%- for discount_allocation in line_item.line_level_discount_allocations -%}
+                            {%- unless discount_allocation.discount_application.title contains "IMPOSTOS" -%}
+                              {% assign discountTotal = discountTotal | plus: discount_allocation.discount_application.value %}
+                              <li class="mini-cart__discount">
+                                {%- render 'icon', icon: 'sale' -%}{{ discount_allocation.discount_application.title }} (-{{ discount_allocation.amount | money }})
+                              </li>
+                            {%- endunless -%}
+                          {%- endfor -%}
+                        </ul>
+                      {%- endif -%}
+                    {%- endif -%}
+                  </div>
+
+                  {%- comment -%}If the product has the tag "__gift", we remove the price{%- endcomment -%}
+
+                  {%- unless line_item.product.tags contains '__gift' -%}
+                    <div class="mini-cart__quantity">
+                      {% if customer %}
+                        <div class="quantity-selector border-width-hairline border-radius-sm border-color-main-50" variant-id="{{ line_item.variant_id }}">
+                          {%- assign allow_to_add_more = true -%}
+
+                          {%- if line_item.variant.inventory_management and line_item.variant.inventory_policy == 'deny' and line_item.quantity == line_item.variant.inventory_quantity -%}
+                            {%- assign allow_to_add_more = false -%}
+                          {%- endif -%}
+                          {% if line_item.quantity == productQty %}
+                          <span class="product-min_warning color-main-080" data-bs-toggle="tooltip" data-bs-html="true" title="Mínimo {{ productQty }} uni.">{% render 'icon', icon: 'minus' %}</span>
+                          {%- comment -%}<i class="fas fa-exclamation-triangle product-min_warning" style="padding: 0 12px; color: var(--accent-color);" data-bs-toggle="tooltip" data-bs-html="true" title="Mínimo {{ productQty }} uni."></i>{%- endcomment -%}
+                          {% else %}
+                          <button class="quantity-selector__button color-main-080" product-sku="{{ line_item.sku }}" data-action="decrease-quantity" data-quantity="{{ line_item.quantity | minus: stepQuantity | at_least: productQty }}" data-line="{{ forloop.index }}" aria-label="{{ 'cart.items.decrease_quantity' | t }}" title="{{ 'cart.items.decrease_quantity' | t }}">{% render 'icon', icon: 'minus' %}</button>
+                          {% endif %}
+
+                          <input aria-label="{{ 'product.form.quantity' | t }}"  min="{{ productQty }}" class="quantity-selector__value" inputmode="numeric" data-current-value="{{ line_item.quantity | at_least: productQty }}" data-line="{{ forloop.index }}" value="{{ line_item.quantity }}" size="{{ line_item.quantity | append: '' | size | at_least: 2 }}" id="quantity-{{ line_item.product.id }}" {% if stepQuantity > 1 %}data-step-quantity="{{ stepQuantity }}"{% endif %} step="{{ stepQuantity }}" data-old-value="{{ line_item.quantity }}">
+                          <button class="quantity-selector__button color-main-080" product-sku="{{ line_item.sku }}" data-action="increase-quantity" data-quantity="{{ line_item.quantity | plus: stepQuantity }}" data-line="{{ forloop.index }}" {% if allow_to_add_more %}aria-label="{{ 'cart.items.increase_quantity' | t }}" title="{{ 'cart.items.increase_quantity' | t }}"{% else %}disabled="disabled" aria-label="{{ 'cart.items.no_more_stock' | t }}" data-tooltip="{{ 'cart.items.no_more_stock' | t }}" data-tooltip-position="bottom-left"{% endif %}>{% render 'icon', icon: 'plus' %}</button>
+                        </div>
+
+                        <a href="{{ routes.cart_change_url }}?quantity=0&line={{ forloop.index }}" product-sku="{{ line_item.sku }}" data-action="decrease-quantity" data-quantity="0" data-line="{{ forloop.index }}" class="mini-cart__quantity-remove link color-main-100">Excluir</a>
+                      {% else %}
+                        <div variant-id="{{ line_item.variant_id }}" class="d-none">
+                          <input disabled="disabled" aria-label="{{ 'product.form.quantity' | t }}"  min="{{ productQty }}" class="quantity-selector__value" inputmode="numeric" data-current-value="{{ line_item.quantity | at_least: productQty }}" data-line="{{ forloop.index }}" value="{{ line_item.quantity }}" size="{{ line_item.quantity | append: '' | size | at_least: 2 }}" id="quantity-{{ line_item.product.id }}" {% if stepQuantity > 1 %}data-step-quantity="{{ stepQuantity }}"{% endif %} step="{{ stepQuantity }}" data-old-value="{{ line_item.quantity }}">
+                        </div>
+                      {% endif %}
+                    </div>
+                  {%- endunless -%}
+                </div>
+              </div>
+            {%- endfor -%}
+          </div>
+        </div>
+
+        <div class="mini-cart__recap">
+          {% if customer %}
+            {%- if cart.cart_level_discount_applications != blank -%}
+              {%- for discount_application in cart.cart_level_discount_applications -%}
+                <div class="mini-cart__recap-price-line mini-cart__recap-price-line--highlight text--pull">
+                  <span>{{ discount_application.title }}</span>
+                  <span>-{{ discount_application.total_allocated_amount | money }}</span>
+                </div>
+              {%- endfor -%}
+            {%- endif -%}
+
+            <div class="mini-cart__recap-price-line body-3-density-1 color-main-100">
+              <span class="fw-normal">Produtos sem impostos</span>
+              <span class="subtotalAmount fw-normal">{{ cart.total_price | minus: taxTotal | money }}</span>
+            </div>
+
+            <div>
+              <div class="mini-cart__recap-price-line body-3-density-1 color-main-100">
+                <span class="fw-normal">Impostos</span>
+                <span class="totalAmount fw-normal">{{ taxTotal | money }}</span>
+              </div>
+            </div>
+
+            <div>
+              <div class="mini-cart__recap-price-line body-3-density-1 color-main-100">
+                <span>{{ 'cart.general.total' | t }}</span>
+                <span class="totalAmount">{{ cart.total_price | money }}</span>
+              </div>
+            </div>
+
+            {%- if customer -%}
+              {% unless customer.tags contains "cpf-user" %}
+                {% assign credit = 0 %}
+                {% assign spent = 0 %}
+                {% for tag in customer.tags %}
+                {% if tag contains 'credit:' %}
+                {% assign credit = tag | split: ':' | last %}
+                {% assign creditDue = 90 %}
+                {% endif %}
+                {% if tag contains 'spent:' %}
+                {% assign found-spent = tag | split: ':' %}
+                {% assign spent = spent | plus: found-spent[1] %}
+                {% endif %}
+                {% endfor %}
+                {% if customer.tags contains 'credit30' %}
+                {% assign creditDue = 30 %}
+                {% elsif customer.tags contains 'credit15' %}
+                {% assign creditDue = 15 %}
+                {% endif %}
+                {% assign credit = credit | minus: spent %}
+                {% assign cents = credit | modulo: 1 %}
+                {% assign credit = credit | minus: cents %}
+                {% if credit > 0 %}
+                <div>
+                  <p class="text-end color-main-080 body-3-density-1">Pague em {{ creditDue }} dias compras de até {{ credit | times: 100 | floor | money }}</p>
+                </div>
+                {% endif %}
+              {% endunless %}
+            {%- endif -%}
+            {%- comment -%}To calculate the total discount, we take both into account the Shopify Script (for Plus merchants), but we also add the compare at price{%- endcomment -%}
+
+            {%- assign total_discount = 0 -%}
+            {% comment %}
+
+            {%- for line_item in cart.items -%}
+              {%- if line_item.final_line_price < line_item.original_line_price and line_item.message != "IMPOSTOS" and line_item.message != "PREÇO SEM IMPOSTOS" -%}
+                {%- assign total_discount = total_discount | plus: line_item.total_discount -%}
+              {%- elsif line_item.variant.compare_at_price > line_item.variant.price and line_item.message != "IMPOSTOS" and line_item.message != "PREÇO SEM IMPOSTOS" -%}
+                {%- assign line_discount = line_item.variant.compare_at_price | minus: line_item.variant.price | times: line_item.quantity -%}
+                {%- assign total_discount = total_discount | plus: line_discount -%}
+              {%- endif -%}
+            {%- endfor -%}
+
+            {%- assign discountAmount = discountTotal | times: 100 -%}
+            {%- assign discountValue = total_discount -%}
+            {%- assign totalDiscounts = discountValue | plus: discountAmount -%}
+
+            {%- if totalDiscounts > 0 -%}
+              {%- capture amount_saved -%}<span>{{ totalDiscounts | money }}</span>{%- endcapture -%}
+              <span class="mini-cart__amount-saved body-2-density-1 fw-bold color-green-darken-20">{{ 'cart.general.amount_saved_html' | t: amount_saved: amount_saved }}</span>
+            {%- endif -%}
+            {% endcomment %}
+
+            {%- assign customerOrdersCount = customer.orders_count | plus: 0 -%}
+      {%- assign customerTags = customer.tags | upcase | join: "," -%}
+
+      {% comment %}
+      {% if customerTags contains 'ESTADO:' and customerTags contains 'test_experiment_group' %}
+        {%- if cart.total_price > 0 -%}
+        {%- assign remaining = 1000 | times: 100 | minus: cart.total_price -%}
+        <p class="border-top mt-2 pt-2 mb-0 pb-0 progress-bar_not-full">{%- if remaining > 0 -%}Falta pouco para ganhar 50% em seu frete{%- else -%}Já tem 50%, só pouco mais para ganhar FRETE GRÁTIS{%- endif -%}</p>
+        <p class="border-top mt-2 pt-2 mb-0 pb-0 progress-bar_full">Parabéns, você ganhou FRETE GRÁTIS!</p>
+        <div class="progress">
+          <div class="progress-bar progress-bar_control bg-warning"></div>
+        </div>
+        <p class="text-secondary progress-bar_remaining">Adicione <span class="progress-bar_remaining-number"></span> em produtos</p>
+      {%- endif -%}
+      {% else %}
+      <div class="mt-2">
+        <p class="border-top pt-2 text-center text-uppercase color-main-100 body-3-density-1 fw-bold">FRETE GRÁTIS PARA TODOS OS PRODUTOS</p>
+      </div>
+      {% endif %}
+      {% endcomment %}
+
+            <div class="mini-cart__button-container">
+              <div class="button-group button-group--loose button-group--fit">
+                <a href="{{ routes.cart_url }}" class="py-2 mt-0 w-100 text-center body-2-density-1 fw-bold color-main-100 border-radius-md color-background-yellow-accent">{{ 'cart.general.view_cart' | t }}</a>
+              </div>
+            </div>
+
+            {%- if settings.hide_express_checkout_buttons -%}
+              {%- comment -%}
+                By showing the div in the cart but hiding it in CSS, the express checkout buttons are hidden from the first step of the checkout, and
+                are rather deferred to the payment step. This is a hacky trick, but it is often requested by merchants.
+              {%- endcomment -%}
+
+              {%- if additional_checkout_buttons -%}
+                <div class="additional-checkout-buttons" style="display: none !important">
+                  {{ content_for_additional_checkout_buttons }}
+                </div>
+              {%- endif -%}
+            {%- endif -%}
+          {% else %}
+            <a href="#" onclick="openModal(); event.preventDefault()" class="js-login-btn button button--primary button--full">Login para comprar</a>
+          {% endif %}
+        </div>
+      </div>
+      {% comment %}<script src="{{ 'minicartValidation.js' | asset_url }}"></script>{% endcomment %}
+  {%- endif -%}
+
+</form>
+
+<script>
+  const updateProductCards = () => {
+    fetch('/cart.json').then(res => res.json())
+    .then(res => {
+      if(typeof progressBar_update == 'function') {
+        const shippingInfo = {
+          remaining: 0,
+          message: 'Já tem 50% ;)',
+          percent: 100
+        }
+        if((discountShippingValue - res.total_price) > 0){
+          shippingInfo.remaining = (discountShippingValue - res.total_price);
+          shippingInfo.percent = Math.round(
+            (res.total_price * 100) / discountShippingValue
+          );
+          shippingInfo.message = 'Falta pouco para ganhar 50% em seu frete';
+        }else{
+          shippingInfo.remaining = (freeShippingValue - res.total_price);
+          shippingInfo.percent = Math.round(
+            (res.total_price * 100) / freeShippingValue
+          );
+        }
+        if (typeof progressBar_update == "function")
+          progressBar_update(shippingInfo.percent, shippingInfo.remaining, shippingInfo.message);
+      }
+      const { items } = res;
+      const cardsWithItems = document.querySelectorAll('input.value-control:not([value="0"])');
+      for(let i = 0; i < cardsWithItems.length; i++){
+        const id = cardsWithItems[i].parentElement.getAttribute('product-id');
+        if(!items.some(({variant_id}) => variant_id == id)){
+          cardsWithItems[i].value = 0;
+          cardsWithItems[i].setAttribute('value', 0);
+          cardsWithItems[i].setAttribute('old-value', 0);
+        }
+      }
+      for(let i = 0; i < items.length; i++){
+        const { variant_id, quantity } = items[i];
+        const input = document.querySelectorAll(`[product-id="${variant_id}"] input.value-control`);
+        if(input.length){
+          for(let i = 0; i < input.length; i++){
+            input[i].value = quantity;
+            input[i].setAttribute('value', quantity);
+            input[i].setAttribute('old-value', quantity);
+          }
+        }
+      }
+    })
+  }
+
+  const clickLess = (dataline) => {
+    const button = document.querySelector(`.quantity-selector__button[data-line="${dataline}"]`);
+    button.click();
+    document.documentElement.dispatchEvent(new CustomEvent('cart:refresh', {
+      bubbles: true
+    }));
+  }
+  const getMiniCart = () => {
+    setTimeout(() => {
+      updateProductCards();
+      const iconWarnings = document.querySelectorAll('.product-min_warning');
+      for(let i = 0; i < iconWarnings.length; i++){
+        new bootstrap.Tooltip(iconWarnings[i]);
+      }
+      const inputs = document.querySelectorAll('.quantity-selector__value');
+      const buttons = document.querySelectorAll('.quantity-selector__button');
+      const removes = document.querySelectorAll('.mini-cart__quantity-remove');
+      for(let i = 0; i < buttons.length; i++){
+        buttons[i].addEventListener('click', () => {
+          document.documentElement.dispatchEvent(new CustomEvent('cart:refresh', {
+            bubbles: true
+          }));
+        })
+      }
+      for(let i = 0; i < inputs.length; i++){
+        let oldValue;
+        inputs[i].addEventListener('focus', () => {
+          oldValue = inputs[i].value;
+        })
+        inputs[i].addEventListener('blur', () => {
+          const newValue = parseInt(inputs[i].value);
+          const min = parseInt(inputs[i].getAttribute('min'));
+          if(newValue != oldValue){
+            if(newValue < min) {
+              const dataLine = inputs[i].getAttribute('data-line');
+              setTimeout(() => {
+                clickLess(dataLine);
+              }, 750);
+            }else{
+              document.documentElement.dispatchEvent(new CustomEvent('cart:refresh', {
+                bubbles: true
+              }));
+            }
+          }
+        })
+      }
+      for(let i = 0; i < removes.length; i++){
+        removes[i].addEventListener('click', () => {
+          const info = removes[i].parentElement.parentElement.querySelector('.mini-cart__product-info');
+          const title = info.querySelector('.mini-cart__product-title').innerText;
+          const vendor = info.querySelector('.mini-cart__product-vendor').innerText;
+          const url = window.location.href;
+          const sku = removes[i].getAttribute('product-sku');
+          const position = removes[i].getAttribute('data-line');
+          const price = info.querySelector('[product-price]').getAttribute('product-price');
+          window.dataLayer.push({
+            event: 'removeProduct',
+            userID: customer.id,
+            data: JSON.stringify({
+              title, vendor, url,
+              sku, position, price
+            })
+          })
+
+          document.documentElement.dispatchEvent(new CustomEvent('cart:refresh', {
+            bubbles: true
+          }));
+        });
+      }
+
+      const lessToRemove = document.querySelectorAll('button[data-action="decrease-quantity"][data-quantity="0"]');
+      for(let i = 0; i < lessToRemove.length; i++){
+        lessToRemove[i].addEventListener('click', () => {
+          const info = removes[i].parentElement.parentElement.parentElement.querySelector('.mini-cart__product-info');
+          const title = info.querySelector('.mini-cart__product-title').innerText;
+          const vendor = info.querySelector('.mini-cart__product-vendor').innerText;
+          const url = window.location.href;
+          const sku = lessToRemove[i].getAttribute('product-sku');
+          const position = lessToRemove[i].getAttribute('data-line');
+          const price = lessToRemove[i].parentElement.parentElement.parentElement.querySelector('[product-price]').getAttribute('product-price');
+          window.dataLayer.push({
+            event: 'removeProduct',
+            userID: customer.id,
+            data: JSON.stringify({
+              title, vendor, url,
+              sku, position, price
+            })
+          })
+        })
+      }
+      
+      const goCart = document.querySelector('#mini-cart a[href="/cart"]');
+      if(goCart){
+        goCart.addEventListener('click', () => {
+          window.dataLayer.push({
+            event: 'viewCart',
+            userID: customer.id,
+            data: JSON.stringify({ url: window.location.href })
+          })
+        })
+      }
+    }, 1000)
+  }
+  window.addEventListener('cart:refresh', getMiniCart);
+  setTimeout(getMiniCart, 2000);
+</script>

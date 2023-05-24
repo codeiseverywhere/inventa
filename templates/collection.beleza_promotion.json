@@ -1,0 +1,78 @@
+{
+  "sections": {
+    "header": {
+      "type": "promotion-page-header",
+      "blocks": {
+        "a60f51f5-38b5-492b-aa60-4853c73723e3": {
+          "type": "banner",
+          "disabled": true,
+          "settings": {
+            "promotion-banner-image": "shopify:\/\/shop_images\/oldinventa-comercio.png",
+            "banner_link": ""
+          }
+        }
+      },
+      "block_order": [
+        "a60f51f5-38b5-492b-aa60-4853c73723e3"
+      ],
+      "settings": {
+        "show-promo-banner": true,
+        "autoplay-promo-banner": true,
+        "autoplay-time": 3
+      }
+    },
+    "description": {
+      "type": "promotion-page-description",
+      "settings": {
+        "title": "Beleza e Bem-Estar",
+        "content": "Nessa página você encontra milhares de ótimos produtos de Beleza e Bem-Estar de marcas incríveis! São inúmeras opções disponíveis em categorias como  Maquiagem, Cabelo, Cuidado Pessoal, Esmaltes, Perfumes e muito mais. Aproveite!",
+        "image": "shopify:\/\/shop_images\/icone.png"
+      }
+    },
+    "carousal": {
+      "type": "promotion-product-carousal",
+      "settings": {
+        "show-priority-collection": true,
+        "title": "Principais Marcas",
+        "collection": "beleza-e-bem-estar"
+      }
+    },
+    "main": {
+      "type": "collection-template",
+      "blocks": {
+        "bc29b24f-f099-44a7-aef9-ea648232e009": {
+          "type": "seller_priority",
+          "settings": {
+            "seller-name": "seller"
+          }
+        }
+      },
+      "block_order": [
+        "bc29b24f-f099-44a7-aef9-ea648232e009"
+      ],
+      "settings": {
+        "show_collection_image": true,
+        "collapse_collection_description": false,
+        "collection_image_size": "small",
+        "products_per_row": "4",
+        "default_products_per_page": 24,
+        "default_view_layout": "grid",
+        "show_quick_buy": "list",
+        "show_quick_view": "list",
+        "quick_links": "",
+        "quick_links_show_products_count": true,
+        "show_filters": true,
+        "show_filter_color_swatch": true,
+        "filter_type": "tag",
+        "open_group_filters_mode": "all_closed",
+        "filter_group_order": ""
+      }
+    }
+  },
+  "order": [
+    "header",
+    "description",
+    "carousal",
+    "main"
+  ]
+}

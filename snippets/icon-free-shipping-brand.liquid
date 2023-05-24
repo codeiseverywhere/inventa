@@ -1,0 +1,18 @@
+{% assign freeShippingBrands = shop.metafields.vendor_free_shipping.whitelist %}
+{% assign freeShippingBrandDetails = "Marca que oferece frete grátis" %}
+{% assign iconSizeSvg = 20 %}
+{% if iconSize %}
+	{% assign iconSizeSvg = iconSize %}
+{% endif %}
+{% assign formattedBrand = brand | json | remove: "\u0026#39;" | remove: '"' | remove: "'" %}
+
+{% if freeShippingBrands contains brand or brand == nil or freeShippingBrands contains formattedBrand %}
+	<span class="d-inline free-shipping-seal" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="top" data-bs-content="{{ freeShippingBrandDetails }}">
+		<svg class="{{ svgClass }}" width="{{ iconSizeSvg }}" height="{{ iconSizeSvg }}" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+			<path fill-rule="evenodd" clip-rule="evenodd" d="M5.52042 2.14597C6.2921 2.08439 7.02469 1.78094 7.61389 1.27883C8.98886 0.10709 11.0111 0.10709 12.3861 1.27883C12.9753 1.78094 13.7079 2.08439 14.4796 2.14597C16.2804 2.28968 17.7103 3.71965 17.8541 5.52044C17.9156 6.29212 18.2191 7.02471 18.7212 7.61391C19.8929 8.98888 19.8929 11.0112 18.7212 12.3861C18.2191 12.9753 17.9156 13.7079 17.8541 14.4796C17.7103 16.2804 16.2804 17.7104 14.4796 17.8541C13.7079 17.9157 12.9753 18.2191 12.3861 18.7212C11.0111 19.893 8.98886 19.893 7.61389 18.7212C7.02469 18.2191 6.2921 17.9157 5.52042 17.8541C3.71963 17.7104 2.28965 16.2804 2.14595 14.4796C2.08437 13.7079 1.78092 12.9753 1.2788 12.3861C0.107067 11.0112 0.107067 8.98888 1.2788 7.61391C1.78092 7.02471 2.08437 6.29212 2.14595 5.52044C2.28965 3.71965 3.71963 2.28968 5.52042 2.14597ZM14.4485 8.44855C14.9172 7.97992 14.9172 7.22012 14.4485 6.7515C13.9799 6.28287 13.2201 6.28287 12.7515 6.7515L8.8 10.703L7.24853 9.15149C6.7799 8.68287 6.0201 8.68287 5.55147 9.15149C5.08284 9.62012 5.08284 10.3799 5.55147 10.8486L7.95147 13.2486C8.4201 13.7172 9.1799 13.7172 9.64853 13.2486L14.4485 8.44855Z" fill="#0ed511"/>
+		</svg>
+		{% if text %}
+			<span class="color-green-darken-20 font-weight-bold align-middle {{ textSize }}">{{ text }}</span>
+		{% endif %}
+	</span>
+{% endif %}

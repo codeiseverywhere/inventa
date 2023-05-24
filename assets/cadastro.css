@@ -1,0 +1,696 @@
+html {
+  font-family: Nunito, sans-serif;
+}
+
+.nav-container {
+  height: 56px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid #e1e9ef;
+}
+
+.waiting-list-submit {
+  border: none;
+  background: none;
+  padding: 0;
+}
+
+@media (min-width: 992px) {
+  .nav-container {
+    height: 72px;
+  }
+}
+
+@media (min-width: 992px) {
+  .container,
+  .container-lg,
+  .container-md,
+  .container-sm {
+    max-width: 768px !important;
+  }
+}
+
+.success-modal-container {
+  left: 0;
+  top: 0;
+  background: #00000080;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.success-modal {
+  background: #fff;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding: 1rem;
+}
+
+.icon-container {
+  border-radius: 50%;
+  background: #f7f9fc;
+  padding: 0.75rem 1rem;
+  border: 0;
+}
+
+
+.button-redirect {
+  color: #000 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background-color: #ffd93d !important;
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
+  width: 80%;
+  height: 48px;
+  line-height: 0;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 16px;
+  max-width: 340px;
+  margin-top: 50px;
+  margin-bottom: 2rem;
+  text-decoration: none;
+}
+
+.success-modal-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.success-modal-content h2 {
+  font-family: "Nunito";
+  font-style: normal;
+  font-weight: 800;
+  font-size: 28px;
+  line-height: 38px;
+  text-align: center;
+  max-width: 490px;
+  color: #373d43;
+}
+
+.success-modal-content h4 {
+  font-family: "Nunito";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 38px;
+  text-align: center;
+  color: #777a7c;
+}
+
+.waiting-form-container {
+  background: "red";
+}
+
+.waiting-list-submit {
+  color: #4793ef;
+}
+
+.cf-phone-field .cf-country-picker {
+  display: none !important;
+}
+
+.cnpj-banner {
+  background: #eef7fe;
+  border-radius: 16px;
+  margin: 1rem auto;
+}
+
+.cnpj-banner h4 {
+  color: #4793ef;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.cnpj-banner p {
+  font-size: 14px;
+}
+
+.cnpj-banner p a {
+  color: #4793ef;
+  font-weight: 700;
+}
+
+.register-lojista-form__container {
+  background: #fff;
+
+  background-image: -webkit-linear-gradient(
+    to bottom,
+    #f7f9fc 250px,
+    #fff 251px
+  );
+  background-image: -moz-linear-gradient(to bottom, #f7f9fc 250px, #fff 251px);
+  background-image: -o-linear-gradient(to bottom, #f7f9fc 250px, #fff 251px);
+  background-image: -ms-linear-gradient(to bottom, #f7f9fc 250px, #fff 251px);
+  background-image: linear-gradient(to bottom, #f7f9fc 250px, #fff 251px);
+}
+
+.register-lojista-form {
+  min-height: calc(100vh - 72px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-family: Nunito, sans-serif;
+}
+
+.register-lojista-form .page__header {
+  margin: 20px 0;
+  display: flex;
+}
+
+.register-lojista-form .page__title {
+  margin: 0 auto;
+  font-weight: 800;
+  font-size: 26px;
+}
+
+.page__title,
+.about-you,
+.about-company {
+  font-family: "Nunito", sans-serif !important;
+  font-weight: 800;
+}
+
+.about-you,
+.about-company {
+  font-size: 20px;
+  margin-bottom: 12px;
+}
+.about-company {
+  margin-top: 16px;
+}
+
+.page__header {
+  margin: 50px 0;
+}
+
+.cf-step-tabs {
+  display: none;
+  font-family: Nunito, sans-serif;
+}
+
+.register-lojista__card {
+  padding: 40px 16px;
+  background: #fff;
+  min-width: 328px;
+  width: 328px;
+  margin: 0 auto;
+  border-radius: 16px;
+  margin-top: 48px;
+}
+@media (min-width: 992px) {
+  .register-lojista__card {
+    width: 807px;
+  }
+}
+
+.register-lojista-form .page__header {
+  margin: 20px 0 24px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.register-lojista-form .page__title {
+  color: #373d43;
+  margin: 0 auto;
+  font-weight: 800;
+  font-size: 23px;
+  margin-bottom: 8px;
+}
+@media (min-width: 992px) {
+  .register-lojista-form .page__title {
+    font-size: 31px;
+  }
+}
+
+.register-lojista-form .page__header span {
+  color: #777a7c;
+  font-size: 14px;
+  text-align: center;
+}
+@media (min-width: 992px) {
+  .register-lojista-form .page__header span {
+    font-size: 18px;
+    width: 600px;
+  }
+}
+
+.d-none {
+  display: none;
+}
+
+.text-step {
+  font-weight: 800 !important;
+  font-size: 14px !important;
+}
+
+.text-step-disable {
+  color: #e1e9ef !important;
+}
+
+.text-step-enable {
+  color: #4793ef !important;
+}
+
+.box-number {
+  display: flex;
+  align-items: center;
+}
+.container-step {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+  font-family: "Nunito", sans-serif !important;
+}
+
+.box-step {
+  flex-direction: column;
+  display: flex;
+}
+.box-step-2 {
+  flex-direction: column;
+  display: flex;
+  justify-content: end;
+}
+
+#radius-negative-right {
+  margin-right: -5px;
+}
+
+#radius-negative-left {
+  margin-left: -5px;
+}
+
+.radius-negative-pattern {
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 15px !important;
+  background-color: white !important;
+  z-index: 1;
+}
+
+.line-sizes {
+  height: 5px !important;
+  width: 100px !important;
+  border-radius: 50px !important;
+}
+
+.line-enable {
+  background-color: #4793ef !important;
+  border-radius: 50px !important;
+}
+
+.line-right {
+  margin-right: -2px;
+}
+
+.line-left {
+  margin-left: -2px;
+}
+
+.line-disable {
+  background-color: #e1e9ef !important;
+  border-radius: 50px !important;
+}
+
+.circle-pattern {
+  border-radius: 50px;
+  font-weight: 800 !important;
+  font-size: 14px !important;
+  float: left;
+  text-align: center;
+  width: 32px !important;
+  height: 32px !important;
+}
+
+.circle-right {
+  margin-right: 2.5rem;
+}
+
+.circle-left {
+  margin-left: 1.5rem;
+}
+
+.circle-enable {
+  color: white !important;
+  background-color: #4793ef !important;
+  line-height: 32px !important;
+}
+
+.circle-disable {
+  color: #e1e9ef !important;
+  background: #ffffff !important;
+  border: 2px solid #e1e9ef !important;
+  line-height: 30px !important;
+}
+
+.register-lojista-form .terms-container {
+  flex-wrap: nowrap !important;
+}
+
+.register-lojista-form .terms-container .cf-field-description {
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  color: #1a1a1a !important;
+  opacity: 1;
+}
+
+.register-lojista-form .terms-container .cf-field-description a {
+  color: #1472e4;
+}
+
+.register-lojista-form .terms-container {
+  padding: 0;
+}
+
+.register-lojista-form .terms-container .cf-field-description {
+  padding: 0;
+}
+
+.register-lojista-form .cf-form-actions button.cf-submit-form,
+.register-lojista-form .cf-form-actions button.cf-next-step {
+  color: #000 !important;
+  background-color: #ffd93d !important;
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
+  width: 50%;
+  height: 48px;
+  line-height: 0;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.register-lojista-form .cf-form-actions button.cf-next-step {
+  margin: 0 auto;
+  display: block;
+}
+
+.register-lojista-form .cf-form-actions button.cf-prev-step {
+  background: white !important;
+  color: black !important;
+  border: 1px solid #ffd93d;
+  width: 45%;
+  border-radius: 20px;
+
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
+
+  height: 48px;
+  line-height: 0;
+  font-weight: 700;
+  font-size: 16px;
+  margin: 0 !important;
+}
+
+.register-lojista-form .cf-form-actions button.cf-prev-step:hover {
+  background: white;
+}
+
+.register-lojista-form .cf-form-actions button.cf-submit-form {
+  margin: 0 0 0 0.5rem !important;
+}
+
+@media (min-width: 768px) {
+  .register-lojista-form .cf-form-actions button.cf-submit-form,
+  .register-lojista-form .cf-form-actions button.cf-next-step {
+    width: 45%;
+  }
+
+  .register-lojista-form .cf-form-actions button.cf-submit-form {
+    margin: 0 0 0 2rem !important;
+  }
+}
+
+.register-lojista-form .cf-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.register-lojista-form .cf-react-target {
+  margin-bottom: 58px;
+}
+
+.register-lojista-form .cf-field {
+  margin: 0;
+}
+
+.success-modal-content .icon-container {
+  margin-bottom: 30px;
+}
+
+.form__container {
+  display: flex;
+  flex-direction: column;
+}
+@media (min-width: 992px) {
+  .form__container {
+    width: 392px;
+    margin: 0 auto;
+  }
+}
+
+.progress-bar__container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 4px;
+}
+
+.go-back__container {
+  position: absolute;
+  left: 12px;
+  top: -4px;
+}
+
+.go-back__btn {
+  width: 32px;
+  height: 32px;
+  font-size: 20px;
+  background: #fff;
+  border: none;
+  font-size: 22px;
+}
+
+.register-form__progress-bar {
+  display: flex;
+  width: 200px;
+  height: 30px;
+}
+
+.register-form__progress-bar .step {
+  position: relative;
+  text-align: center;
+  width: 100%;
+}
+
+.register-form__progress-bar .step:last-child .bullet:before {
+  display: none;
+}
+
+.register-form__progress-bar .step .bullet:before {
+  position: absolute;
+  content: "";
+  bottom: 11px;
+  right: -40px;
+  height: 1px;
+  width: 35px;
+  background-color: #c7d3d9;
+}
+
+.register-form__progress-bar .step .bullet {
+  position: relative;
+  height: 24px;
+  width: 24px;
+  display: inline-block;
+  border-radius: 50%;
+  background-color: #f7f9fc;
+}
+
+.register-form__progress-bar .step span {
+  position: absolute;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 24px;
+  letter-spacing: 0em;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.register-form__progress-bar .step .check {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  font-size: 12px;
+  transform: translate(-50%, -50%);
+  color: #fff;
+}
+
+.register-form__progress-bar .step .check span {
+  display: none;
+}
+
+.register-form__progress-bar .step.active-step .bullet {
+  background-color: #373d43;
+  color: #fff;
+}
+
+.register-form__progress-bar .step.step-completed .bullet {
+  background-color: #27c478;
+  color: #fff;
+}
+
+.register-form__progress-bar .step.step-completed .bullet span {
+  display: none;
+}
+
+.register-lojista-form .step__container {
+  display: flex;
+  flex-direction: column;
+}
+
+.register-lojista-form .step__container a {
+  font-size: 14px;
+  font-weight: 700;
+  color: #4793ef;
+}
+@media (min-width: 992px) {
+  .register-lojista-form .step__container a {
+    font-size: 16px;
+  }
+}
+
+.go-to-cnpj-form-link__container {
+  display: flex;
+  width: auto;
+}
+
+.register-lojista-form__btn {
+  color: #1a1a1a;
+  background-color: #ffd93d;
+  height: 44px;
+  border-radius: 17.6px;
+  border: none;
+  font-weight: bold;
+  margin-top: 48px;
+}
+
+.register-lojista-form__btn span {
+  margin-left: 12px;
+}
+
+.register-lojista-form__btn:disabled {
+  background-color: #f7f9fc;
+  color: #c7d3d9;
+  cursor: not-allowed;
+}
+
+.step2__btn--next {
+  margin-top: 24px;
+}
+
+.confirmar__btn {
+  margin-top: 32px;
+}
+
+.link__container {
+  color: #373d43;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 32px;
+}
+@media (min-width: 992px) {
+  .link__container {
+    font-size: 16px;
+  }
+}
+
+.error-phantom-form {
+  display: inline-block;
+  background: #fdf5f5;
+  border: 1px solid #ce2525;
+  color: #ce2525;
+  border-radius: 3px;
+  padding: 8px 12px;
+  font-weight: 700;
+  font-size: 1em;
+  width: 100%;
+  margin-top: 16px;
+}
+
+.cf-step-invalid {
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+/*  */
+
+/* .register-lojista-form .cf-step-invalid {
+  display: none;
+} */
+
+.register-lojista-form .cf-step-invalid ul:last-child {
+  margin-bottom: 0;
+}
+
+.error-phantom-form .cf-step-invalid {
+  display: inline-block;
+}
+
+.register-lojista-form .cf-field {
+  margin: 4px 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  border: 1px solid transparent;
+  box-sizing: border-box;
+  align-items: flex-start;
+  position: relative;
+}
+
+.register-lojista-form .cf-field-async-validation-spinner {
+  top: 50% !important;
+  right: 1em !important;
+  transform: translate(-50%, -50%);
+}
+
+.register-lojista-form .step__container .form__div a {
+  font-size: 10px;
+  margin-bottom: 0;
+}
+@media (min-width: 992px) {
+  .register-lojista-form .step__container .form__div a {
+    font-size: 16px;
+  }
+}
+
+.confirmar__btn--info {
+  display: flex;
+  justify-content: center;
+}
+
+.confirmar__btn--info .spinner {
+  border: 2px solid rgba(0, 0, 0, 0);
+  border-top: 2px solid #c7d3d9;
+  border-right: 2px solid #c7d3d9;
+  border-bottom: 2px solid #c7d3d9;
+}

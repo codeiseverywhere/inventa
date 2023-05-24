@@ -1,0 +1,75 @@
+<div class="toast p-2" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="2000">
+  <div class="row p-1">
+    <div class="toast-image col-3 border border-light text-center"></div>
+    <div class="col-9 fs-6">
+      <div class="toast-body">
+        <div class="title fw-bold"></div>
+        <div class="content"></div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      {%- assign customerOrdersCount = customer.orders_count | plus: 0 -%}
+      {%- assign shippingValidStates = "AC,AM,AP,PA,RO,RR,TO,AL,BA,CE,MA,PB,PE,PI,RN,SE" -%}
+      {%- assign customerTags = customer.tags | upcase | join: "," -%}
+      {%- assign payShipping = false -%}
+
+      {% if customerTags contains 'ESTADO:' and customerTags contains 'hasToPayShipping_yes' %}
+        {%- assign stateTag = customerTags | split: "ESTADO:" | last | strip | slice: 0, 2 -%}
+        {% if shippingValidStates contains stateTag %}
+          {%- assign payShipping = true -%}
+        {% endif %}
+      {% endif %}
+      {% if payShipping == true %}
+        <div class="border-top pt-2">
+          <p class="lato mb-0 pb-0 progress-bar_not-full">Já tem 50%, só pouco mais para ganhar FRETE GRÁTIS</p>
+          <p class="lato mb-0 pb-0 progress-bar_full">Parabéns, você ganhou FRETE GRÁTIS!</p>
+          <div class="progress">
+            <div class="progress-bar progress-bar_control bg-warning" role="progressbar" aria-valuenow="{{ percentageBar }}" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+          <p class="text-secondary progress-bar_remaining">Adicione <span class="progress-bar_remaining-number"></span> em produtos</p>
+        </div>
+      {% else %}
+        {% comment %}
+        <p class="border-top pt-2 text-center lato text-uppercase font-color-accent">FRETE GRÁTIS PARA TODOS OS PRODUTOS</p>
+        {% endcomment %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<style>
+  .toast {
+    position: absolute;
+    top: 12vh;
+    right: 25px;
+    z-index: 2000;
+  }
+  .toast:not(.showing):not(.show){
+    display: none;
+  }
+  .toast-image img {
+    max-height: 65px;
+  }
+  @media(min-width: 1000px){
+    .toast{
+      top: 110px;
+    }
+  }
+  @media(max-width: 600px){
+    .toast{
+      width: 90%;
+      right: 5%;
+    }
+  }
+</style>
+
+<script defer>
+  window.addEventListener('load', () =>{
+    var toastElList = [].slice.call(document.querySelectorAll('.toast'))
+    var toastList = toastElList.map(function (toastEl) {
+      return new bootstrap.Toast(toastEl)
+    })
+  })
+</script>

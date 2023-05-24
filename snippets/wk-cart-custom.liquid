@@ -1,0 +1,432 @@
+{% assign _SERVER_ = 'https://sp-seller.webkul.com/' %}
+{% assign draft_order_enabled = 0 %}
+{% assign pickup_by_cart_enabled = 0 %}
+
+<div class="wk-main-conent__split-cart">
+  <div id="hidePriceStyles"></div>
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" type="text/javascript"></script>
+  <input type="hidden" id="server_name" value={{ _SERVER_ }}>
+  <script>
+    var from_cart_page = true;
+    var server_name = document.getElementById("server_name").value;
+    var draft_order_enabled = "{{draft_order_enabled}}";
+    var pickup_by_cart_enabled =  "{{pickup_by_cart_enabled}}";
+    var pickup_by_cart_error_message = " not Available at selected Location";
+    var want_order_as_label = "{{want_order_as_label | default:"Want Order As"}}";
+    var route_public_token = "411fb1c4-616a-4279-a1a1-aafe1afbc7ea";
+     if (typeof(label_data) != "undefined" && label_data && label_data.label34) {
+        wk_preorder_qty_error_label = label_data.label34;
+    } else {
+        wk_preorder_qty_error_label = "Product quantity available for preorder is less than the quantity added to the cart. Kindly, reduce the product quantity & proceed to checkout.";
+    }
+  </script>
+
+  {{ _SERVER_ | append : 'assets/split-cart/wk-split-cart-thanku.js' | script_tag }}
+  {{ 'wk-split-cart.css' | asset_url | stylesheet_tag }}
+  {% if cart.item_count > 0 %}
+    <h1 class="h2">Meu Carrinho</h1>
+    <div class="no-display" id="wk_minimum_purchase_div"></div>
+  <style>
+    .no-display{
+      display: none !important;
+    }
+  </style>
+    <form action="/cart" method="post" novalidate>
+        {% assign tem_vendor_wise_products = "" %}
+        {% for item in cart.items %}
+          {% assign tem_vendor_wise_products = tem_vendor_wise_products | append: item.vendor  | append: '$!$' %} 
+        {% endfor %}
+        {% assign vendor_wise_products = tem_vendor_wise_products| split: '$!$' | uniq %}
+        {% assign vendors = "" %}
+        <script>
+          var vendors= "{{tem_vendor_wise_products|replace:"&amp;","&"}}"
+          var vend={{vendor_wise_products|json}};
+          var order_note1 = sessionStorage.getItem("order_note");
+          var new_order_note = {};
+          if(order_note1){
+              order_note1 = JSON.parse(order_note1);
+              for(j=0;j< vend.length; j++)
+              {
+                if(order_note1[vend[j]] != undefined)
+                  new_order_note[vend[j]] = order_note1[vend[j]];
+              }
+  
+            }
+              sessionStorage.removeItem("order_note")
+                 sessionStorage.setItem("order_note", JSON.stringify(new_order_note))
+              
+              
+              function u(e, o, r, n) {
+                  var t = "https://api.route.com"; 
+                        o || (o = {}), e += "?" + function(e) {
+                            var o = [];
+                            for (var t in e) e.hasOwnProperty(t) && o.push(encodeURIComponent(t) + "=" + encodeURIComponent(e[t]));
+                            return o.join("&")
+                        }(o);
+                        var i = new XMLHttpRequest;
+                        "stage" === n && (t = "https://api-stage.route.com");
+                        var a = t + e;
+                        i.open("GET", a), i.setRequestHeader("token", m), i.onload = function() {
+                            if (200 === i.status) try {
+                                r(JSON.parse(i.responseText))
+                            } catch (e) {
+                                r(i.responseText)
+                            } else r({
+                                error: i.status
+                            })
+                        }, i.send()
+                    }
+                get_quote_vendor = function(e, o, t, r, vendor) {
+                        m = e,
+                        u("/v1/quote", {
+                            subtotal: o,
+                            currency: t
+                        }, function(e) {
+                            n = e.currency,
+                              d = e.insurance_price,
+                              r({
+                                currency: n,
+                                insurance_price: e.insurance_price,
+                                vendor: vendor
+                            })
+                        })};
+          function update_price(data) {
+    
+              console.log("udpate "+JSON.stringify(data));
+            if(data.vendor != "undefined") {
+              $("#"+data.vendor).text(data.insurance_price);
+              $("#"+data.vendor).attr("data-price", data.insurance_price);
+            }
+          }
+        </script>
+    
+        <div>
+          <div class="cart-recap__scroller mb-4">
+            <div class="card">
+            <div class="card__section d-flex">
+                <div>
+                  <span class="cart-recap__price-line-label fw-bold">{{ 'cart.general.total' | t }} Geral</span>
+                  <div class="cart-recap__notices rte">
+                    <p>
+                        {%- if shop.taxes_included and shop.shipping_policy.body != blank -%}
+                        {{ 'cart.general.taxes_included_and_shipping_policy_html' | t: link: shop.shipping_policy.url }}
+                        {%- elsif shop.taxes_included -%}
+                        {{ 'cart.general.taxes_included_but_shipping_at_checkout' | t }}
+                        {%- elsif shop.shipping_policy.body != blank -%}
+                        {{ 'cart.general.taxes_and_shipping_policy_at_checkout_html' | t: link: shop.shipping_policy.url }}
+                        {%- else -%}
+                        {{ 'cart.general.taxes_and_shipping_at_checkout' | t }}
+                        {%- endif -%}
+                    </p>
+                  </div>
+                  <p id="general-nomin-error" class="text-danger" style='display:none;'>Algumas das compras não têm o valor mínimo de compra</p>
+                  {%- if section.settings.enable_order_notes -%}
+                    <div class="cart-recap__note">
+                        <button type="button" class="cart-recap__note-button" data-action="toggle-collapsible" data-collapsible-force-overflow aria-controls="order-note" aria-expanded="false">
+                        {{- 'cart.general.note_title' | t -}}
+                        <span>
+                            <span class="cart-recap__note-edit {% if cart.note != blank %}is-visible{% endif %}">{{ 'cart.general.edit_note' | t }}</span>
+                            {%- render 'icon', icon: 'arrow-bottom' -%}
+                        </span>
+                        </button>
+
+                        <div id="order-note" class="collapsible" aria-hidden="true">
+                        <div class="cart-recap__note-inner">
+                            <textarea name="note" class="form__field form__field--textarea" rows="3">{{ cart.note }}</textarea>
+                            <button type="button" class="form__submit form__submit--tight button button--secondary" data-action="save-note">{{ 'cart.general.save_note' | t }}</button>
+                        </div>
+                        </div>
+                    </div>
+                  {%- endif -%}
+                </div>
+                <div class="ms-auto">
+                  <span style="padding-left: 30px;" class="float-end mb-3 fw-bold" id="total-price" data-price="{{ cart.total_price }}" data-currency={{cart.currency.iso_code}}   data-wk_slot_subtotal='wk_slot' data-wk_selected_tag= '{% if customer.tags contains 'VIP' %}VIP{% elsif customer.tags contains 'GOLD' %}GOLD{% endif %}'>{{ cart.total_price | money }}</span>
+                  <a href="/checkout" id="checkout_id"><button disabled id="general-checkout" type="button" class="py-0 d-block button button--primary button--full button--large">{{ 'cart.general.checkout' | t }}</button></a>
+                  <div class="ms-2 pt-2 cart-recap__secure-payment">
+                      <p class="cart-recap__secure-payment-title">{% render 'icon', icon: 'lock-2' %} {{ 'cart.general.secure_payments' | t }}</p>
+                    <div class="cart-recap__secure-payment-list payment-list payment-list--centered">
+                        {% for type in shop.enabled_payment_types %}
+                            {{ type | payment_type_svg_tag: class: 'payment-list__item' }}
+                        {% endfor %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      
+        {% for vendor in vendor_wise_products %}
+            {%assign cart_loc_array = "" %}
+          <div id="table-{{ vendor | replace: ' ', '' }}">
+            <p id="{{ vendor | replace: ' ', '-' }}-nomin" style="display: none;"></p>
+            
+            <div class="cart-wrapper">
+                <div class="cart-wrapper__inner">
+                    <div class="cart-wrapper__inner-inner">
+                        <div class="container container--flush">
+                            <div class="card">
+                                <div class="table-wrapper">
+                                    <table class="line-item-table table table--loose">
+                                        <thead class="hidden-phone">
+                                            <th>Produto</th>
+                                            <th class="table__cell--center">Quantidade</th>
+                                            <th class="table__cell--right">Total</th>
+                                        </thead>
+                                        <tbody id="tablebody-{{ vendor | replace: ' ', '' }}">
+                                            {% assign total_price = 0 %}
+                                            {% assign order_note = "" %}
+                                            {% assign params = "" %}
+                                            {% assign param = "" %}
+                                            {% assign properties = '' %}
+                                            {% assign wk_pay_whatever_extra_price = 0 %}
+                                            {% assign wk_addon_cart_total = 0 %}
+                                            {% for item in cart.items %}
+                                                {% if item.product.tags contains 'preorder' %}<span class='wk_po_count' style='display:none;'></span>{% endif %}
+                                                {% assign wk_addon_price = 0 %}
+                                                {% if item.product.tags contains 'wk_slot' and customer != empty and customer.tags contains 'VIP' or customer.tags contains 'GOLD'%}<span class='wk_slot_count' style='display:none;'></span>{% endif %}
+                                                {% if item.product.tags contains 'wk_pay_what_you_want' and item.properties['wk_custom_price'] %}<span class='wk_pay_what_you_want_count_split_cart' style='display:none;'></span>{%endif%}
+
+                                                {% if item.vendor == vendor %}
+                                                    {% assign total_price = total_price | plus: item.final_line_price %}
+                                                    {%- assign productQty = 1 -%}
+                                                    {%- for tag in item.product.tags -%}
+                                                      {%- if tag contains "Pedido mínimo (produto)" -%}
+                                                        {%- assign productQty = tag | split: '_' | last | plus: 0 | at_least: 1 -%}
+                                                      {%- endif -%}
+                                                    {%- endfor -%}
+                                                
+                                                    <tr class="line-item line-item--stack item-{{ vendor | replace: ' ', '' }} border-bottom" id="{{ item.variant_id }}">
+                                                        <td class="line-item__product-info">
+                                                            <div class="line-item__product-info-wrapper">
+                                                            <div class="line-item__image-wrapper">
+                                                                <div class="aspect-ratio" style="padding-bottom: 100.0%">
+                                                                <img src="{{ item | img_url: 'medium' }}"  alt="{{ item.title | escape }}">
+                                                                </div>
+                                                            </div>
+                                                            <div class="line-item__meta">
+                                                                <a href="{{ item.url }}" class="line-item__title link text--strong">{{ item.product.title }}</a>
+                                                                <div class="line-item__price-list">
+                                                                <span{% if item.product.tags contains 'wk_slot' and customer != empty and customer.tags contains 'VIP' or customer.tags contains 'GOLD'%} id='price_{{item.variant_id}}'{% endif %}>
+                                                                    {% if item.product.tags contains 'wk_pay_what_you_want' and item.properties['wk_custom_price'] %} 
+                                                                    {{item.properties['wk_custom_price']| times: 100 | money }}
+                                                                    {% else %}
+                                                                        {{ item.price  | plus: wk_addon_price  | money }} 
+                                                                    {% endif %}
+                                                                </span>
+                                                                </div>
+                                                            </div>
+                                                            </div>
+                                                            <span class="d-block">Mínimo {{ productQty }} unidades</span>
+                                                        </td>
+                                                        <td class="line-item__quantity table__cell--center border-0">
+                                                            <div class="quantity-selector">
+                                                            {%- assign allow_to_add_more = true -%}
+                                                            {%- if item.variant.inventory_management and item.variant.inventory_policy == 'deny' and item.quantity == item.variant.inventory_quantity -%}
+                                                                {%- assign allow_to_add_more = false -%}
+                                                            {%- endif -%}
+
+                                                            <button type="button" id="less-{{ item.variant_id }}" class="quantity-selector__button">{% render 'icon', icon: 'minus' %}</button>
+                                                            <input class="quantity-selector__value wk_qty_selector" min="{{ productQty }}" inputmode="numeric" value="{{ item.quantity }}" data-wk_min_qty_{{ item.variant_id }} id="quantity-{{ item.variant_id }}" size="{{ item.quantity | append: '' | size | at_least: 2 }}">
+                                                            <button type="button" id="add-{{ item.variant_id }}" class="quantity-selector__button">{% render 'icon', icon: 'plus' %}</button>
+                                                            </div>
+                                                            <a href="#" class="line-item__quantity-remove link" id="remove-{{ item.variant_id }}">{{ 'cart.items.remove' | t }}</a>
+                                                        </td>
+                                                        <td id="lineprice-{{ item.variant_id }}" class="line-item__line-price table__cell--right border-0">
+                                                            <span class="d-block pt-2 pt-md-0">{{ item.final_line_price | money }}</span>
+                                                        </td>
+                                                        {% assign param = param | append: item.id | append : ":" | append: item.quantity %} 
+                                                        {% assign param = param | append: "," %}
+                                                        {% assign params = params | append: "$^$" %}
+                                                    </tr>
+                                                {% endif %}
+                                            {% endfor %}
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="cart-recap">
+                            <div class="cart-recap__scroller mb-4">
+                              <div class="card">
+                                <div class="card__section" id="{{ vendor | downcase | replace: ' ', '_' }}-subtotal">
+                                    <div class="cart-recap__price-line text--pull row">
+                                    <span class="cart-recap__price-line-label col-7">{{ 'cart.general.total' | t }} {{ vendor }}</span>
+                                    <span  class="subtotal-{{ vendor | replace: ' ', ''}} text-end col-5" data-price="{{ total_price | plus: wk_pay_whatever_extra_price}}" data-currency={{cart.currency.iso_code}}   data-wk_slot_subtotal='wk_slot' data-wk_selected_tag= '{% if customer.tags contains 'VIP' %}VIP{% elsif customer.tags contains 'GOLD' %}GOLD{% endif %}' id="wk_subtotal_{{ vendor | replace: ' ', ''}}">{{ total_price | plus: wk_pay_whatever_extra_price | money }}</span>
+                                    </div>
+                                    {%- if section.settings.enable_order_notes -%}
+                                    <div class="cart-recap__note">
+                                        <button type="button" class="cart-recap__note-button" data-action="toggle-collapsible" data-collapsible-force-overflow aria-controls="order-note" aria-expanded="false">
+                                        {{- 'cart.general.note_title' | t -}}
+                                        <span>
+                                            <span class="cart-recap__note-edit {% if cart.note != blank %}is-visible{% endif %}">{{ 'cart.general.edit_note' | t }}</span>
+                                            {%- render 'icon', icon: 'arrow-bottom' -%}
+                                        </span>
+                                        </button>
+
+                                        <div id="order-note" class="collapsible" aria-hidden="true">
+                                        <div class="cart-recap__note-inner">
+                                            <textarea name="note" class="form__field form__field--textarea" rows="3">{{ cart.note }}</textarea>
+                                            <button type="button" class="form__submit form__submit--tight button button--secondary" data-action="save-note">{{ 'cart.general.save_note' | t }}</button>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    {%- endif -%}
+                                    <a class="text-decoration-underline" href="/pages/fornecedores/{{ vendor | downcase | replace: ' ', '-' }}">Comprar mais deste vendedor</a>
+                                </div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                {% assign siz = param | siz | minus: 1 %}
+                {% assign param = param | slice: 0, siz %}
+                {% assign size = params | size | minus: 3 %}
+                {% assign params = params | slice: 0, size %}
+                <script>
+                var setToSessionStorage = function(time, vendor, params, vendor_wise_products, count) {
+                    if(count > 10)
+                    return false;
+                    setTimeout(() => {
+                    if(typeof window.wk_loaded != "undefined" && window.wk_loaded){
+                        sessionStorage.setItem(vendor, params)
+                        sessionStorage.setItem("WK_SHOPIFY_SPLIT_CART", vendor_wise_products)
+                    }
+                    else
+                        setToSessionStorage(time+5000, vendor, params, vendor_wise_products, count++);
+                    }, time)
+                }
+                setToSessionStorage(0, {{ vendor | json }}, {{ params | json}}, {{ vendor_wise_products | json }}, 0);
+                </script>
+                <script>
+                var order_note = sessionStorage.getItem("order_note");
+                if(order_note){
+                    order_note = JSON.parse(order_note)
+                    order_note = order_note[{{vendor | json}}]
+                    if (document.getElementById("cartSpecialInstructions_{{vendor}}") != null) {
+                    if(typeof order_note != "undefined")
+                        document.getElementById("cartSpecialInstructions_{{vendor}}").value = order_note;
+                    else
+                        document.getElementById("cartSpecialInstructions_{{vendor}}").value = "";
+                    }
+                }
+                </script>
+          </div>
+        {% endfor %}
+      <script>
+        	sessionStorage.removeItem("WK_DRAFT_VENDOR");
+              $(window).on('load' , (function(){
+                 if(pickup_by_cart_enabled == 1)    
+                 {
+                    var latitude = false;
+                    var longitude = false;
+                   	var customisable = true;
+                    var wk_customer_location = window.localStorage.getItem('wk_customer_location');
+                    if(wk_customer_location && wk_customer_location.length != 0)
+                    {
+                      wk_customer_location = JSON.parse(wk_customer_location);
+                      latitude 			 =  wk_customer_location.lat;
+                      longitude 			 =  wk_customer_location.lng;
+                    }
+                   jQuery.ajax({
+                   url : server_name+"index.php?p=get_pickup_by_cart",
+                   dataType: 'jsonp',
+                   type: 'GET',
+                   contentType: 'application/json',
+                   jsonpCallback: 'getSellerPickupLocation',
+                   data : { shop_name : Shopify.shop, vendors : vendors, latitude: latitude, longitude:longitude , customisable:customisable},
+                     success: function(data){
+                       for(vendor in data)
+                       {
+                         if(typeof vendor !== "false" && $.trim(data[vendor]) != "false") 
+                         {
+                           cart_loc_vendor = vendor.split(" ");
+                           cart_loc_vendor = cart_loc_vendor.join("_");
+                           if(customisable){
+							                $("*[id='pickup-by-cart"+cart_loc_vendor+"']").show();
+                              if(data[vendor]['mode'] == "0"){
+                               if(data[vendor]['default_selected'] == "1"){// store_pickup checked
+                                 	$("*[id='"+cart_loc_vendor+"_store_pickup']").prop("checked", true);
+                                 	$("*[id='cart_pickup_"+cart_loc_vendor+"']").show();
+                               }
+                               else
+                                 	$("*[id='"+cart_loc_vendor+"_delivery']").prop("checked", true);
+                                 
+                             }
+                             else{
+                               $("*[id='"+cart_loc_vendor+"_store_pickup']").prop("checked", true);
+                               $("*[id='cart_pickup_"+cart_loc_vendor+"']").show();
+                               $("*[id='"+cart_loc_vendor+"_delivery_p']").hide();
+                               $("*[id='"+cart_loc_vendor+"_note']").show();
+                             }
+                             $("*[id='cart_pickup_"+cart_loc_vendor+"']").html(data[vendor]['location_html'])
+                           }
+                         }
+                       }
+                     },
+                     complete: function(){
+                       $('.wk-radio').on('change', function(){
+                        $(this).parent().find('.wk_cart_pickup_locations').toggle();
+                        $(this).parent().parent().find('.wk_cart_pickup_locations').toggle();
+                       })
+                       $('.wk_cart_pickup_locations').on('change', function(){
+                        $('.wk-buy').show();
+                       })
+                     }
+                   })
+                 }
+              }))
+              $(document).on("click",".route-rm-close-modal", function(){$(".route-modal").removeClass("rm-open");});
+        	$(".rw-info").on("click",function(){$(".route-modal").addClass("rm-open");});
+        	$(".rw-checkbox-span").on("click",function() {
+              if($(this).hasClass("rw-unchecked")){
+                $(this).parents(".WkRouteWidget").attr("data-insurance_checked", true);
+                $(this).removeClass("rw-unchecked");
+                $(this).addClass("rw-checked");
+                $(this).children("span.rw-unchecked").removeClass("rw-unchecked");
+                $(this).children("span").addClass("rw-checked");
+               
+              } else {
+                $(this).parents(".WkRouteWidget").attr("data-insurance_checked", false);
+                $(this).removeClass("rw-checked");
+                $(this).addClass("rw-unchecked");
+                $(this).children(".rw-checked").removeClass("rw-checked");
+                $(this).children().addClass("rw-unchecked");
+              }
+            })
+            $(".getInsurencePrice, .rw-checkbox-span").on("click", function() {
+              var vendor = $(this).attr("data-vendor");
+              var price = $("#wk_subtotal_"+vendor).attr("data-price");
+              var currency = $("#wk_subtotal_"+vendor).attr("data-currency");
+              console.log("price "+price/100);
+              get_quote_vendor(route_public_token, price/100, currency, update_price, "insurance_price_"+vendor);
+              
+            })
+      </script>
+      {{ 'wk-split-cart.js' | asset_url | script_tag }}
+    </form>
+  {% else %}
+    <div id="EmptyCart">
+      <div class="d-flex justify-content-center align-items-center">
+        <div>
+          <h1 class="h2">Seu carrinho de compras</h1>
+          <p class="cart--empty-message">Seu carrinho está vazio no momento.</p>
+          <p class="cart--continue-message"><a href="/collections/marcas">Continue browsing here</a></p>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+  <div class="route-modal"><div class="route-modal-box"> <img class="background" src="https://cdn.routeapp.io/route-widget-shopify/stable/images/LightboxBackground.svg"> <img class="route-line" src="https://cdn.routeapp.io/route-widget-shopify/stable/images/RouteLine.png"> <img class="route-rm-close-modal" src="https://cdn.routeapp.io/route-widget-shopify/stable/images/CloseIcon.svg"><div class="route-modal-header"> <img class="route-rm-route-logo" src="https://cdn.routeapp.io/route-widget-shopify/stable/images/RouteLogoWhite.svg"> <img class="route-rm-route-logo-color" src="https://cdn.routeapp.io/route-widget-shopify/stable/images/RouteLogoKiona.png"><div class="route-rm-secure-with">Secure your shipment and easily <br> resolve order issues with one tap.</div></div><div class="route-modal-content"><div class="icon-box1"> <span class="route-rm-icon-box1"> <img class="route-rm-icon-box-image" src="https://cdn.routeapp.io/route-widget-shopify/stable/images/Purchase_RoutePlus.svg" alt="Secured your shipment"> </span><div class="route-rm-text1">Protect orders from loss,<br> damage, or theft.</div></div><div class="icon-box2"> <span class="route-rm-icon-box2"> <img class="route-rm-icon-box-image" src="https://cdn.routeapp.io/route-widget-shopify/stable/images/Instant_Protection.svg" alt="Instantly insured"> </span><div class="route-rm-text2">Backed by Lloyds of<br>London through Route.</div></div><div class="icon-box3"> <span class="route-rm-icon-box3"> <img class="route-rm-icon-box-image" src="https://cdn.routeapp.io/route-widget-shopify/stable/images/LBBox_3.svg" alt="One click claims"> </span><div class="route-rm-text3">Refunds or reorders<br> in just a few clicks.</div></div></div><div class="route-modal-footer"><div class="rm-footer-1"><div class="route-rm-terms"> This optional protection is offered to you solely in order to effectuate the shipment of your package(s). Route is the named assured on the Route Policy of which your shipment will be protected on. The cost of adding your shipment to the Route Policy includes compensation paid to Safe Order Solutions, LLC (a licensed insurance agency affiliate of Route), for making this protection available.</div></div><div class="rm-footer-2"><div class="route-rm-copyright"> Route App © 2020 Route App</div><div class="route-rm-user-privacy"> <a class="route-rm-user-privacy-text" href="https://route.com/privacy-page/" target="_blank" rel="noopener noreferrer"> User Privacy </a></div><div class="route-rm-terms-of-use"> <a class="route-rm-terms-of-use-text" href="https://route.com/terms-and-conditions/" target="_blank" rel="noopener noreferrer"> User Terms of Use </a></div><div class="route-rm-lloyds-container"> Backed by <img class="route-rm-lloyds-image" src="https://cdn.routeapp.io/route-widget-shopify/stable/images/LloydsLogo.png" alt="Lloyd's of London"></div></div></div></div></div>
+  
+  <script src="{{ 'cartvalidation.js' | asset_url }}"></script>
+
+  <style>
+    #general-checkout:disabled{
+      color: #fff;
+      background-color: #6c757d;
+    }
+  </style>
+</div>

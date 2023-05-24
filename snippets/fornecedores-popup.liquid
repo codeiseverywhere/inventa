@@ -1,0 +1,450 @@
+<div class="fornecedores_popup justify-content-center" style="display: none;">
+  <div class="fornecedores_inner p-3 position-relative rounded">
+    <div class="popup-closebtn position-absolute">
+      <svg class="modal-closer" width="23" height="21" viewBox="0 0 23 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M9.75806 10.2688L0 1.48659L1.33793 0L11.2529 8.92348L21.1679 0L22.5058 1.48659L12.7478 10.2688L22.5058 19.0511L21.1679 20.5377L11.2529 11.6142L1.33793 20.5377L2.08616e-06 19.0511L9.75806 10.2688Z" fill="white"/>
+      </svg>
+    </div>
+    <div class="fornecedores_header">
+      <h3 class="display-6 mb-4 pe-5">
+      {%- if collection.handle == 'all' -%}
+        Todos os fornecedores para o atacado
+      {%- elsif collection.handle == 'marcas' -%}
+        Todas as marcas para o atacado
+      {%- else -%}
+        Compre marcas de {{ collection.title | downcase }} no atacado
+      {%- endif -%}
+      </h3>
+    </div>
+    <div class="fornecedores_nav"></div>
+    <div class="fornecedores_list">
+      <div class="vendor-list vendor-priority mb-3">
+        <h3>Marcas mais buscadas</h3>
+        <div class="vendor-grid">
+          {% for seller_priority in vendor_priorities %}
+          {% for seller_name in wk_store_names %}
+          {% if seller_name == seller_priority %}
+          {% assign collectionValid = false %}
+          {% if collection.all_vendors contains seller_priority and collection.products_count > 0 %}
+          {% assign collectionValid = true %}
+          {% endif %}
+          {% if template contains 'search' or collectionValid %}          
+          <div class="fornecedor-popup text-center" >
+            <a {%- unless template contains 'search' -%}onclick="filterFornecedor(event, '{{ seller_name }}', {popup: true, best_sellers: true}, '{{ seller_name | url_encode }}')"{%- endunless -%} href="/collections/vendors?q={{ seller_name | url_encode }}">
+              <div class="col-12 text-center px-3 img-container">
+                <div class="border m-auto d-flex justify-content-center align-items-center p-2">
+                  <div class="w-100 h-100 d-flex justify-content-center align-items-center">
+                    <img
+                    class="img-fluid m-auto"
+                    srcset="{{ wk_store_logos[forloop.index0] }}"
+                    src="{{ wk_store_logos[forloop.index0] }}"
+                    sizes="(min-width: {{ settings.page_width }}px) {{ settings.page_width | minus: 130 | divided_by: 4 }}px, (min-width: 990px) calc((100vw - 130px) / 4), (min-width: 750px) calc((100vw - 120px) / 3), calc((100vw - 35px) / 2)"
+                    alt="Imagem de loja {{ wk_store_names[forloop.index0] }}"
+                    loading="lazy"
+                    class="motion-reduce"
+                    width="200px"
+                    height="200px"
+                    >
+                  </div>
+                </div>
+              </div>
+              <span class="fs-6">{{ seller_name }}</span>
+              <small class="text-secondary d-block">
+                {% assign minimum_order = 0 %}
+                {% if shop.metafields.sellers.minimum_order_value contains wk_store_handles[forloop.index0] %}
+                {% assign split_name = wk_store_handles[forloop.index0] | append: '":' %}
+                {% assign minimum_order = shop.metafields.sellers.minimum_order_value | json | split: split_name | last | split: ',' | first %}
+                {% endif %}
+                {% if minimum_order != 0 and minimum_order != "0" %}Min. {{ minimum_order | times: 100 | money }}{% else %}Sem mínimo{% endif %}
+              </small>                   
+            </a>
+          </div>
+          {% endif %}
+          {% break %}
+          {% endif %}
+          {% endfor %}
+          {% endfor %}
+        </div>
+      </div>
+
+      {% for seller_id in wk_store_ids %}
+      {% if collection.all_vendors contains wk_store_names[forloop.index0] or template contains 'search' %}
+      {% if wk_store_logos[forloop.index0] %}
+      <div class="fornecedor-popup normal-fornecedor d-none text-center" sort-char="{{ wk_store_names[forloop.index0] | slice: 0 | upcase }}">
+        <a {% unless template contains 'search' %}onclick="filterFornecedor(event, '{{ wk_store_names[forloop.index0] }}', {popup: true}, '{{ wk_store_names[forloop.index0] | url_encode }}')"{% endunless %} href="/collections/vendors?q={{ wk_store_names[forloop.index0] | url_encode }}">
+          <div class="col-12 text-center px-3 img-container">
+            <div class="border m-auto d-flex justify-content-center align-items-center p-2">
+              <div class="w-100 h-100 d-flex justify-content-center align-items-center">
+                <img
+                class="img-fluid m-auto"
+                srcset="{{ wk_store_logos[forloop.index0] }}"
+                src="{{ wk_store_logos[forloop.index0] }}"
+                sizes="(min-width: {{ settings.page_width }}px) {{ settings.page_width | minus: 130 | divided_by: 4 }}px, (min-width: 990px) calc((100vw - 130px) / 4), (min-width: 750px) calc((100vw - 120px) / 3), calc((100vw - 35px) / 2)"
+                alt="Imagem de loja {{ wk_store_names[forloop.index0] }}"
+                loading="lazy"
+                class="motion-reduce"
+                width="200px"
+                height="200px"
+                >
+              </div>
+            </div>
+          </div>
+          <span class="fs-6">{{ wk_store_names[forloop.index0] }}</span>
+          <small class="text-secondary d-block">
+            {% assign minimum_order = 0 %}
+            {% if shop.metafields.sellers.minimum_order_value contains wk_store_handles[forloop.index0] %}
+            {% assign split_name = wk_store_handles[forloop.index0] | append: '":' %}
+            {% assign minimum_order = shop.metafields.sellers.minimum_order_value | json | split: split_name | last | split: ',' | first %}
+            {% endif %}
+            {% if minimum_order != 0 and minimum_order != "0" %}Min. {{ minimum_order | times: 100 | money }}{% else %}Sem mínimo{% endif %}
+          </small>                   
+        </a>
+      </div>
+      {% endif%}
+      {% endif%}
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+<script defer>
+  setTimeout(() => {
+    const popup = document.querySelector('.fornecedores_popup');
+    if(popup) popup.removeAttribute('style');
+  }, 500);
+</script>
+{%- comment -%}
+popup with fornecedores
+{%- endcomment -%}
+<script defer>
+  function openFornecedorPopup(not_send_event){
+    const popup = document.querySelector('.fornecedores_popup');
+    if(popup){
+      popup.classList.add('fornecedores_popup-open');
+    }
+    if(driver && !not_send_event) driver.pushEvent('openFornecedores-popup', {
+      url: window.location.href
+    })
+  }
+
+  function closePopup(){
+    const popup = document.querySelector('.fornecedores_popup');
+    if(popup){
+      popup.classList.remove('fornecedores_popup-open');
+    }
+  }
+
+  function showAllLists(){
+    const lists = document.querySelectorAll('.fornecedores_list .vendor-list');
+    for(let i = 0; i < lists.length; i++){
+      lists[i].classList.remove('d-none');
+    }
+  }
+  function showOneCharacterList(character){
+    const lists = document.querySelectorAll('.fornecedores_list .vendor-list');
+    for(let i = 0; i < lists.length; i++){
+      lists[i].classList.add('d-none');
+    }
+    const vendor = document.querySelector(`.fornecedores_list .vendor-list[vendor-char="${character}"]`);
+    if(vendor) vendor.classList.remove('d-none');
+  }
+
+  function toggleCharacterClick(event){
+    const clicked = event.target.getAttribute('selected-char');
+    if(clicked && clicked == 'true'){
+      showAllLists();
+      event.target.setAttribute('selected-char', 'false')
+    }else{
+      const alreadyChecked = document.querySelector('.fornecedores_nav span[selected-char="true"]');
+      if(alreadyChecked) alreadyChecked.setAttribute('selected-char', 'false');
+
+      const char = event.target.innerText;
+      showOneCharacterList(char);
+      event.target.setAttribute('selected-char', 'true');
+    }
+  }
+  
+  function scrollToChar(character){
+    const elementToScroll = document.querySelector(`.fornecedores_list .vendor-list[vendor-char="${character}"]`);
+    if(elementToScroll){
+    	elementToScroll.parentElement.scroll(0, elementToScroll.offsetTop - 100);
+    }
+  }
+
+  window.addEventListener('load', () => {
+    const popup = document.querySelector('.fornecedores_popup');
+    if(popup){
+      const prioritizeds = document.querySelector('.vendor-priority');
+      if(prioritizeds){
+        const vendorCount = prioritizeds.querySelectorAll('.fornecedor-popup').length;
+        if(!vendorCount){
+         prioritizeds.classList.add('d-none'); 
+       }
+     }
+
+     popup.addEventListener('click', (e) => {
+      closePopup();
+      e.stopPropagation();
+    })
+     const popupInner = popup.querySelector('.fornecedores_inner');
+     if(popupInner){
+      popupInner.addEventListener('click', (e) => {
+        e.stopPropagation();
+      })
+    }
+
+    const fornecedores = popup.querySelectorAll('.fornecedor-popup');
+    for(let i = 0; i < fornecedores.length; i++){
+      fornecedores[i].addEventListener('click', closePopup);
+    }
+
+    const openers = document.querySelectorAll('.fornecedor-popup_opener');
+    for(let i = 0; i < openers.length; i++){
+      openers[i].addEventListener('click', (e) => {
+        e.preventDefault();
+        openFornecedorPopup();
+      })
+    }
+
+    const closers = document.querySelectorAll('.popup-closebtn');
+    for(let i = 0; i < closers.length; i++){
+      closers[i].addEventListener('click', () => {
+        closePopup();
+      })
+    }
+
+    const popupNav = document.querySelector('.fornecedores_nav');
+    const popupList = document.querySelector('.fornecedores_list');
+    if(popupNav && popupList){
+      const A = 65;
+      const Z = 90;
+      for(let i = A; i <= Z; i++){
+        const vendorsAvailables = document.querySelectorAll(`.fornecedor-popup[sort-char="${String.fromCharCode(i)}"]`)
+
+        const span = document.createElement('span');
+        if(!vendorsAvailables.length) span.classList.add('no-available');
+        else span.addEventListener('click', (e) => {
+         scrollToChar(e.target.innerText);                    
+       });
+          span.innerText = String.fromCharCode(i);
+          popupNav.append(span);
+
+          if(vendorsAvailables.length){
+            const characterList = document.createElement('div');
+            characterList.classList.add('vendor-list', 'mb-3');
+            characterList.setAttribute('vendor-char', `${String.fromCharCode(i)}`);
+            const listTitle = document.createElement('h3');
+            listTitle.innerText = `${String.fromCharCode(i)} (${vendorsAvailables.length})`;
+            characterList.append(listTitle);
+            const grid = document.createElement('div');
+            grid.classList.add('vendor-grid');
+            for(let j = 0; j < vendorsAvailables.length; j++){
+              vendorsAvailables[j].classList.remove('d-none');
+              grid.append(vendorsAvailables[j]);
+            }
+            characterList.append(grid);
+            popupList.append(characterList);
+          }
+
+        }
+
+        const span = document.createElement('span');
+        span.innerText = '0-9';
+        span.classList.add('no-available');
+        popupNav.append(span);
+
+        const characterList = document.createElement('div');
+        characterList.classList.add('vendor-list');
+        characterList.setAttribute('vendor-char', `0-9`);
+        const listTitle = document.createElement('h3');
+        characterList.append(listTitle);
+        const grid = document.createElement('div');
+        grid.classList.add('vendor-grid');
+        characterList.append(grid);
+
+
+        let productCount = 0;
+
+        for(let i = 0; i < 10; i++){
+          const vendorsAvailables = document.querySelectorAll(`.fornecedor-popup[sort-char="${i}"]`)
+          if(vendorsAvailables.length) {
+           span.classList.remove('no-available');
+           productCount += vendorsAvailables.length;
+         }
+
+         if(vendorsAvailables.length){
+          for(let j = 0; j < vendorsAvailables.length; j++){
+            vendorsAvailables[j].classList.remove('d-none');
+            grid.append(vendorsAvailables[j]);
+          }
+        }
+      }
+      if(productCount){
+        span.addEventListener('click', (e) => {
+         scrollToChar(e.target.innerText);                    
+       });
+        listTitle.innerText = `0-9 (${productCount})`;
+        popupList.append(characterList);
+      }
+
+      const vendorsQty = document.querySelectorAll('.fornecedor-popup.normal-fornecedor').length;
+      const paragraph = document.createElement('p');
+      paragraph.innerText = `Exibindo ${vendorsQty} marcas`;
+      popupList.prepend(paragraph)
+    }
+  }
+
+  if(window.location.href.includes('popup-ab')) openFornecedorPopup(true);
+})
+
+
+</script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap');
+  .fornecedores_popup{
+    background: rgba(34, 34, 34, 0.8);
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    z-index: 500;
+    top: 0;
+    display: none;
+    opacity: 0;
+    overflow-y: auto;
+  }
+  .fornecedores_popup-open{
+    display: flex;
+    opacity: 1;
+    animation: fadeIn forwards 1.2s;
+  }
+  @keyframes fadeIn{
+    from{
+      opacity: 0;
+    }
+    to{
+      opacity: 1;
+    }
+  }
+  .fornecedores_inner{
+    width: 60%;
+    height: fit-content;
+    background-color: #fff;
+    position: relative;
+    top: 50px;
+    height: 85vh;
+    overflow: hidden;
+  }
+  .popup-closebtn{
+   right: 20px;
+    top: 20px;
+  }
+  .popup-closebtn path{
+    fill: #000;
+  }
+  .fornecedores_header{
+    font-family: 'Noto Sans', sans-serif;
+  }
+  .fornecedores_nav{
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 10px;
+  }
+  .fornecedores_nav span{
+    font-size: 18px;
+    padding: 2px 8px;
+    text-decoration: underline;
+    color: #666;
+    cursor: pointer;
+    white-space: nowrap
+  }
+  .fornecedores_nav span.no-available{
+    color: #CDCDCD;
+    text-decoration: none;
+    cursor: default;
+  }
+  .fornecedores_nav span[selected-char="true"]{
+    background-color: #B2C4C7;
+    color: #FFF;
+    border-radius: 4px;
+  }
+  .fornecedores_list{
+    height: 65vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .vendor-list h3{
+    font-size: 1.3rem !important;
+  }
+  .vendor-grid{
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+  }
+  .fornecedor-popup .border{
+    width: 120px;
+    height: 120px;
+  }
+
+  .fornecedor-popup img{
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  @media (max-width: 1440px){
+    .vendor-grid{
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  @media (max-width: 1100px){
+    .vendor-grid{
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  @media (max-width: 830px){
+    .vendor-grid{
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 650px){
+    .vendor-grid{
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .fornecedores_inner{
+      width: 90%;
+    }
+  }
+
+  @media (max-width: 520px){
+    .vendor-grid{
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .fornecedores_list::-webkit-scrollbar,
+  .fornecedores_nav::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+  }
+
+  .fornecedores_list::-webkit-scrollbar-track,
+  .fornecedores_nav::-webkit-scrollbar-track {
+    background: transparent; 
+  }
+
+  .fornecedores_list::-webkit-scrollbar-thumb,
+  .fornecedores_nav::-webkit-scrollbar-thumb {
+    background-color: #efefef;
+    border-radius: 20px;
+  }
+  .fornecedores_list::-webkit-scrollbar-thumb:hover,
+  .fornecedores_nav::-webkit-scrollbar-thumb:hover{
+    background-color: #666;
+  }
+  .vendor-grid .normal-fornecedor{
+        margin-bottom: 10px;
+    }
+</style>

@@ -1,0 +1,304 @@
+{
+  "form": {
+    "id": "bbt0eY",
+    "name": "Product Recommendation form",
+    "handle": "contact-form-copy-1",
+    "theme_id": "125856121039",
+    "settings": {
+      "locales": {
+        "back": "Atrás",
+        "next": "Próximo",
+        "cancel": "Cancelar",
+        "edit_link": "Edit account",
+        "fix_errors": "Por favor corrija os erros antes de continuar",
+        "is_invalid": "{{label}} é inválido",
+        "email_taken": "O e-mail já foi tomado",
+        "phone_taken": "O número de telefone já foi escolhido",
+        "server_error": "Não foi possível salvar o formulário, tente novamente mais tarde",
+        "step_counter": "Paso {{current}} de {{total}}",
+        "verify_email": "Verifique seu e-mail para obter um link de verificação para ativar sua conta.",
+        "not_available": "Ocorreu um erro ao salvar sua conta, tente novamente em alguns minutos.",
+        "create_account": "Me avise",
+        "update_account": "Me avise",
+        "recaptcha_error": "Challenge verification failed, please try again",
+        "creating_account": "Enviando...",
+        "updating_account": "Enviando...",
+        "invalid_email_domain": "O e-mail contém um nome de domínio inválido"
+      },
+      "customCSS": "textarea {\n    height: 100% !important;\n}",
+      "whitelistedTags": "",
+      "markRequiredFields": false,
+      "displayCancelButton": false,
+      "redirectAfterSubmit": false,
+      "goBackAfterSubmission": false,
+      "accountApprovalRequired": true,
+      "cancelButtonRedirectUrl": "\/account\/login",
+      "emailVerificationRequired": false,
+      "postSubmissionRedirectUrl": "\/account",
+      "showSuccessStepAfterSubmit": true,
+      "goBackAfterCancelButtonClick": false
+    },
+    "install_locations": [
+      "manual"
+    ],
+    "created_at": "2021-05-27T21:48:44Z",
+    "updated_at": "2021-11-22T14:13:23Z",
+    "revision_ids": [
+      "xMTxLqX",
+      "d7Tqvmz",
+      "58T7LKy"
+    ]
+  },
+  "revision": {
+    "id": "xMTxLqX",
+    "created_at": "2021-05-27T23:40:43Z",
+    "updated_at": "2021-11-22T14:45:02Z",
+    "embed_version": "4.8.1",
+    "published_at": "2021-11-22T14:45:02Z",
+    "fields": [
+      {
+        "id": 180070,
+        "dataColumn": null,
+        "parentId": null,
+        "position": 0,
+        "type": "heading",
+        "stepId": 194406,
+        "default": "",
+        "label": "Account request sent heading",
+        "placeholder": null,
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12,
+          "alignment": "center"
+        },
+        "settings": {
+          "size": 1,
+          "content": "Recebido!",
+          "hideLabel": true,
+          "fontWeight": "bold"
+        },
+        "validations": [],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 106349,
+        "dataColumn": null,
+        "parentId": null,
+        "position": 1,
+        "type": "paragraph",
+        "stepId": 194406,
+        "default": "",
+        "label": "Reviewing submission explanation",
+        "placeholder": null,
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "content": "<p style=\"text-align: center;\">Muito obrigado por nos ajudar a encotrar os melhores produtos!<\/p>",
+          "fontSize": 14,
+          "hideLabel": true
+        },
+        "validations": [],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 828224,
+        "dataColumn": {
+          "key": "tipo_de_conta",
+          "label": "New dropdown field",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 0,
+        "type": "dropdown",
+        "stepId": 529971,
+        "default": "Recomendação de produto",
+        "label": "Tipo de conta",
+        "placeholder": "Tipo de conta",
+        "description": "",
+        "enum": [
+          {
+            "label": "Recomendação de produto",
+            "value": "Recomendação de produto"
+          }
+        ],
+        "appearance": {
+          "width": 12,
+          "cssClass": "invisible position-absolute start-0"
+        },
+        "settings": {
+          "end": 10,
+          "start": 1,
+          "enumType": "list",
+          "hideLabel": true,
+          "separateValues": false
+        },
+        "validations": [],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 115994,
+        "dataColumn": {
+          "key": "produto_ou_marca_novo",
+          "label": "Produto ou marca",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 1,
+        "type": "text",
+        "stepId": 529971,
+        "default": "",
+        "label": "Produto ou marca",
+        "placeholder": "Produto ou marca de interesse",
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "hideLabel": true
+        },
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Por favor forneça um nome de produto ou marca válido"
+          }
+        ],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 156535,
+        "dataColumn": {
+          "key": "email",
+          "label": "Email address",
+          "dataType": "email"
+        },
+        "parentId": null,
+        "position": 2,
+        "type": "email",
+        "stepId": 529971,
+        "default": "",
+        "label": "Email comercial",
+        "placeholder": "Email comercial",
+        "description": "",
+        "enum": null,
+        "appearance": {
+          "width": 12,
+          "cssClass": "emailInput invisible position-absolute start-0"
+        },
+        "settings": {
+          "hideLabel": true
+        },
+        "validations": [
+          {
+            "operator": "is_valid_email",
+            "comparand": null,
+            "errorMessage": "Por favor forneça um endereço de e-mail válido"
+          },
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Por favor insira um email"
+          }
+        ],
+        "sensitive": null,
+        "preset": "email_address",
+        "autotag": null
+      }
+    ],
+    "steps": [
+      {
+        "id": 529971,
+        "title": "Contact form",
+        "description": ""
+      },
+      {
+        "id": 194406,
+        "title": "Submission success",
+        "metadata": {
+          "isSuccessStep": true
+        },
+        "description": ""
+      }
+    ],
+    "rules": [
+      {
+        "id": 271398,
+        "title": "Show \"Wholesale\" step and tag customer",
+        "actions": [
+          {
+            "effect": "show_step",
+            "metadata": {
+              "stepId": 228625
+            }
+          },
+          {
+            "effect": "tag_customer",
+            "metadata": {
+              "value": "B2B"
+            }
+          }
+        ],
+        "conditions": [
+          {
+            "operand": null,
+            "metadata": {
+              "column": {
+                "key": "wholesale_partner",
+                "label": "I am signing up as a wholesale partner",
+                "dataType": "boolean"
+              },
+              "comparand": "Wholesale"
+            },
+            "operator": "is_true"
+          }
+        ],
+        "conditionChaining": "all"
+      },
+      {
+        "id": 195628,
+        "title": "Show tax exempt upload field",
+        "actions": [
+          {
+            "effect": "show_field",
+            "metadata": {
+              "fieldId": 134858
+            }
+          }
+        ],
+        "conditions": [
+          {
+            "operand": null,
+            "metadata": {
+              "column": {
+                "key": "tax_exempt",
+                "label": "Tax exempt",
+                "dataType": "boolean"
+              }
+            },
+            "operator": "is_true"
+          }
+        ],
+        "conditionChaining": "all"
+      }
+    ]
+  }
+}

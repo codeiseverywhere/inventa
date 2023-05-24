@@ -1,0 +1,96 @@
+svg.os-header__hanging-icon{
+    stroke: #C7D3D9 !important;
+}
+
+.os-header__heading .os-order-number{
+    color: #777A7C;
+}
+
+.os-header__heading .os-header__title{
+    color: #1A1A1A;
+}
+
+.step__footer .step__footer__info{
+    color: #777A7C !important;
+}
+.step__footer a[data-contact-us-link="true"] {
+    color: #777A7C !important;
+    text-decoration: underline !important;
+}
+.step__footer .step__footer__continue-btn{
+    background-color: #FFD93D !important;
+    color: #1A1A1A !important;
+    border-radius: 8px !important;
+}
+
+.content-box{
+    border: #F7F9FC 2px solid;
+    border-radius: 8px;
+}
+@media (min-width: 1000px){
+    .sidebar::after{
+        -webkit-box-shadow: 2px 0 0 #F7F9FC inset !important;
+        box-shadow: 2px 0 0 #F7F9FC inset !important;
+    }
+}
+
+.sidebar::after{
+    -webkit-box-shadow: 0 -2px 0 #F7F9FC inset;
+    box-shadow: 0 -2px 0 #F7F9FC inset;
+}
+
+th.total-line__name {
+    color: #1A1A1A !important;
+}
+tr.total-line .payment-due-label__total,
+tr.total-line .payment-due__price{
+    color: #1A1A1A !important;
+    font-weight: 700;
+}
+tr.total-line .payment-due__currency{
+    color: #777A7C !important;
+}
+
+.product .product-thumbnail__quantity{
+    background-color: #EDF4FD !important;
+    color: #1472E4 !important;
+    font-weight: 700;
+    border-radius: 1000px;
+}
+.product .product-thumbnail{
+    border-radius: 8px !important;
+    border-width: 2px !important;
+    border-color: #F7F9FC !important;
+}
+
+th.product__description .product__description__name{
+    color: #1A1A1A !important;
+    font-weight: 700 !important;
+}
+
+h2.order-title{
+    color: #1A1A1A !important;
+    font-size: 19px;
+    line-height: 22px;
+}
+@media (min-width: 1000px){
+    h2.order-title{
+        font-size: 26px;
+        line-height: 29px;
+    }   
+}
+h2.order-title a{
+    text-decoration: underline !important;
+    color: #C7D3D9 !important;
+}
+
+h3.heading-3{
+    color: #1A1A1A !important;
+    font-weight: 700 !important;
+}
+
+.input-checkbox{
+    background-color: #E1E9EF !important;
+    border-color: #E1E9EF !important;
+    border-radius: 0 !important;
+}

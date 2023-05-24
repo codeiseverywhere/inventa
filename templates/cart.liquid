@@ -1,0 +1,7 @@
+{% unless customer %}
+<script>
+  window.location.replace('/account/login');
+</script>
+{% endunless %}
+{% include 'cart-inventa' %}
+{% section 'static-recently-viewed-products' %}

@@ -1,0 +1,71 @@
+<section id="home-noticias-section" class="section my-0 pt-5" data-section-id="home-noticias-section">
+  <div class="container py-5">
+    <div class="row pb-4">
+      <div class="col-12 col-lg-6">
+        <h2 class="display-5 fw-bold">Acreditamos que o futuro do varejo é local.</h2>
+      </div>
+      <div class="col-12 col-lg-6">
+        <p class="text-secondary">Nossa missão é ajudar empreendedores independentes a perseguir seus sonhos. Simplificamos o processo de compra em massa e reunimos marcas e varejistas independentes de todo o mundo, tentando nivelar o campo de jogo para pequenas empresas onde quer que estejam.</p>
+        <a href="/pages/sobre-inventa" class="d-block fw-bold text-decoration-underline mt-4">Sobre nós</a>
+      </div>
+    </div>
+    <div class="row mt-4 pt-lg-4">
+      <div class="col-12 col-lg-4">
+        <div class="card p-3 custom-radius border">
+          <div class="card-body pt-2 mt-1">
+            <img src="{{ 'logo_exame.png' | file_img_url: "x17"}}" loading="lazy" class="py-1">
+            <p class="card-text text-secondary mt-4">Terceira rodada de investimento em um ano: Inventa capta R$ 260 mi e já soma quase meio bi</p>
+            <br />
+            <a href="https://exame.com/pme/inventa-startup-capta-260-milhoes-e-ja-soma-quase-meio-bi/" target="_blank" class="fw-bold text-decoration-underline">Leia mais</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-4">
+        <div class="card p-3 custom-radius border">
+          <div class="card-body">
+            <img src="{{ 'logo-terra.png' | file_img_url: "x30"}}" loading="lazy">
+            <p class="card-text text-secondary mt-4 mt-md-3">Startup Inventa levanta US$ 55 mi para expandir produtos para varejistas em novas categorias</p>
+            <br />
+            <a href="https://www.terra.com.br/noticias/tecnologia/inovacao/startup-inventa-levanta-us-55-mi-para-expandir-produtos-para-varejistas,cb3d6f876e460c1f03ecbac4a9f35f9fzykisplz.html" target="_blank" class="fw-bold text-decoration-underline">Leia mais</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-4">
+        <div class="card p-3 custom-radius border">
+          <div class="card-body">
+            <img src="{{ 'logo-tech-crunch.png' | file_img_url: "x25"}}" loading="lazy">
+            <p class="card-text text-secondary mt-3 pt-1">Empresa sediada no Brasil conecta pequenas e médias empresas com fornecedores permitindo a descoberta de novos produtos.</p>
+            <a href="https://techcrunch.com/2022/04/27/inventa-poised-to-enter-mexico-colombia-with-its-supplier-marketplace" target="_blank" class="fw-bold text-decoration-underline">Leia mais</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  #home-noticias-section {
+    background-color: #FFFBEC;
+  } 
+</style>
+
+{% schema %}
+{
+  "name": "home-noticias-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Título"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Custom Sections",
+      "name": "home-noticias-section",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

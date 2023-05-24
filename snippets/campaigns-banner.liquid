@@ -1,0 +1,135 @@
+{% if section.settings.show_banner %}
+{% if section.settings.banner_url %}
+	<a href="{{section.settings.banner_url}}">
+{% endif %}
+<section id="campaigns-banner">
+	<div class="row">
+		{% if section.settings.show_timer %}
+			<div class="count-down-wrapper col-6 offset-6 col-md-3 offset-md-9">
+				{% capture circle %}
+					<span class="circle-container bg-dark rounded-circle fs-4" style="background-color:{{section.settings.circle_bg_color}} !important;color:{{section.settings.circle_text_color}} !important;"></span>
+				{% endcapture %}
+				<div class="count-down-container text-white pt-1 pt-md-0">
+					<span class="d-block text-center" >
+					{{section.settings.heading}}:</span>
+					<div class="days d-inline-block text-center px-1">
+						{{ circle }}
+						<p>dias:</p>
+					</div>
+					<div class="hours d-inline-block text-center px-1">
+						{{ circle }}
+						<p>horas:</p>
+					</div>
+					<div class="minutes d-inline-block text-center px-1">
+						{{ circle }}
+						<p>min:</p>
+					</div>
+					<div class="seconds d-inline-block text-center px-1">
+						{{ circle }}
+						<p>sec:</p>
+					</div>
+				</div>
+			</div>
+		{% endif %}
+	</div>
+</section>
+{% if section.settings.banner_url %}	
+	</a>
+{% endif %}
+<style>
+	#campaigns-banner {
+		height: 90px;
+		overflow: hidden;
+		background: url('{{section.settings.desktop_banner_image | image_url}}');
+		background-size: {{section.settings.desktop_banner_bg_size}};
+		background-color: {{section.settings.header_bg_color}};
+		background-repeat: no-repeat;
+		background-position: center;
+	}
+
+	.circle-container {
+		display: block;
+		width: 44px;
+		height: 44px;
+		padding-top: 0.40rem;
+	}
+
+	.count-down-container {
+		width: fit-content;
+	}
+
+	@media (max-width: 768px) {
+		#campaigns-banner {
+			height: 90px;
+			background: url('{{section.settings.mobile_banner_image | image_url}}');
+			background-size: {{section.settings.mobile_banner_bg_size}};
+			background-color: {{section.settings.header_bg_color}};
+			background-repeat: no-repeat;
+			background-position: center;
+		}
+
+		.circle-container {
+			width: 33px;
+			height: 33px;
+			padding: 0.15rem !important;
+		}
+
+		.count-down-container p {
+			font-size: 10px !important;
+		}
+	}
+
+	@media (max-width: 425px) {
+		.circle-container {
+			width: 25px;
+			height: 25px;
+			padding: 0.15rem !important;
+		}
+
+		.count-down-container span {
+			font-size: 1rem!important;
+		}
+
+		.count-down-container > span {
+			font-size: .7rem!important;
+		}
+
+		.count-down-wrapper {
+			margin-top: 15px!important;
+		}
+	}
+</style>
+
+{%- assign endyear = section.settings.end_year -%}
+{%- assign endmonth =  section.settings.end_month -%}
+{%- assign endday = section.settings.end_day  -%}
+{%- assign endhour = section.settings.end_hours  -%}
+{%- assign endminute = section.settings.end_minute  -%}
+{%- assign endsec = section.settings.end_sec  -%}
+
+<script>
+	const countDownDate = new Date('{{endyear}}-{{endmonth}}-{{endday}}T{{endhour}}:{{endminute}}:{{endsec}}').getTime();
+	const daysElement = document.querySelector(".count-down-container .days > span");
+	const hoursElement = document.querySelector(".count-down-container .hours > span");
+	const minutesElement = document.querySelector(".count-down-container .minutes > span");
+	const secondsElement = document.querySelector(".count-down-container .seconds > span");
+	const countDownInterval = setInterval(function() {
+		const now = new Date().getTime();
+		const distance = countDownDate - now;
+		const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+		const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+		const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+		const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+		if (daysElement) daysElement.innerHTML = days.toLocaleString('en-US', { minimumIntegerDigits: 2 });
+		if (hoursElement) hoursElement.innerHTML = hours.toLocaleString('en-US', { minimumIntegerDigits: 2 });
+		if (minutesElement) minutesElement.innerHTML = minutes.toLocaleString('en-US', { minimumIntegerDigits: 2 });
+		if (secondsElement) secondsElement.innerHTML = seconds.toLocaleString('en-US', { minimumIntegerDigits: 2 });
+
+		if (distance < 0) {
+          clearInterval(countDownInterval);
+        }
+
+	}, 1000);
+</script>
+{% endif %}

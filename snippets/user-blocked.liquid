@@ -1,0 +1,31 @@
+{%- assign wpp_placeholder = 'Olá, sou %%NAME%%, minha conta foi desativada e preciso de ajuda para resolver isso.' -%}
+{%- assign wpp_placeholder = wpp_placeholder | replace: '%%NAME%%', customer.first_name -%}
+
+<div class="w-100 d-flex justify-content-center align-items-center my-5">
+    <div class="user-blocked_wrapper row px-3 px-md-0">
+        <div class="col-3 col-md-4">
+            <img src="https://cdn.shopify.com/s/files/1/0507/3226/9775/files/image_20.png?v=1637336337" alt="warning">
+        </div>
+        <div class="col-9 col-md-8">
+            <h2 class="text-dark display-4 mb-2 text-nowrap">Conta bloqueada</h2>
+            <p class="text-secondary mb-0">Seu cadastro não foi aceito devido ao erro:</p>
+            <ul class="mt-2 mb-4">
+                <li class="fw-bold fs-5">Não foi possível validar seus dados</li>
+            </ul>
+            <div class="row">
+                <div class="col-12 col-md-6 mb-3">
+                    <a class="btn btn-warning fs-5 fw-bolder py-3 w-100" href="https://wa.me/5511994902904?text={{ wpp_placeholder }}">Peça ajuda</a>
+                </div>
+                <div class="col-12 col-md-6 mb-3">
+                    <a class="btn btn-dark fs-5 py-3 w-100" href="/account/logout">Desconectar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .user-blocked_wrapper{
+        max-width: 700px;
+    }
+</style>

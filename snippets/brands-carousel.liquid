@@ -1,0 +1,59 @@
+{% if collectionArray.size > 0 %}
+  <section class="{{wrapperName}}-container">
+    <h2 class="collection__title fs-2 mt-2 mb-3 fw-bold color-main-080">{{ custom_title }}</h2>
+    <div class="card generic-slider-wrapper {{wrapperName}} border-0">
+      <button class="previous-slide">{%- render 'icon', icon: 'arrow-left' -%}</button>
+      <button class="next-slide">{%- render 'icon', icon: 'arrow-right' -%}</button>
+      <div class="row justify-content-center ps-2">
+        <div class="generic-slider px-md-5 {{containerName}}">
+          {%- for product in collectionArray -%}
+            {%- render 'brand-item', product: product -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script defer>
+    function initCarousel{{ containerName | replace: "-", "" }}(){
+      const brandsElement = document.querySelector(".{{containerName}}");
+  
+      new Glider(brandsElement, {
+        type: 'carousel',
+        focusAt: 'center',
+        rewind: true,
+        slidesToShow: 2,
+        slidesToScroll: 2,
+        draggable: true,
+        arrows: {
+          prev: '.{{wrapperName}} .previous-slide',
+          next: '.{{wrapperName}} .next-slide'
+        },
+        responsive: [
+        {
+          breakpoint: 600,
+          settings: {
+            slidesToShow: 3,
+            slidesToScroll: 3
+          }
+        },
+        {
+          breakpoint: 769,
+          settings: {
+            slidesToShow: 4,
+            slidesToScroll: 4
+          }
+        },
+        {
+          breakpoint: 1200,
+          settings: {
+            slidesToShow: 5,
+            slidesToScroll: 5
+          }
+        }
+        ]
+      })
+    }
+    initCarousel{{ containerName | replace: "-", "" }}();
+  </script>
+{% endif %}

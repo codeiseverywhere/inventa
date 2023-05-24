@@ -1,0 +1,127 @@
+<section id="anniversary-banner">
+	<div class="row">
+		<div class="d-none d-md-inline-block col-md-6 col-lg-7 col-xl-7 position-relative">
+			<img src="{{ 'ballons.png' | file_img_url: 'master' }}" class="" />
+			<h1 class="d-none d-md-inline-block text-white display-4 ms-4 mt-2">Aniversário <span class="fw-bold">INVENTA</span></h1>
+		</div>
+		<div class="col-12 col-md-6 col-lg-5 col-xl-5 pt-2 text-white">
+			<div class="row pt-1">
+				<div class="col-12 d-md-none">
+					<img src="{{ 'ballons.png' | file_img_url: 'master' }}" class="position-absolute top-0" />
+					<h2 class="text-end fs-3 mb-2 me-md-4 pe-3 pe-md-3 z-1 position-relative" >Aniversário <span class="fw-bold">INVENTA</span></h2>
+				</div>
+				<div class="text-wrapper col-3 offset-4 col-md-5 col-lg-5 col-xl-4 offset-md-0 offset-xl-2 ps-0 z-1">
+					<h2 class="text-end fs-4 fw-bold mt-1 d-none d-md-block">As <a href="/collections/promocoes-1" class="text-decoration-underline">promoções</a> acabam em:</h2>
+					<h2 class="text-end fs-6 fw-bold mt-1 d-md-none">As promoções acabam em:</h2>
+				</div>
+				<div class="count-down-wrapper col-5 col-md-6 col-lg-7 col-xl-5 px-0 ps-md-2">
+					<div class="count-down-container">
+						<div class="days d-inline-block text-center px-1">
+							<span class="circle-container bg-dark rounded-circle fs-4 p-1"></span>
+							<p>dias:</p>
+						</div>
+						<div class="hours d-inline-block text-center px-1">
+							<span class="circle-container bg-dark rounded-circle fs-4 p-1"></span>
+							<p>horas:</p>
+						</div>
+						<div class="minutes d-inline-block text-center px-1">
+							<span class="circle-container bg-dark rounded-circle fs-4 p-1"></span>
+							<p>min:</p>
+						</div>
+						<div class="seconds d-inline-block text-center px-1">
+							<span class="circle-container bg-dark rounded-circle fs-4 p-1"></span>
+							<p>sec:</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<style>
+	#anniversary-banner {
+		height: 86px;
+		background-color: #60BF99;
+		overflow: hidden;
+	}
+
+	.circle-container {
+		display: block;
+		width: 44px;
+		height: 44px;
+	}
+
+	#anniversary-banner .z-1 {
+		z-index: 1;
+	}
+
+	@media (max-width: 992px) {
+		#anniversary-banner {
+			height: 95px;
+		}
+
+		#anniversary-banner img.position-absolute {
+			max-height: 95px;
+		}
+
+    .circle-container {
+			width: 33px;
+			height: 33px;
+			padding: 0.15rem !important;
+		}
+
+		.count-down-container p {
+			font-size: 10px !important;
+		}
+  }
+
+  @media (max-width: 400px) {
+		#anniversary-banner .text-wrapper {
+			width: 30%;
+			margin-left: 20%;
+		}
+
+		#anniversary-banner .count-down-wrapper {
+			width: 50%;
+		}
+  }
+
+  @media (max-width: 340px) {
+		#anniversary-banner .text-wrapper {
+			width: 35%;
+			margin-left: 10%;
+			color: #000;
+		}
+
+		#anniversary-banner .count-down-wrapper {
+			width: 55%;
+		}
+  }
+</style>
+
+<script>
+const countDownDate = new Date("Mar 18, 2022 23:59:59").getTime();
+const daysElement = document.querySelector(".count-down-container .days > span");
+const hoursElement = document.querySelector(".count-down-container .hours > span");
+const minutesElement = document.querySelector(".count-down-container .minutes > span");
+const secondsElement = document.querySelector(".count-down-container .seconds > span");
+const countDownInterval = setInterval(function() {
+  const now = new Date().getTime();
+  const distance = countDownDate - now;
+  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+  if (daysElement) daysElement.innerHTML = days.toLocaleString('en-US', {minimumIntegerDigits: 2});
+  if (hoursElement) hoursElement.innerHTML = hours.toLocaleString('en-US', {minimumIntegerDigits: 2});
+  if (minutesElement) minutesElement.innerHTML = minutes.toLocaleString('en-US', {minimumIntegerDigits: 2});
+  if (secondsElement) secondsElement.innerHTML = seconds.toLocaleString('en-US', {minimumIntegerDigits: 2});
+
+  if (distance < 0) {
+    clearInterval(countDownInterval);
+    // document.getElementById("demo").innerHTML = "A promoção acabou :(";
+  }
+}, 1000);
+</script>

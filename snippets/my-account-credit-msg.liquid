@@ -1,0 +1,45 @@
+{%- assign creditToShow = false -%}
+{%- if credit and credit > 0 and credit_tp and credit_tp > 0 -%}
+    {%- assign creditToShow = 'C&TR' -%}
+{%- elsif credit and credit > 0 -%}
+    {%- assign creditToShow = 'C' -%}
+{%- elsif credit_tp and credit_tp > 0 -%}
+    {%- assign creditToShow = 'TR' -%}
+{%- elsif credit_tp == true -%}
+    {%- assign creditToShow = 'RM' -%}
+{%- endif -%}
+{% if credit or credit_tp %}
+	{%- case creditToShow -%}
+		<div class="col-10 offset-1 col-md-6 offset-md-3 text-center py-5">
+		{%- when 'C&TR' -%}
+		{% comment %}
+		<div class="col-10 offset-1 col-md-6 offset-md-3 text-center py-5">
+			<p class="fs-4 fw-light color-main-080 text-center">COMPRE ATÉ <strong>{{ credit_tp | times: 100 | floor | money_without_trailing_zeros }}</strong> COM TRUEPAY OU <strong>{{ credit | times: 100 | floor | money_without_trailing_zeros }} em {{ creditDue }} dias.</strong></p>
+			<a href="{{ routes.all_products_collection_url }}" class="btn border-radius-sm color-main-white color-background-main-100 py-3 px-5 fw-bold mt-4">Navegar na loja</a>
+		</div>
+		{% endcomment %}
+			<p class="fs-4 fw-light color-main-080 text-center">COMPRE ATÉ <strong>{{ credit | times: 100 | floor | money_without_trailing_zeros }}</strong> EM ATÉ <strong>{{ creditDue }} DIAS</strong></p>
+		</div>
+		{%- when 'C' -%}
+			<p class="fs-4 fw-light color-main-080 text-center">Você pode pagar até <strong>{{ credit | times: 100 | floor | money_without_trailing_zeros }} no boleto</strong> parcelado <strong>em {{ creditDue }} dias.</strong></p>
+		{%- when 'TR' -%}
+		{% comment %}
+		<div class="col-10 offset-1 col-md-6 offset-md-3 text-center py-5">
+			<p class="fs-4 fw-light color-main-080 text-center">COMPRE ATÉ <strong>{{ credit_tp | times: 100 | floor | money_without_trailing_zeros }} COM TRUEPAY</strong></p>
+			<a href="{{ routes.all_products_collection_url }}" class="btn border-radius-sm color-main-white color-background-main-100 py-3 px-5 fw-bold mt-4">Navegar na loja</a>
+		</div>
+		{% endcomment %}
+			<p class="fs-4 fw-light color-main-080 text-center">COMPRE EM ATÉ 12x NO CARTÃO <strong>SEM JUROS!</strong></p>
+		{%- when 'RM' -%}
+		{% comment %}
+		{%- assign credit_tp = 2000 -%}
+		<div class="col-10 offset-1 col-md-6 offset-md-3 text-center py-5">
+			<p class="fs-4 fw-light color-main-080 text-center">COMPRE ATÉ <strong>{{ credit_tp | times: 100 | floor | money_without_trailing_zeros }}</strong> UTILIZANDO OS RECEBÍVEIS DA MAQUININHA</p>
+			<a href="{{ routes.all_products_collection_url }}" class="btn border-radius-sm color-main-white color-background-main-100 py-3 px-5 fw-bold mt-4">Navegar na loja</a>
+		</div>
+		{% endcomment %}
+			<p class="fs-4 fw-light color-main-080 text-center">COMPRE EM ATÉ 12x NO CARTÃO <strong>SEM JUROS!</strong></p>
+	{%- endcase -%}
+			<a href="{{ routes.all_products_collection_url }}" class="btn border-radius-sm color-main-white color-background-main-100 py-3 px-5 fw-bold mt-4">Navegar na loja</a>
+		</div>
+{% endif %}

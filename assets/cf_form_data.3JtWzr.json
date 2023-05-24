@@ -1,0 +1,409 @@
+{
+  "form": {
+    "id": "3JtWzr",
+    "name": "Manufacturer Form",
+    "handle": "manufacturer-form",
+    "theme_id": "126962761935",
+    "settings": {
+      "locales": {
+        "back": "Atrás",
+        "next": "Próximo",
+        "cancel": "Cancelar",
+        "edit_link": "Edit account",
+        "fix_errors": "Por favor corrija os erros antes de continuar",
+        "is_invalid": "{{label}} é inválido",
+        "email_taken": "O e-mail já foi tomado",
+        "phone_taken": "O número de telefone já foi escolhido",
+        "server_error": "Não foi possível salvar o formulário, tente novamente mais tarde",
+        "step_counter": "Paso {{current}} de {{total}}",
+        "verify_email": "Verifique seu e-mail para obter um link de verificação para ativar sua conta.",
+        "not_available": "Ocorreu um erro ao salvar sua conta, tente novamente em alguns minutos.",
+        "create_account": "Cadastrar",
+        "update_account": "Cadastrar",
+        "recaptcha_error": "Challenge verification failed, please try again",
+        "creating_account": "Salvando...",
+        "updating_account": "Salvando...",
+        "invalid_email_domain": "O e-mail contém um nome de domínio inválido"
+      },
+      "whitelistedTags": "",
+      "markRequiredFields": false,
+      "displayCancelButton": false,
+      "redirectAfterSubmit": false,
+      "goBackAfterSubmission": false,
+      "accountApprovalRequired": true,
+      "cancelButtonRedirectUrl": "\/account\/login",
+      "emailVerificationRequired": false,
+      "postSubmissionRedirectUrl": "\/account",
+      "showSuccessStepAfterSubmit": true,
+      "goBackAfterCancelButtonClick": false
+    },
+    "install_locations": [
+      "manual"
+    ],
+    "created_at": "2021-04-12T18:47:26Z",
+    "updated_at": "2021-11-24T00:02:08Z",
+    "revision_ids": [
+      "nRT1wM2",
+      "RxTXdm",
+      "orTG0k",
+      "kdTrYZ",
+      "58Tbol",
+      "rATgOb",
+      "X1TqPV",
+      "LbTMg6",
+      "akTn16",
+      "d7Tn8v",
+      "znTVAyN",
+      "8oTVoM",
+      "wDTYVa",
+      "K0Tel6",
+      "Z6Tobk",
+      "orTYEy6",
+      "2ETG2b",
+      "vbTvly",
+      "4aTKEV"
+    ]
+  },
+  "revision": {
+    "id": "nRT1wM2",
+    "created_at": "2021-12-15T16:29:55Z",
+    "updated_at": "2021-12-15T16:29:55Z",
+    "embed_version": "4.8.3",
+    "published_at": null,
+    "fields": [
+      {
+        "id": 690837,
+        "dataColumn": {
+          "key": "tipo_de_conta",
+          "label": "Tipo de conta",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 0,
+        "type": "dropdown",
+        "stepId": 136114,
+        "default": "Fornecedor",
+        "label": "Tipo de conta",
+        "placeholder": "Selecione um tipo de conta",
+        "description": "",
+        "enum": [
+          {
+            "label": "Fornecedor",
+            "value": "Fornecedor"
+          },
+          {
+            "label": "Lojista",
+            "value": "Lojista"
+          }
+        ],
+        "appearance": {
+          "width": 12,
+          "cssClass": "invisible position-absolute start-0"
+        },
+        "settings": {
+          "end": 10,
+          "start": 1,
+          "enumType": "list",
+          "hideLabel": true,
+          "separateValues": false
+        },
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Insira um tipo de conta"
+          }
+        ],
+        "sensitive": null,
+        "preset": null,
+        "autotag": true
+      },
+      {
+        "id": 164721,
+        "dataColumn": {
+          "key": "first_name",
+          "label": "First name",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 1,
+        "type": "text",
+        "stepId": 136114,
+        "default": "",
+        "label": "Nome",
+        "placeholder": "Nome completo",
+        "description": null,
+        "enum": null,
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "hideLabel": true
+        },
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Adicione o seu nome"
+          }
+        ],
+        "sensitive": null,
+        "preset": "first_name",
+        "autotag": null
+      },
+      {
+        "id": 443048,
+        "dataColumn": {
+          "key": "phone",
+          "label": "Phone number",
+          "dataType": "phone"
+        },
+        "parentId": null,
+        "position": 2,
+        "type": "phone",
+        "stepId": 136114,
+        "default": "",
+        "label": "Telefone",
+        "placeholder": "Whatsapp",
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "hideLabel": true,
+          "defaultCountryCode": "BR"
+        },
+        "validations": [
+          {
+            "operator": "is_valid",
+            "comparand": null,
+            "errorMessage": "Por favor forneça um número de telefone válido"
+          },
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Adicione o seu telefone"
+          },
+          {
+            "metadata": {},
+            "operator": "longer_than",
+            "comparand": 7,
+            "errorMessage": "O telefone tem um formato incorreto"
+          }
+        ],
+        "sensitive": null,
+        "preset": "phone_number",
+        "autotag": null
+      },
+      {
+        "id": 199288,
+        "dataColumn": {
+          "key": "email",
+          "label": "Email address",
+          "dataType": "email"
+        },
+        "parentId": null,
+        "position": 3,
+        "type": "email",
+        "stepId": 136114,
+        "default": "",
+        "label": "Email",
+        "placeholder": "E-mail",
+        "description": null,
+        "enum": null,
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "hideLabel": true
+        },
+        "validations": [
+          {
+            "operator": "is_valid_email",
+            "comparand": null,
+            "errorMessage": "Por favor, forneça um endereço de e-mail válido"
+          },
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Adicione o seu email"
+          }
+        ],
+        "sensitive": null,
+        "preset": "email_address",
+        "autotag": null
+      },
+      {
+        "id": 104259,
+        "dataColumn": {
+          "key": "site_url",
+          "label": "New single-line text field",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 4,
+        "type": "text",
+        "stepId": 136114,
+        "default": "",
+        "label": "site url",
+        "placeholder": "Instagram ou site da sua marca",
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "hideLabel": true
+        },
+        "validations": [],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 139161,
+        "dataColumn": {
+          "key": "cnpj",
+          "label": "cnpj",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 5,
+        "type": "text",
+        "stepId": 136114,
+        "default": "",
+        "label": "CNPJ",
+        "placeholder": "CNPJ",
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "hideLabel": true
+        },
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Adicione o seu CNPJ"
+          },
+          {
+            "metadata": {
+              "0": "P",
+              "1": "o",
+              "2": "l",
+              "3": "a",
+              "4": "r",
+              "5": "i",
+              "6": "s",
+              "7": "T",
+              "8": "e",
+              "9": "x",
+              "10": "t",
+              "11": "F",
+              "12": "i",
+              "13": "e",
+              "14": "l",
+              "15": "d",
+              "16": "2",
+              "17": "5"
+            },
+            "operator": "matches_regex",
+            "comparand": "\\d{2}\\.?\\d{3}\\.?\\d{3}\\\/?\\d{4}\\-?\\d{2}",
+            "errorMessage": "O CNPJ é incorreto"
+          }
+        ],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 416823,
+        "dataColumn": null,
+        "parentId": null,
+        "position": 0,
+        "type": "heading",
+        "stepId": 167875,
+        "default": "",
+        "label": "Account request sent heading",
+        "placeholder": null,
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12,
+          "cssClass": "text-light mt-5",
+          "alignment": "center"
+        },
+        "settings": {
+          "size": 1,
+          "content": "Perfeito!",
+          "hideLabel": true,
+          "fontWeight": "bold"
+        },
+        "validations": [],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 360899,
+        "dataColumn": null,
+        "parentId": null,
+        "position": 1,
+        "type": "paragraph",
+        "stepId": 167875,
+        "default": "",
+        "label": "Reviewing submission explanation",
+        "placeholder": null,
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12,
+          "cssClass": "text-light"
+        },
+        "settings": {
+          "content": "<p style=\"text-align: center;\">Um consultor entrar&aacute; em contato com voc&ecirc; em breve!<\/p>",
+          "fontSize": 14,
+          "hideLabel": true
+        },
+        "validations": [],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      }
+    ],
+    "steps": [
+      {
+        "id": 136114,
+        "title": "Step 1",
+        "description": ""
+      },
+      {
+        "id": 167875,
+        "title": "Submission success",
+        "metadata": {
+          "isSuccessStep": true
+        },
+        "description": ""
+      }
+    ],
+    "rules": []
+  }
+}

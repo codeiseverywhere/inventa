@@ -1,0 +1,55 @@
+<section class="title-background d-flex align-items-center justify-content-center" data-section-id="{{ section.id }}" data-section-type="title-background">
+  <div class="container-fluid py-5">
+  	<h2 class="col-md-10 offset-md-1 col-12 display-3 pb-4 pb-md-0 text-center fw-bold text-white pt-5">
+      <span>{{ section.settings.title }}</span>
+    </h2>
+  </div>
+</section>
+
+<style>
+    .title-background{
+        background-color: {{ section.settings.background }};
+        {%- if section.settings.image -%}
+            background-image: url({{ section.settings.image | img_url: 'master' }});
+            background-size: cover;
+        {%- endif -%}
+        min-height: 600px;
+    }
+    .title-background h2{
+        top: 40%;
+        max-height: 30%;
+    }
+</style>
+
+{% schema %}
+{
+    "name": "Text with background",
+    "settings": [
+        {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Título"
+        },
+        {
+            "type": "color",
+            "id": "background",
+            "label": "Background color",
+            "default": "#6A766F"
+        },
+        {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image",
+            "info": "Imagem"
+        }
+    ],
+    "presets": [
+        {
+            "category": "Custom Sections",
+            "name": "Title with background",
+            "settings": {}
+        }
+    ]
+}
+{% endschema %}

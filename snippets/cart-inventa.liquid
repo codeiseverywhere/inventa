@@ -1,0 +1,754 @@
+{% if cart.item_count > 0 %}
+{% assign notReachedQuantity = 0 %}
+{% assign vendors = "" %}
+{% assign vendorNames = "" %}
+{% for item in cart.items %}
+{% assign productVendorName = item.vendor %}
+{% if productVendorName == "Inventa Comércio" %}
+    {% assign productTags = item.product.tags | join: "|||" %}
+    {% assign productVendorIdentifier = "Fornecedor_" %}
+    {% if productTags contains "Marca_" %}
+        {% assign productVendorIdentifier = "Marca_" %}
+    {% endif %}
+    {% assign productVendorName = productTags | split: productVendorIdentifier | last | strip | split: "|||" | first | append: "-Inventa Comércio" %}
+{% endif %}
+{% assign vendors = vendors | append: productVendorName | append: '$$' %}
+{%- assign productQty = 1 -%}
+{%- assign origin = false -%}
+{% for tag in item.product.tags %}
+{%- if tag contains "Pedido mínimo (produto)" -%}
+{%- assign productQty = tag | split: '_' | last | plus: 0 | at_least: 1 -%}
+{%- endif -%}
+{%- if tag contains 'Origem' -%}
+{%- assign origin = tag | split: '_' | last -%}
+{%- endif -%}
+{% endfor %}
+{% assign vendor_name = productVendorName | handle %}
+{% assign vendor_name = vendor_name | replace: "-39-", "" | replace: "-amp", "" %}
+{%- unless vendorNames contains vendor_name -%}
+    {% assign vendorNames = vendorNames | append: vendor_name | append: ':' | append: origin | append: '$$' %}
+{%- endunless -%}
+  {% if item.quantity < productQty %}
+    {% assign notReachedQuantity = notReachedQuantity | plus: 1 %}
+  {% endif %}
+{% endfor %}
+{% assign vendors = vendors | split: '$$' | uniq %}
+{% assign allVendors = vendors %}
+
+<div class="row border-bottom">
+    <div class="col-xl-8 pb-5 pe-0 border-end">
+        <div class="border-bottom border-end d-none" id="items_no-min-reached">
+            <h3 class="display-6 text-red ps-4 pt-4 pb-3" style="background-color: #FFF1F1;">Itens abaixo do pedido mínimo</h3>
+            <table class="product-table">
+                <thead class="text-black-50">
+                    <tr>
+                        <th class="ps-4 col-6 pb-2">Produto</th>
+                        <th class="col-2 pb-2">Qtd</th>
+                        <th class="col-2 pb-2">Preço</th>
+                        <th class="col-2 pb-2">Total</th>
+                    </tr>
+                </thead>
+                <tbody class="product-body text-red fs-5" id="rejected-items">
+                    {% for item in cart.items %}
+                    {%- assign productQty = 1 -%}
+                    {%- assign stepQty = 1 -%}
+                    {%- assign maxQuantity = 0 -%}
+                    {% assign productVendorName = item.vendor %}
+                    {% if productVendorName == "Inventa Comércio" %}
+                        {% assign productTags = item.product.tags | join: "|||" %}
+                        {% assign productVendorIdentifier = "Fornecedor_" %}
+                        {% if productTags contains "Marca_" %}
+                            {% assign productVendorIdentifier = "Marca_" %}
+                        {% endif %}
+                        {% assign productVendorName = productTags | split: productVendorIdentifier | last | strip | split: "|||" | first | append: "-Inventa Comércio" %}
+                    {% endif %}
+                    {% for tag in item.product.tags %}
+                        {% assign tagName = tag | downcase %}
+                        {%- if tagName contains "pedido máximo_" -%}
+                            {%- assign maxQuantity = tagName | split: '_' | last | plus: 0 -%}
+                        {%- endif -%}
+                        {%- if tag contains "Pedido mínimo (produto)" -%}
+                            {%- assign productQty = tag | split: '_' | last | plus: 0 | at_least: 1 -%}
+                        {%- endif -%}
+                        {% if tagName contains "quantidade_aumento" %}
+                            {%- assign stepQty = tagName | split: ':' | last | plus: 0 | at_least: 1 -%}
+                        {% endif %}
+
+                        {% if productTags contains "Marca_" %}
+                            {% assign productVendorIdentifier = "Marca_" %}
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if item.quantity < productQty %}
+                    <tr id="lineprice-{{ item.variant_id }}" no-qty-min="true" vendor="{{ productVendorName | downcase | replace: ' ', '_' | replace: ',', '' }}">
+                        <td class="ps-4">
+                            <div class="border-top w-100">
+                                <div class="ms-3 d-flex">
+                                    <div style="min-width: 100px; height: fit-content;" class="mt-4 d-flex justify-content-center img-thumbnail" >
+                                        <img src="{{ item | img_url: 'medium' }}" alt="{{ item.title | escape }}">
+                                    </div>
+                                    <div class="pe-3 position-relative w-100">
+                                        <a href="{{ item.url }}">
+                                            <p class="mt-4 pt-2 ms-4 mb-0 product-name fw-bold">{{ item.product.title }}</p>
+                                            {%- if item.product.selected_or_first_available_variant.sku -%}
+                                            <p class="ms-4 product-sku">
+                                                <small>SKU {{ item.product.selected_or_first_available_variant.sku }}</small>
+                                            </p>
+                                            {%- endif -%}
+                                        </a>
+                                        <div style="bottom: 23px;" class="h-auto position-absolute d-none d-md-flex align-items-end ms-4">
+                                            <p class="fs-5 color-main-080 fst-italic">
+                                                <small class="d-block">Pedido mínimo {{ productQty }} {{ productQty | pluralize: 'unidade', 'unidades' }}</small>
+                                                {% if maxQuantity > 0 %}
+                                                    <small class="d-block">Quantidade máxima {{ maxQuantity }} {{ maxQuantity | pluralize: 'unidade', 'unidades' }}</small>
+                                                {% endif %}
+                                            </p>
+                                        </div>
+                                        <div class="ps-4 h-auto d-md-none mobile-xss">
+                                            <div class="quantity-controls d-flex align-items-center h-auto">
+                                                <div class="d-flex quantity-input align-items-center">
+                                                    <button type="button" product-id="{{ item.variant_id }}" class="less-button">{% render 'icon', icon: 'minus' %}</button>
+                                                    <button type="button" product-id="{{ item.variant_id }}" class="disabled_less-button d-none" data-bs-toggle="tooltip" data-bs-html="true" title="Mínimo {{ productQty }} uni.">{% render 'icon', icon: 'minus' %}</button>
+                                                    <input class="text-center product-input" product-id="{{ item.variant_id }}" step-quantity="{{ stepQty }}" min="{{ productQty }}" {% if maxQuantity > 0 %}max="{{ maxQuantity }}" {% endif %} inputmode="numeric" value="{{ item.quantity }}" id="quantity-{{ item.variant_id }}__mobile" size="{{ item.quantity | append: '' | size | at_least: 2 }}">
+                                                    <button type="button" product-id="{{ item.variant_id }}" class="add-button">{% render 'icon', icon: 'plus' %}</button>
+                                                </div>
+                                                <div class="h-auto">
+                                                    <p product-id="{{ item.variant_id }}" style="line-height: 1.1rem;" class="fs-3 text-black-50 remove-button"><small product-id="{{ item.variant_id }}" class="ps-2">Excluir</small></p>
+                                                </div>
+                                            </div>
+                                            <p class="mt-3 ps-4 fs-2 pt-3 h-auto" id="lineprice-{{ item.variant_id }}__mobile">{{ item.final_line_price | money }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="border-top">
+                                <div class="quantity-controls h-auto">
+                                    <div class="d-flex quantity-input align-items-center">
+                                        <button type="button" product-id="{{ item.variant_id }}" class="less-button">{% render 'icon', icon: 'minus' %}</button>
+                                        <button type="button" product-id="{{ item.variant_id }}" class="disabled_less-button d-none" data-bs-toggle="tooltip" data-bs-html="true" title="Mínimo {{ productQty }} uni.">{% render 'icon', icon: 'minus' %}</button>
+                                        <input class="text-center product-input" product-id="{{ item.variant_id }}" min="{{ productQty }}" {% if maxQuantity > 0 %}max="{{ maxQuantity }}" {% endif %} inputmode="numeric" value="{{ item.quantity }}" id="quantity-{{ item.variant_id }}" size="{{ item.quantity | append: '' | size | at_least: 2 }}">
+                                        <button type="button" product-id="{{ item.variant_id }}" class="add-button">{% render 'icon', icon: 'plus' %}</button>
+                                    </div>
+                                    <div class="h-auto">
+                                        <p product-id="{{ item.variant_id }}" class="fs-5 text-black-50 remove-button"><small product-id="{{ item.variant_id }}" class="ps-2">Excluir</small></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="border-top">
+                                <p class="mt-4 pt-2 product-price">{% if item.discounted_price %}{{ item.discounted_price | money }}{% else %}{{ item.original_price | money }}{% endif %}</p>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="border-top">
+                                <p class="mt-4 pt-2 product-total" id="lineprice-{{ item.variant_id }}__mobile">{{ item.final_line_price | money }}</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>        
+        
+        <div class="border-bottom d-none" id="no-min-amount__container">
+            <h3 class="display-6 ps-md-4 px-2 pt-4 pb-3 color-red-darken-20 color-background-red-lighten-90">Fornecedores abaixo do mínimo</h3>
+
+            <div id="products-without-min" class="color-red-darken-20">
+
+            </div>
+        </div>
+        
+        <div id="products-with-min">
+          {% comment %}
+            <div class="px-4 mt-3">
+                <div class="rounded bg-yellow-light d-flex me-1 py-2">
+                    <div class="d-flex mx-5">
+                        <i style="color: rgba(0, 0, 0, 0.54);" class="my-auto fs-3 fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="noto-sanz">
+                        <h4 class="fs-6 mb-0 text-uppercase fw-bold">ATENÇão</h4>
+                        <p>Devido as festas de fim de ano {{ vendors.size > 1 | pluralize: 'a data', 'as datas' }} de entrega {{ vendors.size > 1 | pluralize: 'sofreu', 'sofreram' }} alteração.</p>
+                    </div>
+                </div>
+            </div>
+          {% endcomment %}
+            <div class="border-bottom">
+                <h3 class="display-6 ps-4 pt-4 pb-3 color-main-100">Carrinho</h3>
+            </div>
+            {% assign total-general = '' %}
+            {% for vendor in vendors %}
+            {% assign existOne = false %}
+            {% assign vendorSubtotal = 0 %}
+            {% assign vendorQuantity = 0 %}
+            {% for item in cart.items %}
+                {% assign productVendorName = item.vendor %}
+                {% if productVendorName == "Inventa Comércio" %}
+                    {% assign productTags = item.product.tags | join: "|||" %}
+                    {% assign productVendorIdentifier = "Fornecedor_" %}
+                    {% if productTags contains "Marca_" %}
+                        {% assign productVendorIdentifier = "Marca_" %}
+                    {% endif %}
+                    {% assign productVendorName = productTags | split: productVendorIdentifier | last | strip | split: "|||" | first | append: "-Inventa Comércio" %}
+                {% endif %}
+                {% if productVendorName == vendor %}
+                    {%- assign productQty = 1 -%}
+                    {% for tag in item.product.tags %}
+                        {%- if tag contains "Pedido mínimo (produto)" -%}
+                            {%- assign productQty = tag | split: '_' | last | plus: 0 | at_least: 1 -%}
+                        {%- endif -%}
+                    {% endfor %}
+                    {% if item.quantity >= productQty %}
+                        {% assign vendorSubtotal = vendorSubtotal | plus: item.final_line_price %}
+                        {% assign vendorQuantity = vendorQuantity | plus: item.quantity %}
+                        {% assign existOne = true %}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+            {% assign vendor-cart-info = vendor | append: '$$' | append: vendorSubtotal | append: '$$' | append: vendorQuantity | append: '__' %}
+            {% assign total-general = total-general | append: vendor-cart-info %}
+            {% if existOne %}
+            <div style="margin-bottom: 40px;" class="vendor_container-general" id="vendor-{{ vendor | downcase | replace: ' ', '_' | replace: ',', '' }}">
+                <div class="d-flex d-block mt-3 vendor_container-header" id="header-{{ vendor | downcase | replace: ' ', '_' | replace: ',', '' }}">
+                    <p style="max-width: 70%;" class="px-2 px-md-0 ms-md-4">
+                        <strong>{{ vendor | remove: "-Inventa Comércio" }}</strong> <span style="white-space: nowrap;">total de <span id="line_vendor-subtotal_{{ vendor | replace: ' ', '_' | replace: ',', '' | downcase | remove: "-Inventa Comércio" }}" >{{ vendorSubtotal | money }}</span></span> <span id="min-{{ vendor | replace: ' ', '_' | replace: ',', '' | downcase }}"></span>
+                        <br>
+                        <span class="frete-stimate color-main-080" id="frete_stimate-{{ vendor | replace: ' ', '_' | replace: ',', '' | downcase }}"></span>
+                    </p>
+                    <a class="color-main-100 ps-2 text-end ms-auto me-4 text-decoration-underline" href="/collections/vendors?q={{vendor | url_encode}}">Comprar mais</a>
+                </div>
+                <table class="product-table" id="table-{{ vendor | downcase | replace: ' ', '_' | replace: ',', '' }}">
+                    <thead class="color-main-100">
+                        <tr>
+                            <th class="ps-4 col-6 pb-2">Produto</th>
+                            <th class="col-2 pb-2">Qtd</th>
+                            <th class="col-2 pb-2">Preço</th>
+                            <th class="col-2 pb-2">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody class="product-body fs-5" id="tbody-{{ vendor | downcase | replace: ' ', '_' | replace: ',', '' }}">
+                        {% for item in cart.items %}
+                        {% assign productVendorName = item.vendor %}
+                        {% if productVendorName == "Inventa Comércio" %}
+                            {% assign productTags = item.product.tags | join: "|||" %}
+                            {% assign productVendorIdentifier = "Fornecedor_" %}
+                            {% if productTags contains "Marca_" %}
+                                {% assign productVendorIdentifier = "Marca_" %}
+                            {% endif %}
+                            {% assign productVendorName = productTags | split: productVendorIdentifier | last | strip | split: "|||" | first | append: "-Inventa Comércio" %}
+                        {% endif %}
+                        {% if productVendorName == vendor %}
+                        {%- assign productQty = 1 -%}
+                        {%- assign stepQty = 1 -%}
+                        {%- assign maxQuantity = 0 -%}
+                        {% for tag in item.product.tags %}
+                            {%- assign tagName = tag | downcase -%}
+                            {%- if tagName contains "pedido máximo_" -%}
+                                {%- assign maxQuantity = tagName | split: '_' | last | plus: 0 -%}
+                            {%- endif -%}
+                            {%- if tag contains "Pedido mínimo (produto)" -%}
+                                {%- assign productQty = tag | split: '_' | last | plus: 0 | at_least: 1 -%}
+                            {%- endif -%}
+                            {% if tagName contains "quantidade_aumento" %}
+                                {%- assign stepQty = tag | split: ':' | last | plus: 0 | at_least: 1 -%}
+                            {% endif %}
+                        {% endfor %}
+                        {% if item.quantity >= productQty %}
+                        <tr id="line-{{ item.variant_id }}" vendor="{{ vendor | downcase | replace: ' ', '_' | replace: ',', '' }}">
+                            <td class="ps-md-4 show-mobile">
+                                <div class="border-top w-100">
+                                    <div class="ms-3 d-flex">
+                                        <div style="min-width: 100px; height: fit-content;" class="mt-4 d-flex justify-content-center img-thumbnail" >
+                                            <img src="{{ item | img_url: 'medium' }}" alt="{{ item.title | escape }}">
+                                        </div>
+                                        <div class="pe-3 position-relative w-100">
+                                            <a href="{{ item.url }}">
+                                                <p class="mt-4 pt-2 ms-4 mb-0 product-name">{{ item.product.title }}</p>
+                                                {%- if item.product.selected_or_first_available_variant.sku -%}
+                                                <p class="ms-4 product-sku">
+                                                    <small>SKU {{ item.product.selected_or_first_available_variant.sku }}</small>
+                                                </p>
+                                                {%- endif -%}
+                                            </a>
+                                            <div style="bottom: 23px;" class="h-auto position-absolute d-none d-md-flex align-items-end ms-4">
+                                                <p class="fs-5 text-black-50 fst-italic">
+                                                    <small class="d-block">Pedido mínimo {{ productQty }} {{ productQty | pluralize: 'unidade', 'unidades' }}</small>
+                                                    {% if maxQuantity > 0 %}
+                                                        <small class="d-block">Quantidade máxima {{ maxQuantity }} {{ maxQuantity | pluralize: 'unidade', 'unidades' }}</small>
+                                                {% endif %}
+                                                </p>
+                                            </div>
+                                            <div class="ps-4 h-auto d-md-none mobile-xss">
+                                                <div class="quantity-controls h-auto">
+                                                    <div class="d-flex quantity-input align-items-center">
+                                                        <button type="button" product-id="{{ item.variant_id }}" class="less-button">{% render 'icon', icon: 'minus' %}</button>
+                                                        <button type="button" product-id="{{ item.variant_id }}" class="disabled_less-button d-none" data-bs-toggle="tooltip" data-bs-html="true" title="Mínimo {{ productQty }} uni.">{% render 'icon', icon: 'minus' %}</button>
+                                                        <input class="text-center product-input" product-id="{{ item.variant_id }}" step-quantity="{{ stepQty }}" min="{{ productQty }}" {% if maxQuantity > 0 %}max="{{ maxQuantity }}" {% endif %} inputmode="numeric" value="{{ item.quantity }}" id="quantity-{{ item.variant_id }}__mobile" size="{{ item.quantity | append: '' | size | at_least: 2 }}">
+                                                        <button type="button" product-id="{{ item.variant_id }}" class="add-button">{% render 'icon', icon: 'plus' %}</button>
+                                                    </div>
+                                                    <div class="h-auto">
+                                                        <p product-id="{{ item.variant_id }}" style="line-height: 1.1rem;" class="fs-3 text-black-50 remove-button"><small product-id="{{ item.variant_id }}" class="ps-2">Excluir</small></p>
+                                                    </div>
+                                                </div>
+                                                <p class="mt-3 ps-4 fs-2 pt-3 h-auto" id="lineprice-{{ item.variant_id }}__mobile">{{ item.final_line_price | money }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="border-top">
+                                    <div class="quantity-controls h-auto">
+                                        <div class="d-flex quantity-input align-items-center">
+                                            <button type="button" product-id="{{ item.variant_id }}" class="less-button">{% render 'icon', icon: 'minus' %}</button>
+                                            <button type="button" product-id="{{ item.variant_id }}" class="disabled_less-button d-none" data-bs-toggle="tooltip" data-bs-html="true" title="Mínimo {{ productQty }} uni.">{% render 'icon', icon: 'minus' %}</button>
+                                            <input class="text-center product-input" product-id="{{ item.variant_id }}" step-quantity="{{ stepQty }}" min="{{ productQty }}" {% if maxQuantity > 0 %}max="{{ maxQuantity }}" {% endif %} inputmode="numeric" value="{{ item.quantity }}" id="quantity-{{ item.variant_id }}" size="{{ item.quantity | append: '' | size | at_least: 2 }}">
+                                            <button type="button" product-id="{{ item.variant_id }}" class="add-button">{% render 'icon', icon: 'plus' %}</button>
+                                        </div>
+                                        <div class="h-auto">
+                                            <p product-id="{{ item.variant_id }}" class="fs-5 text-black-50 remove-button"><small product-id="{{ item.variant_id }}" class="ps-2">Excluir</small></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="border-top">
+                                    <p class="mt-4 pt-2">{% if item.discounted_price %}{{ item.discounted_price | money }}{% else %}{{ item.original_price | money }}{% endif %}</p>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="border-top">
+                                    <p class="mt-4 pt-2" id="lineprice-{{ item.variant_id }}">{{ item.final_line_price | money }}</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endif %}
+                        {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-xl-4 px-lg-5 pb-5 px-4 pt-4 d-xl-flex align-items-start">
+        <div class="cart-recap__scroller align-self-end">
+            {% assign vendors-information = total-general | split: '__' %}
+            {% assign total = 0 %}
+            <h3 class="display-6 color-main-100">Resumo da compra</h3>
+            <table class="container">
+                <thead>
+                    <tr class="row">
+                        <th class="col-3"></th>
+                        <th class="col-4"></th>
+                        <th class="col-5"></th>
+                    </tr>
+                </thead>
+                <tbody class="totals">
+                    {% for vendor in vendors-information %}
+                    {% assign info = vendor | split: '$$' %}
+                    {% assign total = total | plus: info[1] %}
+                    <tr row="subtotals" class="border-bottom fs-6 d-none color-main-090" id="general-subtotal_{{ info[0] | downcase | replace: ' ', '_' | replace: ',', '' }}">
+                        <td class="ps-3">
+                            <p class="subtotal_vendor-name">{{ info[0] | remove: "-Inventa Comércio" }}</p>
+                        </td>
+                        <td>
+                            <span id="general-quantity_{{ info[0] | downcase | replace: ' ', '_' | replace: ',', '' }}">{{ info[2] }} items</span>
+                        </td>
+                        <td class="text-end pe-3">
+                            <span id="general-money_{{ info[0] | downcase | replace: ' ', '_' | replace: ',', '' }}">{{ info[1] | money }}</span>
+                            <small class="d-none font-color-accent" id="general-discount_{{ info[0] | downcase | replace: ' ', '_' | replace: ',', '' }}"></small>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {%- assign customerOrdersCount = customer.orders_count | plus: 0 -%}
+                    {%- assign shippingValidStates = "AC,AM,AP,PA,RO,RR,TO,AL,BA,CE,MA,PB,PE,PI,RN,SE" -%}
+                    {%- assign customerTags = customer.tags | upcase | join: "," -%}
+                    {%- assign payShipping = false -%}
+
+                    {% if customerTags contains 'ESTADO:' and customerTags contains 'hasToPayShipping_yes' %}
+                        {%- assign stateTag = customerTags | split: "ESTADO:" | last | strip | slice: 0, 2 -%}
+                        {% if shippingValidStates contains stateTag %}
+                        {%- assign payShipping = true -%}
+                        {% endif %}
+                    {% endif %}
+                    {% if payShipping == true %}
+                    <tr class="">
+                        <td colspan="3">
+                            <div class="border-bottom py-2">
+                                <p class="mb-0 pb-0 progress-bar_not-full">Já tem 50%, só pouco mais para ganhar FRETE GRÁTIS</p>
+                                <p class="mb-0 pb-0 progress-bar_full">Parabéns, você ganhou FRETE GRÁTIS!</p>
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar_control bg-warning"></div>
+                                </div>
+                                <p class="text-secondary mb-0 progress-bar_remaining">Adicione <span class="progress-bar_remaining-number"></span> em produtos</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endif %}
+                    <tr class="fs-5 subtotal">
+                        <td class="ps-3">
+                            <p class="mb-0 mt-2 color-main-080">Subtotal</p>
+                        </td>
+                        <td colspan="2" class="text-end pe-3">
+                            <p class="mb-0 mt-2 color-main-100" id="subtotal-total">{{ 0 | money }}</p>
+                        </td>
+                    </tr>
+                    <tr class="fs-5 impostos">
+                        <td class="ps-3 text-black-50">
+                            <p class="mb-0 color-main-080">Impostos</p>
+                        </td>
+                        <td colspan="2" class="text-end pe-3">
+                            <p class="mb-0 color-main-100" id="impostos-total">{{ 0 | money }}</p>
+                        </td>
+                    </tr>
+                    <tr class="fs-5 descontos disocunt-line d-none">
+                        <td class="ps-3 pb-2 text-black-50">
+                            <p class="mb-0 color-main-080">Descontos</p>
+                        </td>
+                        <td colspan="2" class="pb-2 text-end pe-3">
+                            <p class="mb-0 color-main-100" id="descontos-total">{{ 0 | money }}</p>
+                        </td>
+                    </tr>
+                    <tr class="fs-4 border-bottom border-top">
+                        <td class="ps-3 pb-2 text-black-50">
+                            <p class="mb-0 mt-2 color-main-080">Total</p>
+                        </td>
+                        <td colspan="2" class="pb-2 text-end pe-3">
+                            <p class="mb-0 mt-2 color-main-100" id="general-total">{{ 0 | money }}</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="color-background-red-lighten-90 color-red-darken-20 text-center py-3 my-3 rounded d-none" id="customer_error-message" style="background-color: #FFF1F1;">Não incluímos itens abaixo do pedido mínimo</p>
+            <p class="color-background-red-lighten-90 color-red-darken-20 text-center py-3 my-3 rounded d-none" id="no-min_error-message" style="background-color: #FFF1F1;">A compra mínima é {{ shop.metafields.shop_info.minimum_order_value | times: 100 | money }}</p>
+            {%- if customer -%}
+                {% assign credit = 0 %}
+                {% assign spent = 0 %}
+                {% assign customer_state = false %}
+                {% for tag in customer.tags %}
+                    {%- assign tagName = tag | downcase -%}
+                    {% if tag contains 'estado' %}
+                        {% assign customer_state = tag | split: ':' | last %}
+                    {% endif %}
+                    {% if tag contains 'credit:' %}
+                        {% assign credit = tag | split: ':' | last %}
+                        {% assign creditDue = 90 %}
+                    {% endif %}
+                    {% if tag contains 'spent:' %}
+                        {% assign found-spent = tag | split: ':' %}
+                        {% assign spent = spent | plus: found-spent[1] %}
+                    {% endif %}
+                {% endfor %}
+                {% unless customer.tags contains "cpf-user" %}
+                    {% if customer.tags contains 'credit30' %}
+                       {% assign creditDue = 30 %}
+                    {% elsif customer.tags contains 'credit15' %}
+                        {% assign creditDue = 15 %}
+                    {% endif %}
+                    {% assign credit = credit | minus: spent %}
+                    {% assign cents = credit | modulo: 1 %}
+                    {% assign credit = credit | minus: cents %}
+                    {% if credit > 0 %}
+                        <div style="height: fit-content;" class="my-2 row justify-content-center align-items-center">
+                            <img class="col-2 px-3" style="width:auto;" src="{{ 'coin-icon.png' | asset_img_url }}" alt="Pague em {{ creditDue }} dias">
+                            <p style="max-width: 400px;" class="fs-6 color-main-080 col-8">Pague em {{ creditDue }} dias compras de até <span style="white-space: nowrap;">{{ credit | times: 100 | floor | money }}</span></p>
+                        </div>
+                    {% endif %}
+                {% endunless %}
+            {%- endif -%}
+            <div style="height: fit-content;" class="my-4 row justify-content-center align-items-center">
+                <img class="col-2" style="width:auto;" src="{{ 'discount-icon.png' | file_img_url }}" alt="Você poderá adicionar um cupom de desconto no próximo passo">
+                <p style="max-width: 400px;" class="fs-6 color-main-080 col-8">Você poderá adicionar um cupom de desconto no próximo passo.</p>
+            </div>
+            {% comment %}          
+            <div style="height: fit-content;" class="my-2 mb-4 row justify-content-center align-items-center">
+                <img class="col-2" style="width:auto;" src="{{ 'truck-icon.png' | asset_img_url }}" alt="Prazo e preço do frete será calculado no próximo passo">
+                <p style="max-width: 400px;" class="fs-6 color-main-080 col-8">Frete grátis acima de {{ shop.metafields.shop_info.minimum_order_value | times: 100 | money }} para todo o Brasil.</p>
+            </div>
+            {% endcomment %}
+            <div class="container px-0 finish-container">
+                <div class="finish-container_inner">
+                    <div class="finish-button_wrapper">
+                        <button class="fw-bold fs-5 color-main-100 color-background-yellow-accent fw-bold border-radius-md py-4 container px-2 btn" id="checkout-button" disabled>
+                            <span class="normal-text">Próximo passo</span>
+                            <span class="spinner-border d-none" role="status" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <button class="fw-bold border-width-thin color-main-090 color-border-050 border-dark fs-5 py-4 mt-3 border-radius-md mb-2 px-4 btn btn-light container" id="continueshop-button">Adicionar mais produtos</button>
+            <p class="text-center fs-4 color-main-080 mt-2">Pagamentos 100% seguros</p>
+        </div>
+    </div>
+</div>
+<style>
+    #products-with-min .vendor_container-header p{
+        color: #1A1A1A !important;
+    }
+
+    .bg-yellow-light{
+        background-color: #FFFBD8;
+    }
+    #products-without-min .frete-stimate,
+    #rejected-items .frete-stimate{
+        display: none;
+    }
+    .vendor_container-header .frete-stimate{
+        color: var(--accent-color);
+    }
+
+    @media (max-width: 849px){
+        #ShopifyChat{
+            bottom: 90px !important;
+        }
+    }
+    @media (min-width: 1200px){
+        #ShopifyChat{
+            bottom: 90px !important;
+        }
+    }
+    @media (max-width: 767px){
+        .vendor_container-general{
+            margin-bottom: 55px !important;
+        }
+
+        .vendor_container-header{
+            position: relative;
+            top: 20px;
+        }
+    }
+    .finish-container{
+        position: relative;
+        height: 77px;
+    }
+    @media (min-width: 850px) and (max-width: 1199px){
+        .finish-container{
+            width: 40%;
+        }
+        #continueshop-button{
+            width: 40% !important;
+            margin-left: 30% !important;
+        }
+        #customer_error-message,
+        #no-min_error-message{
+            width: 60% !important;
+            margin-left: 20% !important;
+        }
+    }
+    .finish-container_inner{
+        position: absolute;
+        visibility: hidden;
+        width: calc(100% + 6rem);
+        left: -3rem;
+    }
+    .finish-button_wrapper{
+        width: 100%;
+        position: sticky;
+        top: calc(100vh - 165px);
+        visibility: visible;
+        padding: 8px 3rem;
+        padding-top: 18px !important;
+        background-color: rgba(255, 255, 255, 0.9);
+    }
+    .product-body tr{
+        height: 147px;
+    }
+    .product-body td div{
+        height: 147px;
+    }
+    table.product-table{
+        width: 100%;
+    }
+    table.product-table img{
+        max-height: 100px;
+        width: auto;
+    }
+    .product-table thead tr th{
+        font-weight: 300;
+        color: #777A7C;
+        font-style: normal;
+    }
+    tbody.totals tr{
+        height: 55px;
+    }
+    tbody.totals tr.subtotal,
+    tbody.totals tr.impostos,
+    tbody.totals tr.descontos{
+        height: 40px;
+    }
+    .quantity-input{
+        height: 40px !important;
+        margin-top: 25px;
+        border: 1px solid #F2F2F2;
+        border-radius: 3px;
+        box-shadow: 0 1px 1px rgba(242, 242, 242, .2);
+        width: fit-content;
+    }
+    .quantity-input input{
+        border: none;
+        height: 30px;
+        width: 65px;
+    }
+    .quantity-input input:focus{
+        outline: none;
+    }
+    .quantity-input button{
+        height: 30px;
+        padding: 0 5px;
+        font-size: 15px;
+        color: rgba(34,34,34,.6);
+        position: relative;
+        bottom: 2px;
+    }
+    .quantity-input button.disabled_less-button{
+        color: rgba(34,34,34,.25);
+    }
+    .subtotal_vendor-name{
+        max-width: 120px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+    @media (max-width: 1199px) and (min-width: 992px) {
+        .subtotal_vendor-name{
+            max-width: 250px;
+        }
+        .product-name{
+            max-width: 360px;
+        }
+    }
+    @media (min-width: 768px) and (max-width: 991px) {
+        .product-name{
+            max-width: 260px;
+        }
+    }
+    @media (max-width: 767px){
+        p.product-name{
+            max-width: 55vw !important;
+        }
+        .product-table thead{
+            display: none;
+        }
+        .product-body td{
+            height: 180px;
+            display: none;
+        }
+        .product-body td.show-mobile{
+            display: table-cell;
+        }
+    }
+    @media (min-width: 420px){
+        .mobile-xss{
+            display: flex;
+        }
+        
+    }
+    @media (max-width: 420px){
+        .mobile-xss p{
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        .product-body tr{
+            height: 210px;
+        }
+    }
+    .product-name{
+        max-width: 240px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+    .product-name,
+    .product-sku,
+    .product-total,
+    .product-price{
+        color: #1A1A1A;
+    }
+    #no-min-amount__container .product-name,
+    #no-min-amount__container .product-sku,
+    #no-min-amount__container .product-total,
+    #no-min-amount__container .product-price{
+        color: #CC0F26 !important;
+    }
+    .remove-button{
+        cursor: pointer;
+        padding-left: 30px;
+    }
+    .text-red{
+        color: #940202!important;
+    }
+    @media (min-width: 1000px){
+        div.cart-recap__scroller{
+            bottom: 350px !important;
+            top: unset !important;
+        }
+    }
+</style>
+
+<script>
+    const brands_discounts = `{{ shop.metafields.brands.discounts | json }}`;
+    const shop_general_min = parseInt({{ shop.metafields.shop_info.minimum_order_value | times: 100 }});
+    var vendor_mins = [
+        {%- for wkHandle in allVendors -%}
+          {%- assign wkNameHandle = wkHandle | replace: "' ", "" | replace: "’", "" | handle | replace: "-39-", "" | replace: "-amp", "" -%}
+          {%- assign wkName = wkHandle | replace: "’", "" | handle -%}
+          {%- assign vendorHandle = wkHandle | downcase | replace: "+", "" | replace: "/", "" | replace: "' ", "-" | replace: " ", "-" | replace: "-&", "" | replace: "'", "" | replace: "--", "-" | replace: ".", "" | replace: "&", "-" | replace: "!", "" | replace: ",", "" | replace: "_", "-" | replace: "|", "" | replace: "-39-", "" | replace: "-amp;", "-" | replace: "-#39;", ""  -%}
+          {% assign vendorHandle = vendorHandle | replace: "--", "-" | remove: "-inventa-comércio" %}
+          {%- if vendorNames contains wkName or vendorNames contains wkNameHandle -%}
+            {%- assign origin = vendorNames | split: wkName | last | split: '$$' | first | split: ':' | last -%}
+            {%- assign minimum_order = 0 -%}
+            {%- assign seller_name = '' -%}
+            {%- assign split_name = '"' | append: vendorHandle | append: '":' -%}
+            {%- assign minimum_metafields = shop.metafields.sellers | json -%}
+            {%- if minimum_metafields contains split_name -%}
+              {%- assign minimum_order = shop.metafields.sellers | json | split: split_name | last | split: ',' | first | plus: 0 | times: 100 -%}
+              
+            {%- endif -%}
+            {%- assign seller_name = wkHandle -%}
+            {
+                seller_store_name: `{{ seller_name | replace: "’", "'" | replace: "&#39;", "'" | replace: "&amp;", "&" }}`,
+                minimum_purchase: {{ minimum_order }},
+                origin: '{{ origin }}'
+            },
+          {%- endif -%}
+        {%- endfor -%}
+    ]
+
+    const customer_state_tag = '{{ customer_state }}';
+    const customerId = {{ customer.id | json}};
+    const pageHost = {{ request.host | json }};
+    const corsUrl = "https://cors.inventashop.com.br/";
+    let shopifyShopUrl = "https://inventa.shop";
+    let shopifyApiUrl = "https://api.inventa.tec.br";
+    let shopifyApiKey = "LmRkuO9OI9";
+    let shopifyApiSecretKey = "42Ipvjz39M";
+
+    {% comment %}
+    if (pageHost.includes("dev")) {
+      shopifyShopUrl = "https://inventa-dev.myshopify.com";
+      shopifyApiUrl = "https://api.inventa.dev.br";
+      shopifyApiKey = "LMYzUdD0Wq";
+      shopifyApiSecretKey = "GHrI6Xg0Qc";
+    }
+    {% endcomment %}
+</script>
+<script src="{{ 'cart-inventa.js' | asset_url }}"></script>
+<script src="{{ 'getStateCode.js' | asset_url }}"></script>
+{% else %}
+<div class="container my-5 p-5 text-center">
+    <h2 class="display-3">Sua lista de compras está vazia :(</h2>
+    <button id="back-to-shop" class="my-3 px-5 py-3 btn btn-dark">Voltar para o Catálogo</button>
+    <script>
+        window.addEventListener('load', () => {
+            document.getElementById('back-to-shop').onclick = () => {
+                window.location.replace('/collections/marcas');
+            }
+        })
+    </script>
+</div>
+{% endif %}

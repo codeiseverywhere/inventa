@@ -1,0 +1,310 @@
+{
+  "form": {
+    "id": "GOtX8d",
+    "name": "Manufacturer compact form",
+    "handle": "manufacturer-compact-form",
+    "theme_id": "126683709593",
+    "settings": {
+      "locales": {
+        "back": "Atrás",
+        "next": "Próximo",
+        "cancel": "Cancelar",
+        "edit_link": "Edit account",
+        "fix_errors": "Por favor corrija os erros antes de continuar",
+        "is_invalid": "{{label}} é inválido",
+        "email_taken": "O e-mail já foi tomado",
+        "phone_taken": "O número de telefone já foi escolhido",
+        "server_error": "Não foi possível salvar o formulário, tente novamente mais tarde",
+        "step_counter": "Paso {{current}} de {{total}}",
+        "verify_email": "Verifique seu e-mail para obter um link de verificação para ativar sua conta.",
+        "not_available": "Ocorreu um erro ao salvar sua conta, tente novamente em alguns minutos.",
+        "create_account": "Cadastrar",
+        "update_account": "Cadastrar",
+        "recaptcha_error": "Challenge verification failed, please try again",
+        "creating_account": "Salvando...",
+        "updating_account": "Salvando...",
+        "invalid_email_domain": "O e-mail contém um nome de domínio inválido"
+      },
+      "enableRecaptcha": false,
+      "whitelistedTags": "",
+      "recaptchaSiteKey": "",
+      "markRequiredFields": false,
+      "displayCancelButton": false,
+      "redirectAfterSubmit": false,
+      "goBackAfterSubmission": false,
+      "accountApprovalRequired": true,
+      "cancelButtonRedirectUrl": "\/account\/login",
+      "emailVerificationRequired": false,
+      "postSubmissionRedirectUrl": "\/account",
+      "showSuccessStepAfterSubmit": true,
+      "goBackAfterCancelButtonClick": false
+    },
+    "install_locations": [
+      "manual"
+    ],
+    "created_at": "2021-05-11T10:25:27Z",
+    "updated_at": "2021-09-15T10:52:24Z",
+    "revision_ids": [
+      "Z6TrnwK",
+      "yzTgpL7",
+      "B5TANGm",
+      "akTzq7V",
+      "2ETzRgk",
+      "Z6Trrxq",
+      "8oTbMN8",
+      "LbTolEV"
+    ]
+  },
+  "revision": {
+    "id": "Z6TrnwK",
+    "created_at": "2021-09-15T20:00:16Z",
+    "updated_at": "2021-09-15T20:00:16Z",
+    "embed_version": "4.6.0",
+    "published_at": null,
+    "fields": [
+      {
+        "id": 521033,
+        "dataColumn": {
+          "key": "tipo_de_conta",
+          "label": "Tipo de conta",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 0,
+        "type": "dropdown",
+        "stepId": 182619,
+        "default": "Fornecedor",
+        "label": "Tipo de conta",
+        "placeholder": "Selecione um tipo de conta",
+        "description": "",
+        "enum": [
+          {
+            "value": "Fornecedor",
+            "label": "Fornecedor"
+          },
+          {
+            "value": "Lojista",
+            "label": "Lojista"
+          }
+        ],
+        "appearance": {
+          "width": 12,
+          "cssClass": "invisible position-absolute start-0"
+        },
+        "settings": {
+          "end": 10,
+          "start": 1,
+          "enumType": "list",
+          "hideLabel": true,
+          "separateValues": false
+        },
+        "validations": [],
+        "sensitive": null,
+        "preset": null,
+        "autotag": true
+      },
+      {
+        "id": 213135,
+        "dataColumn": {
+          "key": "first_name",
+          "label": "First name",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 1,
+        "type": "text",
+        "stepId": 182619,
+        "default": "",
+        "label": "Nome",
+        "placeholder": "Nome",
+        "description": null,
+        "enum": null,
+        "appearance": {
+          "width": 5
+        },
+        "settings": {
+          "hideLabel": true
+        },
+        "validations": [
+          {
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Por favor forneça um nome válido",
+            "metadata": {
+              "hiddenInApp": true
+            }
+          }
+        ],
+        "sensitive": null,
+        "preset": "first_name",
+        "autotag": null
+      },
+      {
+        "id": 481951,
+        "dataColumn": {
+          "key": "email",
+          "label": "Email address",
+          "dataType": "email"
+        },
+        "parentId": null,
+        "position": 2,
+        "type": "email",
+        "stepId": 182619,
+        "default": "",
+        "label": "Email",
+        "placeholder": "Email",
+        "description": null,
+        "enum": null,
+        "appearance": {
+          "width": 7
+        },
+        "settings": {
+          "hideLabel": true
+        },
+        "validations": [
+          {
+            "operator": "is_valid_email",
+            "comparand": null,
+            "errorMessage": "Por favor forneça um endereço de e-mail válido"
+          },
+          {
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Por favor insira um email",
+            "metadata": {
+              "hiddenInApp": true
+            }
+          }
+        ],
+        "sensitive": null,
+        "preset": "email_address",
+        "autotag": null
+      },
+      {
+        "id": 929545,
+        "dataColumn": {
+          "key": "clients_quantity",
+          "label": "",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 3,
+        "type": "dropdown",
+        "stepId": 182619,
+        "default": "",
+        "label": "",
+        "placeholder": "Numero de lojistas que você fornece",
+        "description": "",
+        "enum": [
+          {
+            "value": "1-50",
+            "label": "1-50"
+          },
+          {
+            "value": "51-200",
+            "label": "51-200"
+          },
+          {
+            "value": "201-500",
+            "label": "201-500"
+          },
+          {
+            "value": "Mais de 500",
+            "label": "Mais de 500"
+          }
+        ],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "end": 10,
+          "start": 1,
+          "enumType": "list",
+          "hideLabel": true,
+          "separateValues": false
+        },
+        "validations": [
+          {
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Escolha uma opção",
+            "metadata": {
+              "hiddenInApp": true
+            }
+          }
+        ],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 197495,
+        "dataColumn": null,
+        "parentId": null,
+        "position": 0,
+        "type": "heading",
+        "stepId": 258793,
+        "default": "",
+        "label": "Account request sent heading",
+        "placeholder": null,
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12,
+          "alignment": "center"
+        },
+        "settings": {
+          "size": 1,
+          "content": "Perfeito!",
+          "hideLabel": true,
+          "fontWeight": "bold"
+        },
+        "validations": [],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 878737,
+        "dataColumn": null,
+        "parentId": null,
+        "position": 1,
+        "type": "paragraph",
+        "stepId": 258793,
+        "default": "",
+        "label": "Reviewing submission explanation",
+        "placeholder": null,
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "content": "<p style=\"text-align: center;\">Um consultor entrar&aacute; em contato com voc&ecirc; em breve!<\/p>",
+          "fontSize": 14,
+          "hideLabel": true
+        },
+        "validations": [],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      }
+    ],
+    "steps": [
+      {
+        "id": 182619,
+        "title": "Step 1",
+        "description": ""
+      },
+      {
+        "id": 258793,
+        "title": "Submission success",
+        "description": "",
+        "metadata": {
+          "isSuccessStep": true
+        }
+      }
+    ],
+    "rules": []
+  }
+}

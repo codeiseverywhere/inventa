@@ -1,0 +1,299 @@
+{%- assign items_per_page = cart.attributes.collection_products_per_page | default: section.settings.default_products_per_page -%}
+
+{%- assign quick_links_menu = linklists[section.settings.quick_links] -%}
+{%- assign has_filters = true -%}
+{%- capture grid_classes -%}1/3--tablet-and-up 1/{{ section.settings.products_per_row }}--desk{%- endcapture -%}
+{%- assign view_mode = cart.attributes.collection_layout | default: section.settings.default_view_layout -%}
+
+{%- capture section_settings -%}
+{
+  "currentSortBy": {{ collection.sort_by | default: collection.default_sort_by | json }},
+  "currentTags": [{% for tag in current_tags %}{{ tag | handle | json }}{% unless forloop.last %},{% endunless %}{% endfor %}],
+  "filterType": {{ section.settings.filter_type | json }},
+  "defaultLayout": {{ section.settings.default_view_layout | json }},
+  "defaultProductsPerPage": {{ section.settings.default_products_per_page | json }},
+  "isAutomatic": {% if collection.current_vendor != blank %}true{% else %}false{% endif %},
+  "gridClasses": {{ grid_classes | json }}
+}
+{%- endcapture -%}
+
+{% assign vendorPrioritiesNames = '' %}
+{% for block in section.blocks %}
+  {% if forloop.index0 == 0 %}
+    {% assign vendorPrioritiesNames = block.settings.seller-name %}
+  {% else %}
+    {% assign vendorPrioritiesNames = vendorPrioritiesNames | append: ',' | append: block.settings.seller-name %}
+  {% endif %}
+{% endfor %}
+{% assign vendorPrioritiesNames = vendorPrioritiesNames | split: ',' %}
+
+<section data-section-id="{{ section.id }}" data-section-type="collection" data-section-settings='{{ section_settings }}'>
+  <div class="container container--flush">
+    <div {% if has_filters %}class="layout"{% endif %}>
+      {%- if has_filters -%}
+        <div class="layout__section layout__section--secondary hidden-pocket">
+          <div id="products-grid" class="card border-0">
+          </div>
+        </div>
+      {%- endif -%}
+
+      {%- paginate collection.products by items_per_page -%}
+        <div {% if has_filters %}class="layout__section"{% endif %}>
+          <div class="collection">
+            {%- if collection.all_products_count == 0 -%}
+              <div class="empty-state">
+                <p class="empty-state__heading heading h1">{{ collection.title }}</p>
+                <p class="empty-state__description">{{ 'collection.general.empty' | t }}</p>
+
+                <div class="empty-state__button-container">
+                  <a href="{{ routes.root_url }}" class="empty-state__button button button--primary">{{ 'collection.general.empty_button' | t }}</a>
+                </div>
+              </div>
+            {%- else -%}
+              
+              <div class="card border-0 {% if collection.products_count == 0 %}clearfix{% endif %}">
+                <div class="collection__dynamic-part">
+                  <div class="d-lg-none collection__toolbar px-md-0 pb-3">
+                    {%- if has_filters -%}
+                      <button class="collection__toolbar-item collection__toolbar-item--filter hidden-lap-and-up" data-action="open-drawer" aria-haspopup="true" aria-expanded="false" aria-controls="mobile-collection-filters">
+                        <span class="collection__filter-icon {% if current_tags.size > 0 %}collection__filter-icon--active{% endif %}">{%- render 'icon', icon: 'filter' -%}</span>
+                        {{ 'collection.filter.title' | t }}{% if current_tags.size > 0 %}&nbsp;({{ current_tags | size }}){% endif %}
+                      </button>
+                    {%- endif -%}
+
+                    <div class="collection__toolbar-item collection__toolbar-item--sort border p-3">
+                    </div>
+
+                    <div class="collection__toolbar-item collection__toolbar-item--layout border p-3">
+                    </div>
+                  </div>
+
+                  {%- if collection.products_count == 0 -%}
+                    <div class="empty-state empty-state--tight">
+                      <p class="empty-state__description">{{ 'collection.general.no_results' | t }}</p>
+
+                      <div class="empty-state__button-container">
+                        <button class="empty-state__button button button--primary" data-action="clear-tags">{{ 'collection.filter.clear_all' | t }}</button>
+                      </div>
+                    </div>
+                  {%- else -%}
+                    <div data-sectionId="{% if section.id %}{{section.id}}{% endif %}" data-settings='{% if section.settings %}{{section.settings | json}}{% endif %}' id="gf-products" class="product-list product-list--collection {% if has_filters %}product-list--with-sidebar{% endif %} border-0">
+                    </div>
+                  {%- endif -%}
+                </div>
+              </div>
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endpaginate -%}
+    </div>
+  </div>
+
+<link rel="stylesheet" href="{{ 'collection.css' | asset_url }}">
+
+{% schema %}
+{
+  "name": "Collection page",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_collection_image",
+      "label": "Show collection image",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "collapse_collection_description",
+      "label": "Collapse long description",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "collection_image_size",
+      "label": "Collection image size",
+      "options": [
+        {
+          "value": "preserve_ratio",
+          "label": "Original image ratio"
+        },
+        {
+          "value": "small",
+          "label": "Small"
+        },
+        {
+          "value": "medium",
+          "label": "Medium"
+        },
+        {
+          "value": "large",
+          "label": "Large"
+        }
+      ],
+      "default": "small"
+    },
+    {
+      "type": "select",
+      "id": "products_per_row",
+      "label": "Products per row (desktop)",
+      "options": [
+        {
+          "value": "3",
+          "label": "3"
+        },
+        {
+          "value": "4",
+          "label": "4"
+        }
+      ],
+      "default": "4"
+    },
+    {
+      "type": "range",
+      "id": "default_products_per_page",
+      "label": "Default products per page",
+      "min": 24,
+      "max": 48,
+      "step": 12,
+      "default": 24
+    },
+    {
+      "type": "select",
+      "id": "default_view_layout",
+      "label": "Default view layout",
+      "options": [
+        {
+          "value": "grid",
+          "label": "Grid"
+        },
+        {
+          "value": "list",
+          "label": "List"
+        }
+      ],
+      "default": "grid"
+    },
+    {
+      "type": "select",
+      "id": "show_quick_buy",
+      "label": "Show quick buy on...",
+      "options": [
+        {
+          "value": "list",
+          "label": "List view"
+        },
+        {
+          "value": "list_grid",
+          "label": "List and grid views"
+        }
+      ],
+      "default": "list"
+    },
+    {
+      "type": "select",
+      "id": "show_quick_view",
+      "label": "Show quick view on...",
+      "options": [
+        {
+          "value": "list",
+          "label": "List view"
+        },
+        {
+          "value": "list_grid",
+          "label": "List and grid views"
+        }
+      ],
+      "default": "list"
+    },
+    {
+      "type": "header",
+      "content": "Sidebar"
+    },
+    {
+      "type": "link_list",
+      "id": "quick_links",
+      "label": "Quick links"
+    },
+    {
+      "type": "checkbox",
+      "id": "quick_links_show_products_count",
+      "label": "Show products count",
+      "info": "Only for collection links",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Filtering"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_filters",
+      "label": "Show filters",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_filter_color_swatch",
+      "label": "Show filter color swatch",
+      "info": "Requires filter type \"By group\" to be selected.",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "filter_type",
+      "label": "Filter type",
+      "info": "Filters by group requires specific tag formatting. [Learn more](https://help.shopify.com/manual/using-themes/themes-by-shopify/supply#product-tips-tips-specific)",
+      "options": [
+        {
+          "value": "tag",
+          "label": "By tag"
+        },
+        {
+          "value": "group",
+          "label": "By group"
+        }
+      ],
+      "default": "tag"
+    },
+    {
+      "type": "select",
+      "id": "open_group_filters_mode",
+      "label": "Filter opening mode (desktop)",
+      "options": [
+        {
+          "value": "all_closed",
+          "label": "All closed"
+        },
+        {
+          "value": "all_open",
+          "label": "All open"
+        },
+        {
+          "value": "first_open",
+          "label": "First open"
+        }
+      ],
+      "default": "all_closed"
+    },
+    {
+      "type": "text",
+      "id": "filter_group_order",
+      "label": "Group order",
+      "info": "List items must be identical to the group name. If left empty, all groups will be displayed in alphabetical order. Example: Color, Brand, Size."
+    }
+  ],
+  "blocks": [
+		{
+			"type": "seller_priority",
+			"name": "Seller priority",
+			"settings": [
+				{
+					"type": "text",
+					"id": "seller-name",
+					"label": "Seller name",
+					"default": "seller"
+			  	}
+			]
+		}
+	]
+}
+{% endschema %}

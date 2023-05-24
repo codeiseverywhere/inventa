@@ -1,0 +1,190 @@
+<section class="letters-filter-container text-center pt-3 d-none">
+	{%- assign vendors = "" -%}
+	{%- assign hasNumbersOrSymbols = false -%}
+	{%- assign vendorsWithNumber = "" -%}
+	{%- assign lettersFilter = "A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z" | split: "," -%}
+	{%- assign symbolsFilter = "!,*,&,%,#,@,$" -%}
+	{%- for vendor in collection.all_vendors -%}
+		{%- assign firstLetter = vendor | first  -%}
+		{%- assign parseLetter = firstLetter | plus: 0  -%}
+		{%- if parseLetter > 0 or firstLetter == "0" or symbolsFilter contains firstLetter -%}
+			{%- assign hasNumbersOrSymbols = true -%}
+			{%- assign vendorsWithNumber = vendorsWithNumber | append: vendor | append: "+" -%}
+		{%- endif -%}
+		{%- assign vendors = vendors | append: firstLetter | append: "," -%}
+	{%- endfor -%}
+	
+	{%- for letter in lettersFilter -%}
+		<span class="{% if vendors contains letter %}link{% else %}muted{% endif %} link-{{letter}}">{{ letter }}</span>
+	{%- endfor -%}
+	<span class="{% if hasNumbersOrSymbols == true %}number-link{% else %}muted{% endif %} link-09">#!0-9</span>
+</section>
+
+<style>
+	div[data-filter-type="Vendor"] .gf-count {
+		display: none;
+	}
+
+	#shopify-section-letters-filter {
+		overflow-x: scroll;
+	}
+
+	.letters-filter-container {
+		min-width: 650px;
+	}
+
+	.letters-filter-container span {
+		display: inline-block;
+		font-weight: 700;
+		padding: 5px 15px;
+		font-size: 1.5em;
+		color: #666666;
+	}
+
+	.letters-filter-container span.muted {
+		color: #CDCDCD;
+	}
+
+	.letters-filter-container span.link:hover,
+	.letters-filter-container span.link.active,
+	.letters-filter-container span.number-link:hover,
+	.letters-filter-container span.number-link.active {
+		cursor: pointer;
+		background-color: #B2C4C740;
+		border-radius: 5px;
+	}
+
+	@media (max-width: 640px) {
+		.letters-filter-container span {
+			padding: 5px;
+			font-size: 1.3em;
+		}
+	}
+</style>
+
+<script defer>
+	window.addEventListener('load', function() {
+		const lettersContainer = document.querySelector(".letters-filter-container");
+		const numberLink = document.querySelectorAll(".letters-filter-container .number-link");
+		let urlToRedirect = `{{shop.url}}/collections/marcas`;
+
+		lettersContainer.classList.remove("d-none");
+
+		const letters = document.querySelectorAll(".letters-filter-container .link");
+		if (letters) {
+			letters.forEach( letterObj => {
+				let clearedVendor = false;
+				letterObj.addEventListener('click', function (letter) {
+					const letterContent = letter.srcElement.innerText;
+					const vendors = document.querySelectorAll(".gf-filter-contents div[data-filter-type='Vendor'] li a");
+					let vendorsToFilter = "";
+					let formatedVendor = null;
+
+					for (let vendorObj of vendors) {
+						formatedVendor = vendorObj.title[0].normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+						if (letterContent == formatedVendor) {
+							vendorsToFilter += `${vendorObj.title}+`;
+						}
+					};
+					
+					const urlEncoded = encodeURIComponent(vendorsToFilter);
+					if (!letter.srcElement.classList.contains("active")) {
+						urlToRedirect = `{{shop.url}}/collections/marcas?gf_264086=${urlEncoded}`;
+					}
+					letter.srcElement.classList.toggle("active");
+					window.location.href = urlToRedirect;
+				});
+			});
+		}
+
+		if (numberLink) {
+			numberLink[0].addEventListener('click', function (numberLink) {
+				const urlEncoded = encodeURIComponent({{vendorsWithNumber | json}});
+				if (!numberLink.srcElement.classList.contains("active")) {
+					urlToRedirect = `{{shop.url}}/collections/marcas?gf_264086=${urlEncoded}`;
+				}
+				numberLink.srcElement.classList.toggle("active");
+				window.location.href = urlToRedirect;
+			});
+		}
+
+		if (document.querySelector(".gf-block-title .gf-refine-toggle")) {
+			document.querySelector(".gf-block-title .gf-refine-toggle").addEventListener('click', () => {
+				window.location.href = urlToRedirect;
+			});
+		}
+
+		if (document.querySelector(".gf-filter-contents div[data-filter-type='Vendor'] .gf-clear")) {
+			document.querySelector(".gf-filter-contents div[data-filter-type='Vendor'] .gf-clear").addEventListener('click', () => {
+				window.location.href = urlToRedirect;
+			});
+		}
+
+		checkVendorSelected();
+
+		function checkVendorSelected() {
+			const url = new URL(window.location.href);
+			const hasVendorFilter = url.searchParams.get("gf_264086");
+			const mainTitle = document.querySelector("#gf-controls-container .collection__title");
+			const subTitle = document.querySelector(".gf-actions .gf-summary");
+
+			if (mainTitle) {
+				mainTitle.classList.remove("invisible");
+			}
+
+			if (subTitle) {
+				subTitle.classList.remove("invisible");
+			}
+			
+			if (hasVendorFilter != null) {
+				activateFilter(hasVendorFilter[0]);
+				hideCarousels(true);
+				return true;
+			}
+			hideCarousels(false);
+		}
+
+		function activateFilter(letter) {
+			const vendorFirstLetter = (isNaN(letter) && letter.match(/[a-z]/i))? letter.toUpperCase() : '09';
+			const letterContainer = document.querySelector(`.link-${vendorFirstLetter}`)
+			const mainTitle = document.querySelector("#gf-controls-container .collection__title");
+			const subTitle = document.querySelector(".gf-actions .gf-summary");
+			
+			if (letterContainer) {
+				letterContainer.classList.add("active");
+			}
+
+			if (mainTitle) {
+				mainTitle.innerText = isNaN(letter)? `Marcas que começam com a letra ”${vendorFirstLetter}”` : "Marcas que começam com número";
+			}
+
+			if (subTitle) {
+				subTitle.classList.add("fs-3","fw-light");
+				subTitle.innerText = (isNaN(letter)? letter.toUpperCase() : "0-9") + " " + subTitle.innerText;
+			}
+
+		}
+
+		function hideCarousels(hasToHide) {
+			const newBrandsWrapper = document.querySelector(".new-brands-wrapper-container");
+			const quickPromotionsWrapper = document.querySelector(".quick-promotions-wrapper-container");
+			const moreForLessWrapper = document.querySelector(".more-for-less-wrapper-container");
+			// const vendorsTitle = document.querySelector(".vendors-title.collection__title");
+			// const vendorsSlider = document.querySelector(".vendors-slider");
+			const saleBrandsContainer = document.querySelector(".sale-brands-wrapper-container");
+			const moreSaleBrandsContainer = document.querySelector(".more-sale-brands-wrapper-container");
+
+			if (hasToHide != true) {
+				if (newBrandsWrapper) newBrandsWrapper.removeAttribute("style");
+				if (quickPromotionsWrapper) quickPromotionsWrapper.removeAttribute("style");
+				if (moreForLessWrapper) moreForLessWrapper.removeAttribute("style");
+				// vendorsTitle.removeAttribute("style");
+				// vendorsSlider.removeAttribute("style"); 
+				if (saleBrandsContainer) saleBrandsContainer.removeAttribute("style");
+				if (moreSaleBrandsContainer) moreSaleBrandsContainer.removeAttribute("style");
+			}
+		}
+
+	})
+	
+</script>

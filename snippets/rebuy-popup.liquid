@@ -1,0 +1,634 @@
+<div class="rebuy-popup_wrapper justify-content-center" style="display: none;">
+    <div class="rebuy-popup_inner rounded p-4">
+        <div class="rebuy_desktop-closebtn position-absolute" onclick="closeReBuyModal();">
+            <svg class="modal-closer" width="23" height="21" viewBox="0 0 23 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M9.75806 10.2688L0 1.48659L1.33793 0L11.2529 8.92348L21.1679 0L22.5058 1.48659L12.7478 10.2688L22.5058 19.0511L21.1679 20.5377L11.2529 11.6142L1.33793 20.5377L2.08616e-06 19.0511L9.75806 10.2688Z" fill="white"/>
+            </svg>
+        </div>
+
+        <div class="rebuy-popup_header">
+            <h4 class="fs-3 fw-bold mb-0">Adicionar itens ao carrinho</h4>
+            <p class="fs-5 fw-light">Revise o pedido e adiciona os itens ao seu carrinho</p>
+        </div>
+        <div class="rebuy-popup_body flex-grow-1 border-bottom">
+            <div class="rebuy-popup_body-wrapper">
+                <table class="w-100">
+                    <thead>
+                        <tr>
+                            <th class="col-img"></th>
+                            <th class="col-title"></th>
+                            <th class="col-qty">Qtd</th>
+                            <th class="col-price">Preço</th>
+                            <th class="col-total">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rebuy_popup-table_body" class="border-top">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="rebuy-popup_total row">
+            <div class="col offset-lg-7 col-lg-5">
+                <table class="w-100">
+                    <tbody>
+                        <tr>
+                            <th class="fs-5">Subtotal</th>
+                            <td class="text-end fs-5" id="rebuy-popup_subtotal-general">-</td>
+                        </tr>
+                        <tr>
+                            <th class="fs-5">Impostos</th>
+                            <td class="text-end fs-5" id="rebuy-popup_taxes-general">-</td>
+                        </tr>
+                    </tbody>
+                    <tfoot class="border-top">
+                        <tr>
+                            <th class="fs-4">Total</th>
+                            <td class="text-end fs-4" id="rebuy-popup_total-general">-</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+        <div class="rebuy-popup_footer mx-0 py-3 px-5 border-top row">
+            <button id="rebuy-popup_addToCart-btn" class="fs-5 py-3 btn btn-dark col-12 col-lg-7 mb-2 mb-lg-0">Adicionar ao carrinho</button>
+            <button onclick="closeReBuyModal();" class="fs-5 py-3 fw-bolder btn btn-light border border-dark col-12 offset-lg-1 col-lg-4">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .rebuy-popup_wrapper{
+        overflow-y: auto;
+        position: fixed;
+        z-index: 500;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(34, 34, 34, 0.8);
+        display: none;
+        opacity: 0;
+    }
+    .rebuy-popup_open{
+        display: flex;
+        opacity: 1;
+        animation: fadeInRebuy forwards 0.8s;
+    }
+    @keyframes fadeInRebuy{
+        from{
+            opacity: 0;
+        }
+        to{
+            opacity: 1;
+        }
+    }
+    .rebuy-popup_inner{
+        width: 60%;
+        min-width: 850px;
+        background-color: #fff;
+        position: relative;
+        top: 20px;
+        max-width: 900px;
+        display: flex;
+        flex-direction: column;
+        height: fit-content;
+    }
+    .rebuy_desktop-closebtn{
+        right: -40px;
+        top: 0;
+    }
+
+    @media (max-width: 900px){
+        .rebuy-popup_inner{
+            min-width: 0 !important;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .rebuy_desktop-closebtn{
+            right: 0 !important;
+            top: 0;
+            padding: 10px;
+        }
+        .rebuy_desktop-closebtn svg path {
+            fill: #999 !important;
+        }
+
+        .rebuy-popup_body-wrapper .col-img{
+            display: inline-block;
+            visibility: hidden;
+        }
+        .rebuy-popup_body-wrapper .col-title,
+        .rebuy-popup_body-wrapper .title_td{
+            width: calc(50% - 65px) !important;
+            max-width: none !important;
+            display: inline-block;
+        }
+        .rebuy-popup_body-wrapper .col-qty{
+            width: 50% !important;
+            visibility: hidden;
+            display: inline-block;
+        }
+        .rebuy-popup_body-wrapper .col-price{
+            width: 50% !important;
+            visibility: hidden;
+            display: inline-block;
+        }
+        .rebuy-popup_body-wrapper .col-total{
+            width: 50% !important;
+            visibility: hidden;
+            display: inline-block;
+        }
+        #rebuy_popup-table_body tr td:nth-child(n + 3){
+            width: 50% !important;
+            display: inline-block;
+        }
+        #rebuy_popup-table_body tr td:nth-child(n + 4){
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        #rebuy_popup-table_body tr th{
+            display: inline-block;
+        }
+        .rebuy_input-wrapper{
+            width: 50%;
+            min-width: 110px;
+        }
+
+        .rebuy-popup_body-wrapper thead{
+            display: none !important;
+        }
+
+        #rebuy_popup-table_body{
+            border-top: none !important;
+        }
+
+        .rebuy-popup_header{
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+    }
+
+    .rebuy_input-container input::-webkit-inner-spin-button,
+    .rebuy_input-container input::-webkit-outer-spin-button{
+        -webkit-appearance: none;
+    }
+    .rebuy_input-container input{
+        -moz-appearance: textfield;
+    }
+    .rebuy_input-container{
+        margin-bottom: -8px;
+    }
+
+    .rebuy-popup_total table tfoot th,
+    .rebuy-popup_total table tfoot td{
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+    .rebuy-popup_total table tbody tr:first-of-type th,
+    .rebuy-popup_total table tbody tr:first-of-type td{
+        padding-top: 1rem;
+    }
+    .rebuy-popup_total table tbody tr:last-of-type th,
+    .rebuy-popup_total table tbody tr:last-of-type td{
+        padding-bottom: 1rem;
+    }
+    .rebuy-popup_total table td{
+        color: #666;
+        font-weight: 500;
+        font-family: 'Lato', sans-serif;
+    }
+    .rebuy-popup_total table th{
+        color: #666;
+        font-weight: 300;
+        font-family: 'Lato', sans-serif;
+    }
+    .rebuy-popup_body-wrapper{
+        overflow-y: auto;
+        max-height: 50vh;
+    }
+    .rebuy-popup_body-wrapper .product-icon{
+        width: 54px;
+        height: 54px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: auto;
+    }
+    .rebuy-popup_body-wrapper .col-img{
+        width: 65px;
+    }
+    .rebuy-popup_body-wrapper .col-title,
+    .rebuy-popup_body-wrapper .title_td{
+        max-width: 150px;
+        width: 40%;
+    }
+    .rebuy-popup_body-wrapper .col-qty{
+        width: 20%;
+    }
+    .rebuy-popup_body-wrapper .col-price{
+        width: 15%;
+    }
+    .rebuy-popup_body-wrapper .col-total{
+        width: 15%;
+    }
+    #rebuy_popup-table_body{
+        border-top: 1px solid #dee2e6;
+    }
+    #rebuy_popup-table_body tr{
+        height: 5rem;
+    }
+    #rebuy_popup-table_body tr.unavailable{
+        color: #940202 !important;
+        background-color: #FFF1F1;
+    }
+</style>
+
+<script defer>
+    setTimeout(() => {
+        const popup = document.querySelector('.rebuy-popup_wrapper');
+        if(popup) popup.removeAttribute('style');
+
+        //openReBuyModal();
+    }, 1000);
+</script>
+<script defer>
+    {% comment %}
+    This driver is for giving full functionality to the popup
+    {% endcomment %}
+    function RebuyPopupDriver(rawProducts = []) {
+        const products = [...rawProducts];
+        this.changeQty = (id, newQty) => {
+            products.map(e => {
+                if(e.id == id) {
+                    if(newQty <= 0){
+                        e.quantity = 0;
+                    }else{
+                        const { min_quantity, step_quatity } = e.properties;
+                        let finalQty = newQty;
+                        if(finalQty < parseInt(min_quantity)) finalQty = parseInt(min_quantity);
+                        while(finalQty % parseInt(step_quatity) != 0) finalQty++;
+                        e.quantity = finalQty;
+                    }
+                    const { original_price, taxes, price } = e.properties;
+                    let subtotal = 0;
+                    if(original_price && parseInt(original_price)){
+                        subtotal = parseInt(original_price);
+                    }else if(price && parseInt(price)){
+                        subtotal = parseInt(price);
+                    }
+                    let $taxes = 0;
+                    if(taxes && parseInt(taxes)){
+                        $taxes = subtotal * parseInt(taxes) / 100;
+                    }
+                    this.updateProductInput(id, e.quantity, {taxes: $taxes, subtotal });
+                }
+            })
+        };
+        this.addOneQty = (id) => {
+            products.map(e => {
+                if(e.id == id) {
+                    const { min_quantity, step_quatity } = e.properties;
+                    do{
+                        if(parseInt(step_quatity)) e.quantity = parseInt(e.quantity) + parseInt(step_quatity);
+                        else e.quantity = parseInt(e.quantity)++;
+                    }while(e.quantity < min_quantity);
+                    const { original_price, taxes, price } = e.properties;
+                    let subtotal = 0;
+                    if(original_price && parseInt(original_price)){
+                        subtotal = parseInt(original_price);
+                    }else if(price && parseInt(price)){
+                        subtotal = parseInt(price);
+                    }
+                    let $taxes = 0;
+                    if(taxes && parseInt(taxes)){
+                        $taxes = subtotal * parseInt(taxes) / 100;
+                    }
+                    this.updateProductInput(id, e.quantity, {taxes: $taxes, subtotal });
+                }
+            });
+        };
+        this.removeOneQty = (id) => {
+            products.map(e => {
+                if(e.id == id){
+                    if(parseInt(e.quantity) > 0){
+                        const { min_quantity, step_quatity } = e.properties;
+                        if(e.quantity - parseInt(step_quatity) < parseInt(min_quantity)) e.quantity = 0;
+                        else e.quantity -= parseInt(step_quatity);
+                    }
+                    const { original_price, taxes, price } = e.properties;
+                    let subtotal = 0;
+                    if(original_price && parseInt(original_price)){
+                        subtotal = parseInt(original_price);
+                    }else if(price && parseInt(price)){
+                        subtotal = parseInt(price);
+                    }
+                    let $taxes = 0;
+                    if(taxes && parseInt(taxes)){
+                        $taxes = subtotal * parseInt(taxes) / 100;
+                    }
+                    this.updateProductInput(id, e.quantity, {taxes: $taxes, subtotal });
+                }
+            });
+        };
+        this.updateProductInput = (id, qty, { taxes, subtotal }) =>{
+            const input = document.getElementById(`rebuy-input_${id}`);
+            if(input) input.value = parseInt(qty);
+            const final_line_price = document.querySelector(`.total-price_${id}`);
+            if(final_line_price) {
+                const price = final_line_price.querySelector('p');
+                const tax = final_line_price.querySelector('small');
+                if(price){
+                    price.innerText = formatPrice(subtotal * qty);
+                }
+                if(tax){
+                    if(taxes && qty){
+                        tax.innerHTML = `<span class="text-nowrap">+ ${formatPrice(taxes * qty)}</span> <span class="text-nowrap">ICMS ST</span>`
+                    }else{
+                        tax.innerHTML = '';
+                    }
+                }
+            }
+            this.updateTotals();
+        };
+        this.updateTotals = () => {
+            let subtotal = 0;
+            let impostos = 0;
+            for(let i = 0; i < products.length; i++){
+                const { properties, quantity, available } = products[i];
+                const { original_price, taxes, price } = properties;
+                if(!available) continue;
+                let total_number;
+                if(original_price && parseInt(original_price)){
+                    total_number = parseInt(original_price) * parseInt(quantity);
+                }else if(price && parseInt(price)){
+                    total_number = parseInt(price) * parseInt(quantity);
+                }
+                subtotal += total_number;
+                if(taxes && parseInt(taxes)){
+                    const $taxes = total_number * parseInt(taxes) / 100;
+                    impostos += $taxes;
+                }
+            }
+            updateFinalValues(subtotal, impostos);
+        }
+        this.addProductsToCart = () => {
+            const items = [];
+            let imgForToast;
+            for(const product of products){
+                const { id, quantity, available, image } = product;
+                if(available) {
+                    items.push({id, quantity: parseInt(quantity)});
+                    if(image && !imgForToast) imgForToast = image;
+                }
+            }
+            closeReBuyModal();
+            fetch('/cart/add.js', {
+                method: 'POST',
+                body: JSON.stringify({items}),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(res => {
+                if(res.status == 200) {
+                    document.documentElement.dispatchEvent(
+                        new CustomEvent("cart:refresh", {
+                        bubbles: true,
+                        })
+                    )
+                    if(typeof popupToast == 'function') popupToast(imgForToast, 'Perfeito!', 'Todos seus produtos foram adicionados ao carrinho');
+                }
+                else{
+                    if(typeof popupToast == 'function') popupToast(imgForToast, 'Opa...', 'Ocorreu um erro ao adicionar seus produtos, tente novamente');
+                }
+            }).catch(err => {
+                if(typeof popupToast == 'function') popupToast(imgForToast, 'Opa...', 'Ocorreu um erro ao adicionar seus produtos, tente novamente');
+            })
+        }
+
+        function updateFinalValues(subtotal, impostos = 0) {
+            const subtotalElement = document.getElementById('rebuy-popup_subtotal-general');
+            if(subtotalElement) subtotalElement.innerText = formatPrice(subtotal);
+            const taxesElement = document.getElementById('rebuy-popup_taxes-general');
+            if(taxesElement){
+                if(impostos){
+                    taxesElement.innerText = formatPrice(impostos);
+                }else{
+                    taxesElement.parentElement.classList.add('d-none');
+                }
+            }
+            const totalElement = document.getElementById('rebuy-popup_total-general');
+            if(totalElement) totalElement.innerText = formatPrice(subtotal + impostos);
+            if(!(subtotal + impostos > 0)){
+                const button = document.getElementById('rebuy-popup_addToCart-btn');
+                if(button) button.setAttribute('disabled', 'disabled');
+            }else{
+                const button = document.getElementById('rebuy-popup_addToCart-btn');
+                if(button) button.removeAttribute('disabled');
+            }
+        }
+    }
+
+    function openReBuyModal(rawProducts = []){
+        const products_availables = [];
+        const products_unavailables = [];
+        rawProducts.map(e => {
+            const obj = {...e};
+            const { step_quatity, min_quantity } = obj.properties;
+            obj.quantity = parseInt(obj.quantity);
+            if(min_quantity && obj.quantity < parseInt(min_quantity)) obj.quantity = min_quantity;
+            while(step_quatity && obj.quantity % parseInt(step_quatity) != 0) obj.quantity++;
+            if(e.available) products_availables.push(obj);
+            else products_unavailables.push(obj);
+        })
+
+        if(!products_availables.length){
+            const button = document.getElementById('rebuy-popup_addToCart-btn');
+            if(button) button.setAttribute('disabled', 'disabled');
+        }else{
+            const button = document.getElementById('rebuy-popup_addToCart-btn');
+            if(button) button.removeAttribute('disabled');
+        }
+
+        const products = [...products_availables, ...products_unavailables];
+
+        const productsDriver = new RebuyPopupDriver(products);
+
+        const addToCartProductsBtn = document.getElementById('rebuy-popup_addToCart-btn');
+        if(addToCartProductsBtn) addToCartProductsBtn.onclick = productsDriver.addProductsToCart;
+
+        const table = document.getElementById('rebuy_popup-table_body');
+        if(table){
+            table.innerHTML = '';
+            let subtotal = 0;
+            let impostos = 0;
+
+            for(const product of products){
+                const { image, id, quantity, available, title, vendor, properties, customer_estate } = product;
+                const tr = document.createElement('tr');
+                tr.classList.add('fs-5');
+                if(!available) tr.classList.add('unavailable');
+                const th_image = document.createElement('th');
+                th_image.style.width = '65px';
+                th_image.innerHTML = `
+                    <div class="product-icon">
+                        <img src="${image}" alt=""></th>
+                    </div>
+                `;
+                const td_title = document.createElement('td');
+                td_title.innerHTML = `
+                    <span>${vendor}</span>
+                    <p class="text-truncate-overflow lh-base">${title}</p>
+                `;
+                td_title.classList.add('px-2');
+                td_title.classList.add('lh-1');
+                td_title.classList.add('title_td')
+                const { min_quantity, step_quatity, original_price, taxes, price, compare_at_price } = properties;
+                const td_quantity = document.createElement('td');
+                td_quantity.classList.add('px-2')
+                const td_priceUnit = document.createElement('td');
+                td_priceUnit.classList.add('lh-1');
+                const td_prticeTotal = document.createElement('td');
+                td_prticeTotal.classList.add(`total-price_${id}`);
+                td_prticeTotal.classList.add('lh-1');
+                if(available){
+                    const qty_wrapper = document.createElement('div');
+                    qty_wrapper.classList.add('rebuy_input-wrapper');
+                    qty_wrapper.classList.add('mx-auto');
+                    //quantity control column
+                    const qty_control = document.createElement('div');
+                    qty_control.setAttribute('class', 'rebuy_input-container border border-dark rounded fs-5 d-flex align-items-center justify-content-center text-secondary position-relative');
+                    const addBtn = document.createElement('button');
+                    addBtn.setAttribute('class', 'pe-2 h-100 d-flex align-items-center position-absolute add-product');
+                    addBtn.innerHTML = `
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M11 13V24H13V13H24V11H13V0H11V11H0V13H11Z" fill="#C4C4C4"/>
+                        </svg>
+                    `;
+                    addBtn.onclick = () => productsDriver.addOneQty(id);
+                    const lessBtn = document.createElement('button');
+                    lessBtn.setAttribute('class', 'ps-2 h-100 d-flex align-items-center position-absolute less-product')
+                    lessBtn.innerHTML = `
+                        <svg width="24" height="2" viewBox="0 0 24 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="24" height="2" fill="#C4C4C4"/>
+                        </svg>
+                    `;
+                    lessBtn.onclick = () => productsDriver.removeOneQty(id);
+                    const input = document.createElement('input');
+                    input.setAttribute('type', 'number');
+                    input.setAttribute('class', 'py-2 text-center w-100 fs-4 text-dark border-0');
+                    input.setAttribute('min', 0);
+                    input.value = quantity;
+                    input.id = `rebuy-input_${id}`;
+                    input.onchange = (event) => {
+                        const newValue = event.target.value;
+                        productsDriver.changeQty(id, parseInt(newValue));
+                    }
+                    qty_control.append(lessBtn);
+                    qty_control.append(input);
+                    qty_control.append(addBtn);
+                    qty_wrapper.append(qty_control);
+                    if((min_quantity && parseInt(min_quantity)) || (step_quatity && parseInt(step_quatity))){
+                        const min_text = document.createElement('small');
+                        min_text.classList.add('text-secondary');
+                        if(step_quatity && parseInt(step_quatity)){
+                            const minBoxes = (min_quantity && parseInt(min_quantity) >= parseInt(step_quatity) ? parseFloat(min_quantity)/parseFloat(step_quatity) : 1);
+                            min_text.innerText = `Caixa ${parseInt(step_quatity)}un (Min ${parseInt(Math.ceil(minBoxes))}cx)`;
+                        }else{
+                            min_text.innerText = `Quantidade mínima ${parseInt(min_quantity) > 0 ? parseInt(min_quantity) : 1} ${parseInt(min_quantity) > 1 ? 'unidades' : 'unidade'}`;
+                        }
+                        qty_wrapper.append(min_text);
+                    }
+                    td_quantity.append(qty_wrapper);
+                    
+                    //Unit price column
+                    if(compare_at_price && (original_price || price)){
+                        if(original_price && parseInt(compare_at_price) > parseInt(original_price)){
+                            const compare = document.createElement('small');
+                            compare.innerText = formatPrice(parseInt(compare_at_price));
+                            compare.classList.add('text-decoration-line-through');
+                            compare.classList.add('font-color-accent');
+                            td_priceUnit.append(compare);
+                        }else if(price && parseInt(compare_at_price) > parseInt(price)){
+                            const compare = document.createElement('small');
+                            compare.innerText = formatPrice(parseInt(compare_at_price));
+                            td_priceUnit.append(compare);
+                        }
+                    }
+                    if(original_price && parseInt(original_price)){
+                        const unit_price = document.createElement('p');
+                        unit_price.classList.add('m-0');
+                        unit_price.innerText = formatPrice(parseInt(original_price));
+                        td_priceUnit.append(unit_price);
+                    }else if(price && parseInt(price)){
+                        const unit_price = document.createElement('p');
+                        unit_price.classList.add('m-0');
+                        unit_price.innerText = formatPrice(parseInt(price));
+                        td_priceUnit.append(unit_price);
+                    }
+                    //total price column
+                    const total_price = document.createElement('p');
+                    total_price.classList.add('m-0');
+                    let total_number;
+                    if(original_price && parseInt(original_price)){
+                        total_number = parseInt(original_price) * parseInt(quantity);
+                        total_price.innerText = formatPrice(total_number);
+                    }else if(price && parseInt(price)){
+                        total_number = parseInt(price) * parseInt(quantity);
+                        total_price.innerText = formatPrice(total_number);
+                    }
+                    td_prticeTotal.append(total_price);
+                    subtotal += total_number;
+                    if(taxes && parseInt(taxes)){
+                        const $taxes = total_number * parseInt(taxes) / 100;
+                        const tax = document.createElement('small');
+                        tax.innerHTML = `<span class="text-nowrap">+ ${formatPrice($taxes)}</span> <span class="text-nowrap">ICMS ST</span>`;
+                        td_prticeTotal.append(tax);
+    
+                        impostos += $taxes;
+                    }
+                }
+
+                tr.append(th_image);
+                tr.append(td_title);
+                tr.append(td_quantity);
+                tr.append(td_priceUnit);
+                tr.append(td_prticeTotal);
+                table.append(tr);
+            }
+
+            const subtotalElement = document.getElementById('rebuy-popup_subtotal-general');
+            if(subtotalElement) subtotalElement.innerText = formatPrice(subtotal);
+            const taxesElement = document.getElementById('rebuy-popup_taxes-general');
+            if(taxesElement){
+                if(impostos){
+                    taxesElement.innerText = formatPrice(impostos);
+                }else{
+                    taxesElement.parentElement.classList.add('d-none');
+                }
+            }
+            const totalElement = document.getElementById('rebuy-popup_total-general');
+            if(totalElement) totalElement.innerText = formatPrice(subtotal + impostos);
+
+            const popup = document.querySelector('.rebuy-popup_wrapper');
+            if(popup) popup.classList.add('rebuy-popup_open');
+        }
+    }
+    function closeReBuyModal(){
+        const popup = document.querySelector('.rebuy-popup_wrapper');
+        if(popup) popup.classList.remove('rebuy-popup_open');
+    }
+
+    const reBuyPopup = document.querySelector('.rebuy-popup_wrapper');
+    function initReBuyPopup(){
+        if(reBuyPopup){
+            const inner = document.querySelector('.rebuy-popup_inner');
+            reBuyPopup.addEventListener('click', (e) => {
+                if(!inner.contains(e.target)) closeReBuyModal();
+            })
+        }
+    }
+    initReBuyPopup();
+</script>

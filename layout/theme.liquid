@@ -1,0 +1,957 @@
+<!doctype html>
+
+<html class="no-js p-0" lang="{{ request.locale.iso_code }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, maximum-scale=5.0">
+  <meta name="theme-color" content="{{ settings.accent_color }}">
+  <meta name="theme-color" content="#1a1a1a">
+  <meta name="msapplication-navbutton-color" content="#1a1a1a">
+  <meta name="apple-mobile-web-app-status-bar-style" content="#1a1a1a">
+<script>
+  {% comment %}
+  {% if request.page_type == "collection" %} 
+    window.addEventListener("load", () => {
+      let urlTest= location.href;
+     
+      document.body.addEventListener('click', ()=>{
+        requestAnimationFrame(()=>{
+          if(urlTest!==location.href){
+            console.log('url changed');
+            urlTest = location.href
+          } else {
+            console.log('not changed');
+          }
+        });
+      }, true);
+
+    });
+  {% endif %}
+  {% endcomment %}
+
+  {% if request.page_type == "collection" %}
+    {% unless collection.current_vendor %}
+      {% assign collectionInformation = collection | json %}
+      {% if collectionInformation contains '"column":"vendor"' %}
+        {% assign vendorName = collectionInformation | split: '"condition":' | last | split: "}]" | first | remove: '"' | replace: "\u00", "%" | replace: "+", "%2B" %}
+        window.location.href = "https://inventa.shop/collections/vendors?q={{ vendorName }}";
+      {% endif %}
+    {% endunless %}
+  {% endif %}
+  
+  function setCookie(cname, cvalue, cdomain){
+    var date = new Date();
+    date.setFullYear(date.getFullYear() + 100);
+    var expires = "; expires=" + date.toUTCString();
+    const cookie = cname + '=' + cvalue + expires + '; path=/; domain=' + cdomain + ';';
+    console.log('Cookie for filtering internal traffic set');
+    document.cookie = cookie;
+  }
+  
+  function getCookie(cname) {
+    let name = cname + "=";
+    let ca = document.cookie.split(';');
+    for(let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return null;
+  }
+
+  function getTrackingSessionId(){
+    const sessionStored = window.sessionStorage.getItem("inventaSessionId");
+    if(sessionStored) return sessionStored;
+    else {
+      const newSession = "inventa-session_" + Math.ceil(Math.random() * 10 * new Date().getTime()).toString().substring(0, 12);
+      window.sessionStorage.setItem("inventaSessionId", newSession);
+      return newSession;
+    }
+  }
+  
+  window.addEventListener("load", () => {
+    if (window.location.href.includes("#")) setTimeout(() => {
+      window.location.href = window.location.href;
+    }, 200)
+  });
+  
+  
+  var params = new URLSearchParams(window.location.search);
+  if(params.has('internaltraffic') || params.has('InternalTraffic') || params.has('INTERNALTRAFFIC')){
+    setCookie("InternalTraffic", "true", "{% if shop.name contains 'DEV' %}inventa-dev.myshopify.com{% else %}inventa.shop{% endif %}");
+  }
+</script>
+  
+{% if customer %}
+  <script>
+    if (!getCookie("inventa_user_id")) {
+	    setCookie("inventa_user_id", "{{ customer.id }}", "{{ shop.domain }}");
+    }
+  </script>
+{% endif %}
+  
+<!-- Start of HubSpot Embed Code -->
+  <script type="text/javascript" id="hs-script-loader" async defer src="//js-na1.hs-scripts.com/20901902.js"></script>
+<!-- End of HubSpot Embed Code -->
+  
+
+  
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){
+  let pageType;
+  if(window.location.pathname.includes('vendors')) pageType = 'fornecedor';
+  else if(window.location.pathname.includes('collections')
+    && !window.location.pathname.includes('all')
+    && !window.location.pathname.includes('products')
+  ) pageType = 'collection';
+  else if(window.location.pathname.includes('products')) pageType = 'products';
+  else pageType = 'general';
+
+  let data = '';
+  switch(pageType){
+    case 'fornecedor':
+      data = {vendor: new URL(window.location.href).searchParams.get('q')}
+      break;
+    case 'collection':
+      data = {url: window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1)};
+      break;
+    case 'products':
+      data = {% if request.path contains 'products' %}{
+        sku: "{{ product.selected_or_first_available_variant.sku }}",
+        vendor: "{{ product.vendor }}",
+        url: window.location.href,
+        price: "{{ product.selected_or_first_available_variant.price }}" - 0,
+        variant_id: "{{ product.selected_or_first_available_variant.variant_id }}",
+        title: "{{ product.title }}"
+      }{% else %}""{% endif %};
+      break;
+    default:
+      data = {url: window.location.pathname};
+      break;
+  }
+  const utm_queries = {};
+  const queryParametersRaw = new URLSearchParams(window.location.search);
+  const queryParameters = Object.fromEntries(queryParametersRaw.entries());
+  for(const queryName in queryParameters){
+    if(queryName.toLowerCase().includes("utm")) utm_queries[queryName] = queryParameters[queryName];
+  }
+
+  w[l]=w[l]||[];w[l].push({
+    'gtm.start': new Date().getTime(),
+    event: 'gtm.js',
+    pageType,
+    ...data,
+    userID: '{{ customer.id }}',
+    payload: JSON.stringify({
+      deviceInfo: navigator.userAgent,
+      clientId: getCookie("_ga"),
+      sessionId: getTrackingSessionId(),
+      utm_queries,
+      pageType,
+      data,
+      userID: '{{ customer.id }}'
+    })
+  });var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','{% if shop.name contains 'DEV' %}GTM-MBKM5XD{% else %}GTM-5SKRQ4V{% endif %}');
+  </script>
+  <!-- End Google Tag Manager -->
+  
+  {% if customer %}
+  <script>
+    async function addProductAsync(products = []){
+      if(products.length){
+        await fetch("/cart/add.js", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Requested-With": "XMLHttpRequest",
+          },
+          credentials: "same-origin",
+          body: JSON.stringify({
+            items: products.map(({id, qty}) => {return {id, quantity: qty}})
+          })
+        });
+      }
+      return;
+    }
+    async function updateProductsAsync(products = []){
+      if(products.length){
+        const updates = {};
+        products.map(({id, qty}) => {
+          updates[id] = qty;
+        });
+        await fetch("/cart/update.js", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ updates })
+        });
+      }
+      return;
+    }
+    async function removeProductsAsync(products = []){
+      if(products.length){
+        const updates = {};
+        products.map(({id}) => {
+          updates[id] = 0;
+        });
+        await fetch("/cart/update.js", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ updates })
+        });
+      }
+      return;
+    }
+    window.addEventListener("DOMContentLoaded", () => {
+      const cartUpdates_json = window.localStorage.getItem("cart_user-updates");
+      if(cartUpdates_json){
+        try {
+          const cartUpdates = JSON.parse(cartUpdates_json); 
+          fetch("/cart.json").then(res => res.json())
+          .then(async ({items}) => {
+            const updates = {add: [], remove: [], update: []};
+            for(let i = 0; i < cartUpdates.length; i++){
+              const {qty, id} = cartUpdates[i];
+              if(!items.some(({variant_id}) => variant_id == id && qty > 0)) updates.add.push({qty, id});
+              if(items.some(({variant_id, quantity}) => variant_id == id && qty !== quantity && qty > 0)) updates.update.push({qty, id});
+              if(items.some(({variant_id, quantity}) => variant_id == id && qty == 0)) updates.remove.push({qty, id});
+            }
+            await Promise.all([addProductAsync(updates.add), updateProductsAsync(updates.update), removeProductsAsync(updates.remove)]);
+            document.documentElement.dispatchEvent(
+              new CustomEvent("cart:refresh", {
+                bubbles: true,
+              })
+            );
+            {% if request.page_type == 'cart' %}if(updates.add.length || updates.remove.length || updates.update.length) window.location.reload();{% endif %}
+          })
+        } catch (error) {
+          console.log(error);
+        }
+        window.localStorage.removeItem("cart_user-updates");
+      }
+    })
+  </script>
+
+  <script defer>
+    window.addEventListener('load', () => {
+      if(window.localStorage.getItem('widget-info')){
+        const { source, medium, zoho_id } = JSON.parse(window.localStorage.getItem('widget-info'));
+        if(medium && source) sendReferral(zoho_id, source, medium);
+      }
+
+      let params = (new URL(document.location)).searchParams;
+      let utm__medium = params.get("utm_medium");
+      let utm__source = params.get("utm_source");
+
+      if(utm__medium == 'ref_link' && utm__source) {
+          localStorage.setItem('referralCoupon', 'discount=PRIMEIRA250');
+      }
+
+    })
+    function deleteWidgetInfo() {
+      window.localStorage.removeItem('widget-info');
+    }
+    function sendReferral(zoho_id, source, medium){
+      const shopifyApiUrl = "https://api.inventa.tec.br";
+      const corsUrl = "https://cors.inventashop.com.br/";
+      const shopifyShopUrl = "https://inventa.shop";
+      const shopifyApiKey = "LmRkuO9OI9";
+      const shopifyApiSecretKey = "42Ipvjz39M";
+      fetch(`${corsUrl}${shopifyApiUrl}/data/shopify/retailer_widget`, {
+          method: 'POST',
+          body: JSON.stringify({
+            id_lojista: '{{ customer.id }}',
+            id_fornecedor: zoho_id,
+            utm_source: source,
+            utm_medium: medium,
+            sessionId: getTrackingSessionId(),
+            cnpj: '{{ customer.metafields.customer_fields.data.cnpj }}',
+            name: '{{ customer.first_name  }}',
+            email: '{{ customer.email }}',
+            phone: '{{ customer.phone }}',
+          }),
+          headers: {
+              'Content-Type': 'application/json',
+              'origin': 'shopify',
+              'api-key': shopifyApiKey,
+              'secret-key': shopifyApiSecretKey
+          }
+      }).then(res => res.json())
+      .then(res => {
+          deleteWidgetInfo()
+      }).catch(err => console.log(err));
+    }
+  </script>
+  {% endif %}
+  
+  <script>
+    function tagManagerDriver(user) {
+      const queue = [];
+      let busy = false;
+
+      window.addEventListener("event-pushed", () => {
+        if (!busy) {
+          pushDataLayer(queue.shift());
+        }
+      });
+
+      function pushDataLayer({ event, payload, callback }) {
+        const utm_queries = {};
+        const queryParametersRaw = new URLSearchParams(window.location.search);
+        const queryParameters = Object.fromEntries(queryParametersRaw.entries());
+        for(const queryName in queryParameters){
+          if(queryName.toLowerCase().includes("utm")) utm_queries[queryName] = queryParameters[queryName];
+        }
+
+        busy = true;
+        payload.userID = user;
+        payload.event = event;
+        payload.utm_queries = utm_queries;
+        payload.deviceInfo = navigator.userAgent;
+        payload.clientId = getCookie("_ga");
+        window.dataLayer.push({
+          ...payload,
+          event, 
+          payload: JSON.stringify(payload),
+          eventCallback: () => {
+            if (typeof callback == "function") callback();
+            finishedTask();
+          },
+        });
+      }
+
+      function finishedTask() {
+        if (queue.length) {
+          pushDataLayer(queue.shift());
+        } else {
+          busy = false;
+        }
+      }
+
+      return {
+        pushEvent: (event, payload, callback) => {
+          queue.push({ event, payload, callback });
+          document.documentElement.dispatchEvent(
+            new CustomEvent("event-pushed", {
+              bubbles: true,
+            })
+          );
+        },
+      };
+    }
+    
+    async function saveEvent(action, method, data){
+      const corsUrl = "https://cors.inventashop.com.br/";
+      let shopifyApiUrl = {% if request.host contains 'DEV' %}"https://api.inventa.dev.br"{% else %}"https://api.inventa.tec.br"{% endif %};
+      const raw = await fetch(`${corsUrl}${shopifyApiUrl}${action}`, {
+        method,
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json',
+          'origin': 'shopify',
+        }
+      })
+      const parsed = await raw.json();
+      return ({
+        res: parsed,
+        status: raw.status
+      });
+    }
+
+    const inventa_redirectUrl = window.sessionStorage.getItem('inventa_redirect-url');
+    if(inventa_redirectUrl){
+      window.sessionStorage.removeItem('inventa_redirect-url');
+      const { url } = JSON.parse(inventa_redirectUrl);
+      window.location.replace(url);
+    }
+
+    const driver = new tagManagerDriver("{{ customer.id }}");
+                                        
+    function formatPrice(number) {
+      if(!isNaN(number)){
+        const a = parseInt(number)
+        const floatNum = a / 100;
+        return new Intl.NumberFormat("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        }).format(floatNum);
+      }else return null;
+    }
+    
+    async function checkConnection(){
+      try {
+        const res = await fetch('https://cdn.shopify.com/s/files/1/0507/3226/9775/files/1x1.png?v=' + new Date().getTime());
+        return res.status >= 200 && res.status < 300;
+      } catch (error) {
+        return false;
+      }
+    }
+  </script>
+  
+  <!-- Google Optimize -->
+  {% if shop.permanent_domain == 'inventa-dev.myshopify.com' %}
+  	<script src="https://www.googleoptimize.com/optimize.js?id=OPT-N2HNGRN"></script>
+  {% else %}
+  	<script src="https://www.googleoptimize.com/optimize.js?id=OPT-N56DBVL"></script>
+  {% endif %}
+  <!-- End Google Optimize -->
+  
+  
+  {%- capture seo_page_title -%}
+  {%- if request.page_type == 'search' and search.terms != blank -%}
+  {{ search.terms | split: ' AND ' | last | split: 'product_type:' | last }} - {{ shop.name }}
+  {%- else -%}
+  {{ page_title }}{% if current_tags %}{% assign meta_tags = current_tags | join: ', ' %} &ndash; {{ 'general.meta.tags' | t: tags: meta_tags }}{% endif %}{% if current_page != 1 %} &ndash; {{ 'general.meta.page' | t: page: current_page }}{% endif %}
+  {%- endif -%}
+  {%- endcapture -%}
+
+  {% comment %}
+  {%- assign page_title = seo_page_title -%}
+  {%- if request.page_type == 'collection' -%}
+  {%- assign page_title = page_title | append: 'no Atacado' -%}
+  {%- elsif request.page_type == 'product' -%}
+  {%- assign page_title = page_title | append: ' no Atacado' -%}
+  {%- elsif request.page_type == 'index' or page.url contains 'lojista' or page.url == '/pages/fornecedor' or page.url contains 'sobre-inventa' or page.url contains 'contato' or request.page_type contains 'login' or request.path contains 'politica-de-privacidade' or page.url == '/pages/termos-e-condicoes-fornecedores' -%}
+  {%- assign page_title = 'Inventa - Compre no atacado' -%}
+  {%- endif -%}
+  {% endcomment %}
+  
+  {% if request.page_type == "index" %}
+  <script src="https://www.mercadopago.com/v2/security.js" view="home"></script>
+  {% elsif request.page_type == "product" %}
+  <script src="https://www.mercadopago.com/v2/security.js" view="item"></script>
+  {% elsif request.page_type == "search" %}
+  <script src="https://www.mercadopago.com/v2/security.js" view="search"></script>
+  {% else %}
+  <script src="https://www.mercadopago.com/v2/security.js" view=""></script>
+  {% endif %}
+  
+  <title>{{ page_title | capitalize }}</title>
+
+  {%- if page_description -%}
+    <meta name="description" content="{{ page_description | escape }}">
+  {%- else -%}
+    {%- if request.page_type == 'collection' -%}
+      <meta name="description" content="Compre os melhores produtos {% unless request.path contains 'collections/all' %}de {{ seo_page_title | capitalize }} {% endunless %}para o varejo, com entrega para todo Brasil.">
+    {%- endif -%}
+  {%- endif -%}
+  {% render 'social-meta-tags' %}
+
+  <link rel="canonical" href="{{ canonical_url }}">
+
+  {%- if settings.favicon -%}
+  <link rel="shortcut icon" href="{{ settings.favicon | img_url: '96x96' }}" type="image/png">
+  {%- endif -%}
+
+  {%- comment -%}Few prefech to increase performance on commonly used third-parties{%- endcomment -%}
+  <link rel="preload" as="style" href="{{ 'theme.css' | asset_url }}">
+  <link rel="preload" as="script" href="{{ 'theme.min.js' | asset_url }}">
+  {% if collection.handle == 'marcas' %}
+    <link rel="stylesheet" href="{{ 'marcas.css' | asset_url }}" />
+  {% endif %}
+  <link rel="preconnect" href="https://cdn.shopify.com">
+  <link rel="preconnect" href="https://fonts.shopifycdn.com">
+  <link rel="dns-prefetch" href="https://productreviews.shopifycdn.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">	
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>	
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@500;600;700;800;900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;1,100;1,300;1,400;1,700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,wght@0,200;0,300;0,400;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+  {% render 'css-variables' %}
+
+  {% comment %} without filter's app 
+  {% endcomment %}
+
+  {% include 'globo.filter.script' %}
+  
+
+  {{ content_for_header }}
+
+  {% comment %}
+    Hotjar Tracking Code for www.inventa.shop
+  {% endcomment %}
+  <script defer>
+    (function(h,o,t,j,a,r){
+        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+        h._hjSettings={hjid:2371632,hjsv:6};
+        a=o.getElementsByTagName('head')[0];
+        r=o.createElement('script');r.async=1;
+        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+        a.appendChild(r);
+    })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+  </script>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/glider-js/1.7.7/glider.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+  <link rel="stylesheet" href="{{ 'theme.css' | asset_url }}" />
+  <link rel="stylesheet" href="{{ 'custom.css' | asset_url }}" />
+  
+  <style>
+    #shopify-section-header .logo > svg {
+      max-width: 115px;
+    }
+    {% if request.page_type == 'page' %}
+      @media screen and (min-width: 1000px) {
+        .layout {
+          display: block;
+        }
+      }
+    {% endif %}
+  </style>
+
+  {% render 'microdata-schema' %}
+
+  <script defer>
+      var customerLogged = {% if customer %}true{% else %}false{% endif %};
+
+      // This allows to expose several variables to the global scope, to be used in scripts
+      window.theme = {
+        pageType: {{ request.page_type | json }},
+        cartCount: {{ cart.item_count | json }},
+        moneyFormat: {{ shop.money_format | json }},
+        moneyWithCurrencyFormat: {{ shop.money_with_currency_format | json }},
+        showDiscount: {% if settings.show_discount %}true{% else %}false{% endif %},
+        discountMode: {{ settings.discount_mode | json }},
+        searchMode: {{ settings.search_mode | json }},
+        searchUnavailableProducts: {{ settings.search_unavailable_products | json }},
+        cartType: {{ settings.cart_type | json }}
+      };
+
+      window.routes = {
+        rootUrl: {{ routes.root_url | json }},
+        rootUrlWithoutSlash: {% if routes.root_url == '/' %}''{% else %}{{ routes.root_url | json }}{% endif %},
+        cartUrl: {{ routes.cart_url | json }},
+        cartAddUrl: {{ routes.cart_add_url | json }},
+        cartChangeUrl: {{ routes.cart_change_url | json }},
+        searchUrl: {{ routes.search_url | json }},
+        productRecommendationsUrl: {{ routes.product_recommendations_url | json }}
+      };
+
+      window.languages = {
+        productRegularPrice: {{ 'product.general.regular_price' | t | json }},
+        productSalePrice: {{ 'product.general.sale_price' | t | json }},
+        collectionOnSaleLabel: {{ 'collection.product.discount_html' | t | json }},
+        productFormUnavailable: {{ 'product.form.unavailable' | t | json }},
+        productFormAddToCart: {% if product.template_suffix == 'pre-order' %}{{ 'product.form.pre_order' | t | json }}{% else %}{{ 'product.form.add_to_cart' | t | json }}{% endif %},
+        productFormSoldOut: {{ 'product.form.sold_out' | t | json }},
+        productAdded: {{ 'product.form.added' | t | json }},
+        productAddedShort: {{ 'product.form.added_short' | t | json }},
+        shippingEstimatorNoResults: {{ 'cart.shipping_estimator.no_results_title' | t | json }},
+        shippingEstimatorOneResult: {{ 'cart.shipping_estimator.one_result_title' | t | json }},
+        shippingEstimatorMultipleResults: {{ 'cart.shipping_estimator.multiple_results_title' | t | json }},
+        shippingEstimatorErrors: {{ 'cart.shipping_estimator.errors' | t | json }}
+      };
+
+      window.lazySizesConfig = {
+        loadHidden: false,
+        hFac: 0.8,
+        expFactor: 3,
+        customMedia: {
+          '--phone': '(max-width: 640px)',
+          '--tablet': '(min-width: 641px) and (max-width: 1023px)',
+          '--lap': '(min-width: 1024px)'
+        }
+      };
+
+      document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+    </script>
+
+    {%- if request.page_type == 'customers/addresses' -%}
+    <script src="{{ 'shopify_common.js' | shopify_asset_url }}" defer></script>
+    <script src="{{ 'customer_area.js' | shopify_asset_url }}" defer></script>
+    {%- endif -%}
+
+    <script src="{{ 'theme.min.js' | asset_url }}" defer></script>
+    <script src="{{ 'custom.js' | asset_url }}" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/glider-js/1.7.7/glider.min.js"></script>
+    <script src="{{ 'glider-autoplay.js' | asset_url }}" defer></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/fontawesome.min.js" defer></script>
+    {%- if request.page_type != 'cart' -%}
+    <script>
+      (function () {
+        window.onpageshow = function() {
+        // We force re-freshing the cart content onpageshow, as most browsers will serve a cache copy when hitting the back button, which cause staled data
+        document.documentElement.dispatchEvent(new CustomEvent('cart:refresh', {
+          bubbles: true,
+          detail: {scrollToTop: false}
+        }));
+      };
+    })();
+  </script>
+  {%- endif -%}
+  
+  {%- comment -%}
+  {% include 'hide-price-config' %}
+  {% include 'hide-price' %}
+  {%- endcomment -%}
+
+  {%- assign customer_state = false -%}
+  {%- assign customerTags = customer.tags | join: ',' | upcase -%}
+  {%- if customerTags contains 'ESTADO' -%}
+    {%- assign customer_state = customerTags | split: 'ESTADO:' | last | slice: 0, 2 -%}
+  {%- endif -%}
+  {%- assign freeShippingValue = 1500 | times: 100 -%}
+  
+  {%- if customer_state -%}
+      {%- assign shippingValidStates = "AC,AM,AP,PA,RO,RR,TO,AL,BA,CE,MA,PB,PE,PI,RN,SE" -%}
+      {%- if shippingValidStates contains customer_state -%}
+      {%- assign cartTotal = cart.total_price -%}
+      {%- assign amountToFreeShipping = freeShippingValue | minus: cartTotal | at_most: freeShippingValue | at_least: 0 -%}
+      {%- assign percentageBar = cartTotal | times: 100 | divided_by: freeShippingValue | round | at_most: 100 -%}
+        <script src="{{ 'progress-bar-controller.js' | asset_url }}" defer></script>
+        <script defer>
+          window.addEventListener('load', () => {
+            if(typeof progressBar_update == 'function') progressBar_update({{ percentageBar }}, {{ amountToFreeShipping }});
+          })
+        </script>
+      {%- endif -%}
+  {%- endif -%}
+  
+  <meta name="facebook-domain-verification" content="j1jbe9ril2ebvejwytqrpjpcpji91g" />
+  <meta name="google-site-verification" content="fjl6Wsuw5cWP_ryvjJLQU5y3fUZzSZeO7XDUBx4Nhws" />
+</head>
+ 
+  <body class="{% if request.page_type == 'cart' %}d-none{% endif %} warehouse--v1 bg-transparent {% if settings.animation_image_zoom %}features--animate-zoom{% endif%} template-{{ request.page_type | handle }} {% if request.page_type contains '/' %}template-{{ request.page_type | split: '/' | last | handle }}{% endif %}" data-instant-intensity="viewport">
+    {% section 'youtube-button' %}
+    {% section 'whatsapp-button' %}
+    {% if customer %}
+      <div class="customerIsLogged" user-id="{{ customer.id }}"></div>
+    {% endif %}
+    <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id={% if shop.name contains 'DEV' %}GTM-MBKM5XD{% else %}GTM-5SKRQ4V{% endif %}"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+    <a href="#main" class="visually-hidden skip-to-content">{{ 'general.accessibility.skip_to_content' | t }}</a>
+    <span class="loading-bar"></span>
+
+{% section 'announcement-bar' %}
+
+    {%- unless request.page_type == 'cart' -%}
+    {%- comment -%}As required by Shopify rules, popup must be removed on cart page to remove distraction{%- endcomment -%}
+    {% section 'popups' %}
+    {%- endunless -%}
+    
+    {% comment %}
+    {% if disabledUser == false %}
+    {% section 'header' %}
+    {% section 'testab-banners' %}
+    {% endif %}
+    {% endcomment %}
+    {% section 'campaigns-banner' %}
+    {% section 'header' %}
+    {% section 'testab-banners' %}
+
+    <main id="main" role="main">
+      {{ content_for_layout }}
+      {% comment %}
+      {% if disabledUser == false %}
+	      {{ content_for_layout }}
+      {% else %}
+      	  {% render 'user-blocked' %}
+      {% endif %}
+      {% endcomment %}
+    </main>
+
+    {%- if request.page_type == 'blog' or request.page_type == 'article' or request.page_type == 'page' -%}
+      {% section 'static-newsletter' %}
+    {%- endif -%}
+
+    {% section 'text-with-icons' %}
+    {% section 'footer' %}
+
+    <ul hidden>
+      <li id="a11y-new-window-message">{{ 'general.accessibility.new_window' | t }}</li>
+    </ul>
+
+    {% render 'wk-mvm-variables' %}
+      <script>
+        window.addEventListener('load', () => {
+          window.sessionStorage.removeItem('validCart');
+          let cartItems = window.localStorage.getItem('noMinProds');
+          const items = {};
+          if(cartItems){
+            try{
+                cartItems = JSON.parse(cartItems);
+                for(let i = 0; i < cartItems.length; i++){
+                  const { variant_id, quantity } = cartItems[i];
+                  items[variant_id] = quantity;
+                }
+                if(items){
+                  fetch('/cart/update.js', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ updates: items })
+                  }).then(res => res.json())
+                  .then(res => {
+                    window.localStorage.removeItem('noMinProds');
+                    if(window.location.href.includes('cart')){
+                      window.location.reload(true);
+                    }else{
+                      document.documentElement.dispatchEvent(
+                        new CustomEvent("cart:refresh", {
+                          bubbles: true,
+                        })
+                      );
+                    }
+                    return;
+                  });
+                }
+            } catch(error){
+              window.localStorage.removeItem('noMinProds');
+              window.location.reload(true);
+              return;
+            }
+          }
+          const body = document.querySelector('body');
+          const body1 = document.body;
+          body.classList.remove('d-none');
+          body1.classList.remove('d-none');
+        });
+      </script>
+    <script>
+      const customer = {
+        logged: {% if customer %}true{% else %}false{% endif %},
+        id: '{{ customer.id }}',
+        email: '{{ customer.email }}'
+      }
+
+      let discountShippingValue = 0;
+      const freeShippingValue = {{ freeShippingValue }};
+    </script>
+    {%- comment -%}
+    <script defer>
+      let idleTime = 0;
+      const idleTime_interval = setInterval(() => {
+        idleTime += 1000;
+        if(idleTime >= 10000 && typeof showWppText == 'function') {
+          showWppText();
+          clearInterval(idleTime_interval);
+        }
+      }, 1000);
+      window.addEventListener('mousemove', resetIdleTime);
+      window.addEventListener('keypress', resetIdleTime);
+
+      function resetIdleTime(){
+        idleTime = 0;
+      }
+    </script>
+    {%- endcomment -%}
+    {%- comment -%}
+    <script defer>
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          if(typeof showWppText == 'function' && !sessionStorage.getItem("block-whatsapp")) showWppText();
+          if(typeof showYoutubeText == 'function' && !sessionStorage.getItem("block-youtube")) showYoutubeText();
+      }, {% unless template.name == 'cart' %}3000{% else %}10000{% endunless %});
+      })
+    </script>
+    {%- endcomment -%}
+    <script defer>
+      window.addEventListener("DOMContentLoaded", () => { 
+        setTimeout(() => {
+          const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+          const popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+            return new bootstrap.Popover(popoverTriggerEl, { html: true });
+          });
+        }, 3000);
+      });
+    </script>
+    <script src="{{ 'tagManager.js' | asset_url }}"></script>
+    <script src="{{ 'product-cards-controls.js' | asset_url}}"></script>
+    
+    {% render 'user-check' %}
+    
+    {% include 'globo.filter.action' %}
+    
+	</body>
+  <script id="user-platform-sync">
+    (function () {
+      const SCRIPT_VERSION = '1';
+      const SYNC_FLAG_KEY = 'user-platform-synchronized';
+      const TEMP_DATA_KEY = 'user-platform-token';
+      const CURRENT_SYNC_VERSION = localStorage.getItem(SYNC_FLAG_KEY);
+      const API_HOST = 'https://user.inventashop.com.br';
+      const API_SIGN_ENDPONT = '/v1/shopify/users/sign';
+      const API_CHANGEPASSWORD_ENDPONT = '/v1/shopify/users/change-password';
+      const API_KEY = 'rxExWn5qzgGwEWOckeCbkGq9qlcHyyOgukkuoazt00F8BwEHN0311ei3kSkzfOE0cThnRhhG6kF76QdPxhEJJQlQrWukxSrIL4hqxFAlQVpI1WQnDLZSjCpQaGc8D0eH';
+
+      const clearTemp = () => {
+        sessionStorage.removeItem(TEMP_DATA_KEY);
+      };
+      
+      {%- if customer -%}
+          
+      function getCustomerData(pass) {    
+        const currentCustomer = {
+          "personName": '{{ customer.first_name }} {{ customer.last_name }}'.trim(),
+          "email": '{{ customer.email }}',
+          "phone": '{{ customer.phone }}',
+          "personDocumentValue": '{{ customer.metafields.customer_fields.data.cpf }}',
+          "credentialReferenceId": '{{ customer.id }}',
+          "personAddress": {
+              "zipcode": '{{ customer.default_address.zip }}',
+              "publicArea": '{{ customer.default_address.address1 }} {{ customer.default_address.address2 }}'.trim(),
+              "city": '{{ customer.default_address.city }}',
+              "state": '{{ customer.default_address.province }}',
+              "country": '{{ customer.default_address.country }}',
+              "default": true
+          },
+          "tags": JSON.parse('{{ customer.tags | json }}').join(','),
+          "userPassword": pass,
+        };
+    
+        {% if customer.metafields.customer_fields.data.tipo_de_conta != "cpf-user" %}
+          currentCustomer.companyName = '{{ customer.metafields.customer_fields.data.razao_social }}';
+          currentCustomer.companyTradeName = '{{ customer.metafields.customer_fields.data.razao_social }}';
+          currentCustomer.companyDocumentValue = '{{ customer.metafields.customer_fields.data.cnpj }}';
+          currentCustomer.companyContactValue = '{{ customer.email }}';
+        {% endif %}
+    
+        return currentCustomer;
+      }
+    
+      async function sendToUserPlatform() {        
+        const temp = sessionStorage.getItem(TEMP_DATA_KEY);
+    
+        if(temp) {
+          try {
+            const [, pass, update] = JSON.parse(atob(temp));
+            const body = getCustomerData(pass);
+            const API_URL = `${API_HOST}${update ? API_CHANGEPASSWORD_ENDPONT : API_SIGN_ENDPONT}`;
+            const response = await fetch(API_URL, {
+              method: 'POST',
+              headers: {
+                'Accept': '*/*',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${API_KEY}`,
+              },
+              body: JSON.stringify(body),
+            });
+    
+            if(response.ok) {
+              localStorage.setItem(SYNC_FLAG_KEY, SCRIPT_VERSION);
+            }
+          }
+          catch(error) {
+            console.error('SynchronizationError', error);
+          }
+          finally {
+            sessionStorage.removeItem(TEMP_DATA_KEY);
+          }
+        }
+      }
+      
+      {% comment %} "razao_social" is async updated for CNPJ users and may not be available at login time {% endcomment %}
+      {% if customer.metafields.customer_fields.data.tipo_de_conta == "cpf-user" or customer.metafields.customer_fields.data.razao_social != nil %}
+        sendToUserPlatform();
+      {% endif %}
+      
+      {%- endif -%}
+      
+      window.userPlatform = Object.freeze({
+        clearTemp,
+
+        signInCallback(pass) {
+          if(CURRENT_SYNC_VERSION !== SCRIPT_VERSION) {
+            sessionStorage.setItem(TEMP_DATA_KEY, btoa(JSON.stringify([Math.random(), pass])));
+          }
+        },
+
+        onLoadResetPassword() {
+          const passwordField = document.querySelector('#password-wrapper input');
+          const confirmField = document.querySelector('#confirm-password-wrapper input');
+        
+          confirmField.addEventListener("blur", () => {
+            if(confirmField.value === passwordField.value) {
+              sessionStorage.setItem(TEMP_DATA_KEY, btoa(JSON.stringify([Math.random(), passwordField.value, true])));
+            }
+          });
+        },
+      });
+    })();
+    </script>
+
+    <script defer>
+      ( () => {
+        let pushState = history.pushState;
+        let replaceState = history.replaceState;
+
+        history.pushState = function() {
+          pushState.apply(history, arguments);
+          window.dispatchEvent(new Event('pushstate'));
+          window.dispatchEvent(new Event('locationchange'));
+        };
+
+        history.replaceState = function() {
+          replaceState.apply(history, arguments);
+          window.dispatchEvent(new Event('replacestate'));
+          window.dispatchEvent(new Event('locationchange'));
+        };
+
+        window.addEventListener('popstate', () => {
+          window.dispatchEvent(new Event('locationchange'));
+        });
+      })();
+
+      window.addEventListener('locationchange', function(){
+        const urlParameters = window.location.search;
+        const carouselsContainer = document.querySelector("#carousels-container");
+        const collectionAllBrandsTitle = document.querySelector(".all-brands-title");
+
+        if (carouselsContainer) {
+          if (urlParameters.includes("gf_")) {
+            carouselsContainer.classList.add("hiddenElement");
+            if (collectionAllBrandsTitle) collectionAllBrandsTitle.innerHTML = "Resultados do filtro";
+          } else {
+            carouselsContainer.classList.remove("hiddenElement");
+            if (collectionAllBrandsTitle) collectionAllBrandsTitle.innerHTML = "Demais Marcas";
+          }
+        }
+      })
+    </script>
+
+    {% if customer  %}
+      <script>
+        const windowLocation = window.location;
+        if (windowLocation.pathname == '/' && !windowLocation.href.includes("faq")) {
+          windowLocation.replace("/collections/marcas");
+        }
+      </script>
+    {% endif %}
+
+    <script id="validate-jwt-user">
+      const COOKIE_NAME = "marketplace-auth-id";
+      const REDIRECT_URL = "https://loja.inventa.shop/marcas/1";
+
+      function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) {
+          return true;
+        }
+        return false;
+      }
+      
+      if (getCookie(COOKIE_NAME) && window.location.href != REDIRECT_URL) {
+        window.location.replace(REDIRECT_URL);
+      }
+    </script>
+
+</html>

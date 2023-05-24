@@ -1,0 +1,244 @@
+<section id="home-marcas-section" class="section my-0 py-5" data-section-id="home-marcas-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <h2 class="fw-bold h2">Marcas que confiam e trabalham conosco</h2>
+        <div class="marcas-slider-wrapper position-relative px-5 text-center">
+          <button class="previous-slide">{%- render 'icon', icon: 'arrow-left' -%}</button>
+          <button class="next-slide">{%- render 'icon', icon: 'arrow-right' -%}</button>
+          <div class="marcas-slider">
+            <a href="/collections/vendors?vendor=Adversa%20Makeup&q=Adversa+Makeup">
+              <div>
+                <img 
+                  class="lazyload"
+                  src="{{ 'marca-Adversa.png' | file_img_url: '150x', crop: 'bottom' }}"
+                  alt="Marca Adversa"
+                />
+              </div>
+            </a>
+            <a href="/collections/vendors?vendor=Better%20Drinks&q=Better+Drinks">
+              <div class="">
+                <img 
+                  class="lazyload"
+                  src="{{ 'marca-Cerveja_Praya.png' | file_img_url: '150x', crop: 'bottom' }}"
+                  alt="Marca Cerveja Praya"
+                />
+              </div>
+            </a>
+           <a href="/collections/vendors?vendor=Positiv.a&q=Positiv.a">
+            <div>
+              <img 
+                class="lazyload"
+                src="{{ 'marca-Positiva.png' | file_img_url: '150x', crop: 'bottom' }}"
+                alt="Marca Positiv.a"
+              />
+            </div>
+           </a>
+            <a href="/collections/vendors?vendor=biO2&q=biO2">
+              <div>
+                <img 
+                  class="lazyload"
+                  src="{{ 'marca-biO2.png' | file_img_url: '150x', crop: 'bottom' }}"
+                  alt="Marca Bi02"
+                />
+              </div>
+            </a>
+            <a href="/collections/vendors?q=BS%26CO">
+              <div>
+                <img 
+                  class="lazyload"
+                  src="{{ 'marca-BS_CO.png' | file_img_url: '150x', crop: 'bottom' }}"
+                  alt="Marca BS&CO"
+                />
+              </div>
+            </a>
+          <a href="/collections/vendors?vendor=Enova%20Foods%20S.A&q=Enova+Foods+S.A">
+            <div>
+              <img 
+                class="lazyload"
+                src="{{ 'marca-Enova_foods.png' | file_img_url: '150x' }}"
+                alt="Marca Enova Foods"
+              />
+            </div>
+          </a>
+            <a href="/collections/vendors?vendor=Fiat%20Lux&q=Fiat+Lux">
+              <div>
+                <img 
+                  class="lazyload"
+                  src="{{ 'fiat-lux.png' | file_img_url: '140x', crop: 'bottom' }}"
+                  alt="Marca Fiat Lux"
+                />
+              </div>
+            </a>
+           <a href="/collections/vendors?vendor=Oikos&q=Oikos">
+            <div>
+              <img 
+                class="lazyload"
+                src="{{ 'oikos.png' | file_img_url: '170x', crop: 'bottom' }}"
+                alt="Marca Fiat Lux"
+              />
+            </div>
+           </a>
+           <a href="/collections/vendors?q=Embelleze">
+            <div>
+              <img 
+                class="lazyload"
+                src="{{ 'embelleze.png' | file_img_url: '350x', crop: 'bottom' }}"
+                alt="Embelleze"
+              />
+            </div>
+           </a>
+           <a href="/collections/vendors?vendor=GoldKo&q=GoldKo">
+            <div>
+              <img 
+                class="lazyload"
+                src="{{ 'marca-GoldKo.png' | file_img_url: '150x', crop: 'bottom' }}"
+                alt="Marca GoldKo"
+              />
+            </div>
+           </a>
+           <a href="/collections/vendors?vendor=Laces%20and%20Hair&q=Laces+and+Hair">
+            <div>
+              <img 
+                class="lazyload"
+                src="{{ 'marca-Laces.png' | file_img_url: '150x', crop: 'bottom' }}"
+                alt="Marca Laces"
+              />
+            </div>
+           </a>
+           <a href="/collections/vendors?q=BS%26CO">
+            <div>
+              <img 
+                class="lazyload"
+                src="{{ 'alva-Naturkosmetik.png' | file_img_url: '150x', crop: 'bottom' }}"
+                alt="Alva"
+              />
+            </div>
+           </a>
+            <a href="/collections/vendors?vendor=Mais%20Pura&q=Mais+Pura">
+              <div>
+                <img 
+                  class="lazyload"
+                  src="{{ 'marca-Mais_Pura.png' | file_img_url: '150x', crop: 'bottom' }}"
+                  alt="Marca Mais Pura"
+                />
+              </div>
+            </a>
+            <a href="/collections/vendors?q=Ind+e+Com+Santa+Maria">
+              <div>
+                <img 
+                  class="lazyload"
+                  src="{{ 'santamaria.png' | file_img_url: '150x', crop: 'bottom' }}"
+                  alt="Santa Maria"
+                />
+              </div>
+            </a>
+            <a href="/collections/vendors?q=Ou-">
+              <div>
+                <img 
+                  class="lazyload"
+                  src="{{ 'ou.png' | file_img_url: '150x', crop: 'bottom' }}"
+                  alt="Ou"
+                />
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .marcas-slider-wrapper .previous-slide,
+  .marcas-slider-wrapper .next-slide {
+    position: absolute;
+    padding: 0 12px;
+    z-index: 1;
+    font-size: 1.7rem;
+    width: auto;
+    top: 0;
+    bottom: 0;
+  }
+
+  .marcas-slider-wrapper .next-slide svg,
+  .marcas-slider-wrapper .previous-slide svg {
+    width: 35px;
+    height: 35px;
+    padding: 7px;
+  }
+
+  .marcas-slider-wrapper .previous-slide svg path,
+  .marcas-slider-wrapper .next-slide svg path {
+    stroke-width: 1;
+  }
+
+  .marcas-slider-wrapper .next-slide {
+    right: -30px;
+  }
+
+  .marcas-slider-wrapper .previous-slide {
+    left: -30px;
+  }
+
+  .marcas-slider-wrapper .glider-slide {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+</style>
+
+<script>
+  const marcasSliderContainer = document.querySelector('.marcas-slider');
+
+  new Glider(marcasSliderContainer, {
+    type: 'carousel',
+    focusAt: 'center',
+    rewind: true,
+    slidesToShow: 4,
+    slidesToScroll: 4,
+    draggable: true,
+    arrows: {
+      prev: '.marcas-slider-wrapper .previous-slide',
+      next: '.marcas-slider-wrapper .next-slide'
+    },
+    responsive: [
+    {
+      breakpoint: 1024,
+      settings: {
+        slidesToShow: 6,
+        slidesToScroll: 4
+      }
+    },
+    {
+      breakpoint: 1440,
+      settings: {
+        slidesToShow: 8,
+        slidesToScroll: 4
+      }
+    }
+    ]
+  });
+
+</script>
+
+{% schema %}
+{
+  "name": "home-marcas-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Título"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Custom Sections",
+      "name": "home-marcas-section",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

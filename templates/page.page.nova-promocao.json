@@ -1,0 +1,41 @@
+{
+  "sections": {
+    "header": {
+      "type": "promotion-page-header",
+      "settings": {
+        "show-promo-banner": true
+      }
+    },
+    "description": {
+      "type": "promotion-page-description",
+      "settings": {
+        "title": "30 set 2022",
+        "content": "texto da promoção",
+        "image": "shopify:\/\/shop_images\/logo.png"
+      }
+    },
+    "carousal": {
+      "type": "promotion-product-carousal",
+      "settings": {
+        "show-priority-collection": true,
+        "title": "Título da coleção",
+        "collection": ""
+      }
+    },
+    "collections": {
+      "type": "promotion-page-collections",
+      "settings": {
+        "show-promotion-collections": true,
+        "products_per_row": "4",
+        "default_products_per_page": 24,
+        "default_view_layout": "grid"
+      }
+    }
+  },
+  "order": [
+    "header",
+    "description",
+    "carousal",
+    "collections"
+  ]
+}

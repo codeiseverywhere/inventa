@@ -1,0 +1,430 @@
+{
+  "form": {
+    "id": "8btYL7",
+    "name": "Contact form",
+    "handle": "contact-form-1",
+    "theme_id": "126962761935",
+    "settings": {
+      "locales": {
+        "back": "Atrás",
+        "next": "Próximo",
+        "cancel": "Cancelar",
+        "edit_link": "Edit account",
+        "fix_errors": "Por favor corrija os erros antes de continuar",
+        "is_invalid": "{{label}} é inválido",
+        "email_taken": "O e-mail já foi tomado",
+        "phone_taken": "O número de telefone já foi escolhido",
+        "server_error": "Não foi possível salvar o formulário, tente novamente mais tarde",
+        "step_counter": "Paso {{current}} de {{total}}",
+        "verify_email": "Verifique seu e-mail para obter um link de verificação para ativar sua conta.",
+        "not_available": "Ocorreu um erro ao salvar sua conta, tente novamente em alguns minutos.",
+        "create_account": "Enviar",
+        "update_account": "Enviar",
+        "recaptcha_error": "Challenge verification failed, please try again",
+        "creating_account": "Enviando...",
+        "updating_account": "Enviando...",
+        "invalid_email_domain": "O e-mail contém um nome de domínio inválido"
+      },
+      "customCSS": "textarea {\n    height: 100% !important;\n}",
+      "whitelistedTags": "",
+      "markRequiredFields": true,
+      "displayCancelButton": false,
+      "redirectAfterSubmit": false,
+      "goBackAfterSubmission": false,
+      "accountApprovalRequired": true,
+      "cancelButtonRedirectUrl": "\/account\/login",
+      "emailVerificationRequired": false,
+      "postSubmissionRedirectUrl": "\/account",
+      "showSuccessStepAfterSubmit": true,
+      "goBackAfterCancelButtonClick": false
+    },
+    "install_locations": [
+      "manual"
+    ],
+    "created_at": "2021-04-23T14:16:40Z",
+    "updated_at": "2021-12-07T13:52:57Z",
+    "revision_ids": [
+      "58T7egE",
+      "LbTO4Y",
+      "2ETvAR",
+      "Y9T0Xk",
+      "VNT7k6",
+      "d7Tqyd5",
+      "kdTywn",
+      "RxT3DG",
+      "B5TZ1R",
+      "GYTaq7",
+      "1wTypE",
+      "p4TZ7dP",
+      "OzTkMY",
+      "xMTYaE",
+      "DRTrrrg",
+      "PnTwzn",
+      "rAT28V"
+    ]
+  },
+  "revision": {
+    "id": "58T7egE",
+    "created_at": "2021-12-07T13:53:06Z",
+    "updated_at": "2021-12-07T13:53:06Z",
+    "embed_version": "4.8.1",
+    "published_at": "2021-12-07T13:53:06Z",
+    "fields": [
+      {
+        "id": 180070,
+        "dataColumn": null,
+        "parentId": null,
+        "position": 0,
+        "type": "heading",
+        "stepId": 194406,
+        "default": "",
+        "label": "Account request sent heading",
+        "placeholder": null,
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12,
+          "alignment": "center"
+        },
+        "settings": {
+          "size": 1,
+          "content": "Recebido!",
+          "hideLabel": true,
+          "fontWeight": "bold"
+        },
+        "validations": [],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 106349,
+        "dataColumn": null,
+        "parentId": null,
+        "position": 1,
+        "type": "paragraph",
+        "stepId": 194406,
+        "default": "",
+        "label": "Reviewing submission explanation",
+        "placeholder": null,
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "content": "<p style=\"text-align: center;\">Um consultor entrar&aacute; em contato com voc&ecirc; em breve!<\/p>",
+          "fontSize": 14,
+          "hideLabel": true
+        },
+        "validations": [],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 828224,
+        "dataColumn": {
+          "key": "tipo_de_conta",
+          "label": "New dropdown field",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 0,
+        "type": "dropdown",
+        "stepId": 529971,
+        "default": "Contato",
+        "label": "Tipo de conta",
+        "placeholder": "Tipo de conta",
+        "description": "",
+        "enum": [
+          {
+            "label": "Contato",
+            "value": "Contato"
+          }
+        ],
+        "appearance": {
+          "width": 12,
+          "cssClass": "invisible position-absolute start-0"
+        },
+        "settings": {
+          "end": 10,
+          "start": 1,
+          "enumType": "list",
+          "hideLabel": true,
+          "separateValues": false
+        },
+        "validations": [],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 554233,
+        "dataColumn": {
+          "key": "first_name",
+          "label": "First name",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 1,
+        "type": "text",
+        "stepId": 529971,
+        "default": "",
+        "label": "Nome",
+        "placeholder": "Nome completo",
+        "description": null,
+        "enum": null,
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "hideLabel": true
+        },
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Por favor forneça um nome válido"
+          }
+        ],
+        "sensitive": null,
+        "preset": "first_name",
+        "autotag": null
+      },
+      {
+        "id": 155392,
+        "dataColumn": {
+          "key": "phone",
+          "label": "Phone number",
+          "dataType": "phone"
+        },
+        "parentId": null,
+        "position": 2,
+        "type": "phone",
+        "stepId": 529971,
+        "default": "",
+        "label": "Telefone",
+        "placeholder": "Telefone comercial",
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "hideLabel": true,
+          "defaultCountryCode": "BR"
+        },
+        "validations": [
+          {
+            "operator": "is_valid",
+            "comparand": null,
+            "errorMessage": "Por favor forneça um número de telefone válido"
+          },
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Por favor forneça um número de telefone"
+          },
+          {
+            "metadata": {},
+            "operator": "longer_than",
+            "comparand": 6,
+            "errorMessage": "O telefone tem um formato incorreto"
+          }
+        ],
+        "sensitive": null,
+        "preset": "phone_number",
+        "autotag": null
+      },
+      {
+        "id": 156535,
+        "dataColumn": {
+          "key": "email",
+          "label": "Email address",
+          "dataType": "email"
+        },
+        "parentId": null,
+        "position": 3,
+        "type": "email",
+        "stepId": 529971,
+        "default": "",
+        "label": "Email comercial",
+        "placeholder": "Email comercial",
+        "description": "",
+        "enum": null,
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "hideLabel": true
+        },
+        "validations": [
+          {
+            "operator": "is_valid_email",
+            "comparand": null,
+            "errorMessage": "Por favor forneça um endereço de e-mail válido"
+          },
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Por favor insira um email"
+          }
+        ],
+        "sensitive": null,
+        "preset": "email_address",
+        "autotag": null
+      },
+      {
+        "id": 187618,
+        "dataColumn": {
+          "key": "pedido_ou_cod_cliente",
+          "label": "Nº do pedido ou cod. de cliente",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 4,
+        "type": "text",
+        "stepId": 529971,
+        "default": "",
+        "label": "Nº do pedido",
+        "placeholder": "Nº do pedido",
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "hideLabel": true
+        },
+        "validations": [],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 721946,
+        "dataColumn": {
+          "key": "mensagem",
+          "label": "Mensagem",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 5,
+        "type": "textarea",
+        "stepId": 529971,
+        "default": "",
+        "label": "Mensagem",
+        "placeholder": "Mensagem",
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12,
+          "cssClass": ""
+        },
+        "settings": {
+          "rows": 5,
+          "hideLabel": true
+        },
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Por favor insira sua mensagem"
+          }
+        ],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      }
+    ],
+    "steps": [
+      {
+        "id": 529971,
+        "title": "Contact form",
+        "description": ""
+      },
+      {
+        "id": 194406,
+        "title": "Submission success",
+        "metadata": {
+          "isSuccessStep": true
+        },
+        "description": ""
+      }
+    ],
+    "rules": [
+      {
+        "id": 271398,
+        "title": "Show \"Wholesale\" step and tag customer",
+        "actions": [
+          {
+            "effect": "show_step",
+            "metadata": {
+              "stepId": 228625
+            }
+          },
+          {
+            "effect": "tag_customer",
+            "metadata": {
+              "value": "B2B"
+            }
+          }
+        ],
+        "conditions": [
+          {
+            "operand": null,
+            "metadata": {
+              "column": {
+                "key": "wholesale_partner",
+                "label": "I am signing up as a wholesale partner",
+                "dataType": "boolean"
+              },
+              "comparand": "Wholesale"
+            },
+            "operator": "is_true"
+          }
+        ],
+        "conditionChaining": "all"
+      },
+      {
+        "id": 195628,
+        "title": "Show tax exempt upload field",
+        "actions": [
+          {
+            "effect": "show_field",
+            "metadata": {
+              "fieldId": 134858
+            }
+          }
+        ],
+        "conditions": [
+          {
+            "operand": null,
+            "metadata": {
+              "column": {
+                "key": "tax_exempt",
+                "label": "Tax exempt",
+                "dataType": "boolean"
+              }
+            },
+            "operator": "is_true"
+          }
+        ],
+        "conditionChaining": "all"
+      }
+    ]
+  }
+}

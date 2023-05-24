@@ -1,0 +1,877 @@
+{
+  "form": {
+    "id": "dGtVak",
+    "name": "Retailer Form (three steps)",
+    "handle": "retailer-form-two-steps-copy-1",
+    "theme_id": "127168053455",
+    "settings": {
+      "locales": {
+        "back": "Atrás",
+        "next": "Próximo",
+        "cancel": "Cancelar",
+        "edit_link": "Edit account",
+        "fix_errors": "Verifique os erros para prosseguir",
+        "is_invalid": "{{label}} é inválido",
+        "email_taken": "E-mail já cadastrado",
+        "phone_taken": "Número de telefone já cadastrado",
+        "server_error": "Não foi possível salvar o formulário, tente novamente mais tarde",
+        "step_counter": "Paso {{current}} de {{total}}",
+        "verify_email": "Verifique seu e-mail para ativar sua conta clicando no link de verificação. Caso não encontre o email, cheque também as caixas de spam ou promoções.",
+        "not_available": "Ocorreu um erro ao salvar sua conta, tente novamente em alguns minutos.",
+        "create_account": "Cadastre-se como lojista",
+        "update_account": "Cadastre-se como lojista",
+        "recaptcha_error": "A verificação do captcha falhou, tente novamente!",
+        "creating_account": "Salvando...",
+        "updating_account": "Salvando...",
+        "invalid_email_domain": "E-mail com domínio inválido"
+      },
+      "whitelistedTags": "",
+      "markRequiredFields": false,
+      "displayCancelButton": false,
+      "redirectAfterSubmit": true,
+      "goBackAfterSubmission": false,
+      "accountApprovalRequired": false,
+      "cancelButtonRedirectUrl": "\/account\/login",
+      "emailVerificationRequired": false,
+      "postSubmissionRedirectUrl": "\/collections\/marcas",
+      "showSuccessStepAfterSubmit": false,
+      "goBackAfterCancelButtonClick": false
+    },
+    "install_locations": [
+      "manual"
+    ],
+    "created_at": "2021-12-16T17:14:42Z",
+    "updated_at": "2022-02-04T17:19:11Z",
+    "revision_ids": [
+      "DRTr67m",
+      "rATyleY",
+      "nRT1dYo",
+      "ErTA69g",
+      "rATyZz8",
+      "Z6Trk5Z",
+      "evT9Gg2",
+      "boT5B3G",
+      "3qTevwl",
+      "LbTo5ay",
+      "d7Tqzv4",
+      "X1TkYmL",
+      "DRTr6RP",
+      "OzTXZee",
+      "4aTRewZ",
+      "GYT5p7g",
+      "vbT0nAb",
+      "58T7ELv",
+      "LbToX25",
+      "58T7zmN",
+      "yzTg060",
+      "RxTopvq",
+      "K0TgBOm"
+    ]
+  },
+  "revision": {
+    "id": "nRT1dYo",
+    "created_at": "2022-02-09T21:21:11Z",
+    "updated_at": "2022-02-09T21:21:12Z",
+    "embed_version": "4.9.0",
+    "published_at": "2022-02-09T21:21:12Z",
+    "fields": [
+      {
+        "id": 206305,
+        "dataColumn": {
+          "key": "store_description",
+          "label": "O que descreve melhor sua loja?",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 0,
+        "type": "dropdown",
+        "stepId": 106233,
+        "default": "",
+        "label": "O que descreve melhor sua loja?",
+        "placeholder": "Escolha uma opção...",
+        "description": "",
+        "enum": [
+          {
+            "label": "Loja física",
+            "value": "Loja física"
+          },
+          {
+            "label": "Loja online",
+            "value": "Loja online"
+          },
+          {
+            "label": "Loja física e online",
+            "value": "Loja física e online"
+          }
+        ],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "end": 10,
+          "start": 1,
+          "enumType": "list",
+          "separateValues": false
+        },
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Escolha uma opção"
+          }
+        ],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 258253,
+        "dataColumn": {
+          "key": "interest_categories",
+          "label": "Que tipo de produtos você procura? (Multi seleção)",
+          "dataType": "list"
+        },
+        "parentId": null,
+        "position": 1,
+        "type": "checkbox_list",
+        "stepId": 106233,
+        "default": "",
+        "label": "Que tipo de produtos você procura? (Multi seleção)",
+        "placeholder": "",
+        "description": "",
+        "enum": [
+          {
+            "label": "Aromas e fragrâncias para casa",
+            "value": "Aromas e fragrâncias para casa"
+          },
+          {
+            "label": "Bijouterias e Acessórios",
+            "value": "Bijouterias e Acessórios"
+          },
+          {
+            "label": "Brinquedos e Infantil",
+            "value": "Brinquedos e Infantil"
+          },
+          {
+            "label": "Cama, mesa e Banho",
+            "value": "Cama, mesa e Banho"
+          },
+          {
+            "label": "Cosméticos veganos orgânicos e naturais",
+            "value": "Cosméticos veganos orgânicos e naturais"
+          },
+          {
+            "label": "Cuidados com a pele",
+            "value": "Cuidados com a pele"
+          },
+          {
+            "label": "Decoração",
+            "value": "Decoração"
+          },
+          {
+            "label": "Maquiagens",
+            "value": "Maquiagens"
+          },
+          {
+            "label": "Mercearia",
+            "value": "Mercearia"
+          },
+          {
+            "label": "Papelaria",
+            "value": "Papelaria"
+          },
+          {
+            "label": "Perfumes",
+            "value": "Perfumes"
+          },
+          {
+            "label": "Pets",
+            "value": "Pets"
+          },
+          {
+            "label": "Roupas",
+            "value": "Roupas"
+          },
+          {
+            "label": "Sapatos",
+            "value": "Sapatos"
+          },
+          {
+            "label": "Shampoos e condicionadores",
+            "value": "Shampoos e condicionadores"
+          },
+          {
+            "label": "Outro",
+            "value": "Outro"
+          }
+        ],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "end": 10,
+          "start": 1,
+          "enumType": "list",
+          "direction": "row",
+          "separateValues": false
+        },
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Escolha pelo menos uma das opções"
+          }
+        ],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 178192,
+        "dataColumn": null,
+        "parentId": null,
+        "position": 0,
+        "type": "heading",
+        "stepId": 160622,
+        "default": "",
+        "label": "Account request sent heading",
+        "placeholder": null,
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12,
+          "cssClass": "text-white",
+          "alignment": "center"
+        },
+        "settings": {
+          "size": 1,
+          "content": "Bem-vindo!",
+          "hideLabel": true,
+          "fontWeight": "bold"
+        },
+        "validations": [],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 828097,
+        "dataColumn": null,
+        "parentId": null,
+        "position": 1,
+        "type": "paragraph",
+        "stepId": 160622,
+        "default": "",
+        "label": "",
+        "placeholder": null,
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12,
+          "cssClass": "text-light"
+        },
+        "settings": {
+          "content": "",
+          "fontSize": 14,
+          "hideLabel": true
+        },
+        "validations": [],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 194008,
+        "dataColumn": null,
+        "parentId": null,
+        "position": 2,
+        "type": "link",
+        "stepId": 160622,
+        "default": "",
+        "label": "Comece a comprar",
+        "placeholder": null,
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12,
+          "cssClass": "text-white",
+          "alignment": "center"
+        },
+        "settings": {
+          "url": "\/pages\/bem-vindo",
+          "content": "Comece a comprar",
+          "fontSize": 14,
+          "hideLabel": true,
+          "fontWeight": "normal",
+          "openInNewTab": false
+        },
+        "validations": [],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 496685,
+        "dataColumn": {
+          "key": "interest_benefits",
+          "label": "Qual os dois melhores benefícios para a sua loja?",
+          "dataType": "list"
+        },
+        "parentId": null,
+        "position": 0,
+        "type": "checkbox_list",
+        "stepId": 213886,
+        "default": "",
+        "label": "Qual os dois melhores benefícios para a sua loja?",
+        "placeholder": "",
+        "description": "",
+        "enum": [
+          {
+            "label": "Compre agora pague depois",
+            "value": "Compre agora pague depois"
+          },
+          {
+            "label": "Frete Grátis",
+            "value": "Frete Grátis"
+          },
+          {
+            "label": "Novos Fornecedores",
+            "value": "Novos Fornecedores"
+          },
+          {
+            "label": "Suporte",
+            "value": "Suporte"
+          },
+          {
+            "label": "Promoções",
+            "value": "Promoções"
+          }
+        ],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "end": 10,
+          "start": 1,
+          "enumType": "list",
+          "direction": "row",
+          "separateValues": false
+        },
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Escolha pelo menos uma das opções"
+          }
+        ],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 509685,
+        "dataColumn": {
+          "key": "average_billing",
+          "label": "Qual a modalidade da sua loja?",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 1,
+        "type": "dropdown",
+        "stepId": 213886,
+        "default": "R$10.000",
+        "label": "Qual a média mensal de faturamento bruto da sua loja?",
+        "placeholder": "Escolha uma das opções",
+        "description": "",
+        "enum": [
+          {
+            "label": "R$10.000",
+            "value": "R$10.000"
+          },
+          {
+            "label": "R$50.000",
+            "value": "R$50.000"
+          },
+          {
+            "label": "R$100.000",
+            "value": "R$100.000"
+          },
+          {
+            "label": "+ R$200.000",
+            "value": "+ R$200.000"
+          }
+        ],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "end": 10,
+          "start": 1,
+          "enumType": "list",
+          "separateValues": false
+        },
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Escolha uma das opções"
+          }
+        ],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 558450,
+        "dataColumn": {
+          "key": "tipo_de_conta",
+          "label": "Tipo de conta",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 0,
+        "type": "dropdown",
+        "stepId": 728274,
+        "default": "Lojista",
+        "label": "Tipo de conta",
+        "placeholder": "Selecione um tipo de conta",
+        "description": "",
+        "enum": [
+          {
+            "label": "Fornecedor",
+            "value": "Fornecedor"
+          },
+          {
+            "label": "Lojista",
+            "value": "Lojista"
+          }
+        ],
+        "appearance": {
+          "width": 12,
+          "cssClass": "invisible position-absolute start-0"
+        },
+        "settings": {
+          "end": 10,
+          "start": 1,
+          "enumType": "list",
+          "hideLabel": true,
+          "separateValues": false
+        },
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Insira um tipo de conta"
+          }
+        ],
+        "sensitive": null,
+        "preset": null,
+        "autotag": false
+      },
+      {
+        "id": 157834,
+        "dataColumn": {
+          "key": "first_name",
+          "label": "First name",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 1,
+        "type": "text",
+        "stepId": 728274,
+        "default": "",
+        "label": "Pessoa de contato",
+        "placeholder": "Nome do responsável",
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "hideLabel": true
+        },
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Adicione o nome da pessoa de contato"
+          }
+        ],
+        "sensitive": null,
+        "preset": "first_name",
+        "autotag": null
+      },
+      {
+        "id": 549540,
+        "dataColumn": {
+          "key": "phone",
+          "label": "Phone number",
+          "dataType": "phone"
+        },
+        "parentId": null,
+        "position": 2,
+        "type": "phone",
+        "stepId": 728274,
+        "default": "",
+        "label": "Telefone",
+        "placeholder": "WhatsApp com DDD",
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "hideLabel": true,
+          "defaultCountryCode": "BR"
+        },
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Forneça um número de telefone com DDD válido"
+          },
+          {
+            "metadata": {},
+            "operator": "longer_than",
+            "comparand": 11,
+            "errorMessage": "Forneça um número de telefone com DDD válido"
+          }
+        ],
+        "sensitive": null,
+        "preset": "phone_number",
+        "autotag": null
+      },
+      {
+        "id": 129029,
+        "dataColumn": {
+          "key": "cpf",
+          "label": "CPF",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 3,
+        "type": "text",
+        "stepId": 728274,
+        "default": "",
+        "label": "CPF",
+        "placeholder": "CPF",
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12,
+          "cssClass": "cpf"
+        },
+        "settings": {
+          "hideLabel": true
+        },
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Adicione o seu CPF"
+          },
+          {
+            "metadata": {
+              "0": "P",
+              "1": "o",
+              "2": "l",
+              "3": "a",
+              "4": "r",
+              "5": "i",
+              "6": "s",
+              "7": "T",
+              "8": "e",
+              "9": "x",
+              "10": "t",
+              "11": "F",
+              "12": "i",
+              "13": "e",
+              "14": "l",
+              "15": "d",
+              "16": "6",
+              "17": "4"
+            },
+            "operator": "matches_regex",
+            "comparand": "^[0-9]{3}[\\.]?[0-9]{3}[\\.]?[0-9]{3}[-\\.\\\/]?[0-9]{2}$",
+            "errorMessage": "CPF é inválido, favor validar os números informados"
+          }
+        ],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 230609,
+        "dataColumn": {
+          "key": "cnpj",
+          "label": "CNPJ",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 4,
+        "type": "text",
+        "stepId": 728274,
+        "default": "",
+        "label": "CNPJ",
+        "placeholder": "CNPJ",
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12,
+          "cssClass": "cnpj"
+        },
+        "settings": {
+          "hideLabel": true
+        },
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Adicione o seu CNPJ"
+          },
+          {
+            "metadata": {
+              "0": "P",
+              "1": "o",
+              "2": "l",
+              "3": "a",
+              "4": "r",
+              "5": "i",
+              "6": "s",
+              "7": "T",
+              "8": "e",
+              "9": "x",
+              "10": "t",
+              "11": "F",
+              "12": "i",
+              "13": "e",
+              "14": "l",
+              "15": "d",
+              "16": "5",
+              "17": "7",
+              "18": "1"
+            },
+            "operator": "matches_regex",
+            "comparand": "\\d{2}\\.?\\d{3}\\.?\\d{3}\\\/?.?\\d{4}\\\/?.?-?\\d{2}",
+            "errorMessage": "CNPJ é inválido, favor validar os números informados"
+          }
+        ],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 145435,
+        "dataColumn": {
+          "key": "email",
+          "label": "Email address",
+          "dataType": "email"
+        },
+        "parentId": null,
+        "position": 5,
+        "type": "email",
+        "stepId": 728274,
+        "default": "",
+        "label": "Email comercial",
+        "placeholder": "Email comercial",
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "hideLabel": true
+        },
+        "validations": [
+          {
+            "operator": "is_valid_email",
+            "comparand": null,
+            "errorMessage": "Forneça um endereço de e-mail válido"
+          },
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Insira um e-mail"
+          }
+        ],
+        "sensitive": null,
+        "preset": "email_address",
+        "autotag": null
+      },
+      {
+        "id": 211026,
+        "dataColumn": {
+          "key": "password",
+          "label": "Password",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 6,
+        "type": "password",
+        "stepId": 728274,
+        "default": "",
+        "label": "Senha",
+        "placeholder": "Senha",
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "hideLabel": true
+        },
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Insira uma senha"
+          },
+          {
+            "metadata": {
+              "mandatory": true,
+              "staticOperator": true,
+              "comparandFieldProps": {
+                "min": 5
+              }
+            },
+            "operator": "longer_than",
+            "comparand": 6,
+            "errorMessage": "Insira uma senha com mais de 6 caracteres"
+          }
+        ],
+        "sensitive": true,
+        "preset": "password",
+        "autotag": null
+      },
+      {
+        "id": 673662,
+        "dataColumn": {
+          "key": "termos_e_condicoes",
+          "label": "Aceito os ",
+          "dataType": "boolean"
+        },
+        "parentId": null,
+        "position": 7,
+        "type": "checkbox",
+        "stepId": 728274,
+        "default": "",
+        "label": "Termos e condições",
+        "placeholder": null,
+        "description": "Aceito os <a href=\"\/pages\/termos-e-condicoes-lojistas\" target=\"_blank\">Termos e condições<\/a>",
+        "enum": [],
+        "appearance": {
+          "width": 12,
+          "cssClass": "terms-container text-white fw-bold"
+        },
+        "settings": {},
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Necessário que aceite os termos e condições"
+          }
+        ],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      }
+    ],
+    "steps": [
+      {
+        "id": 728274,
+        "title": "Dados do cliente:",
+        "description": ""
+      },
+      {
+        "id": 106233,
+        "title": "Dados do cliente:",
+        "description": ""
+      },
+      {
+        "id": 213886,
+        "title": "Dados da loja:",
+        "description": ""
+      },
+      {
+        "id": 160622,
+        "title": "Submission success",
+        "metadata": {
+          "isSuccessStep": true
+        },
+        "description": ""
+      }
+    ],
+    "rules": [
+      {
+        "id": 138694,
+        "title": "Razāo social Rule",
+        "actions": [
+          {
+            "effect": "unrequire_field",
+            "metadata": {
+              "fieldId": 214517
+            }
+          }
+        ],
+        "conditions": [
+          {
+            "operand": null,
+            "metadata": {
+              "column": {
+                "id": "X0FjGK",
+                "key": "cnpj",
+                "label": "CNPJ",
+                "dataType": "text",
+                "favorite": true,
+                "readOnly": false,
+                "createdAt": "2021-03-01T21:42:13.890Z",
+                "dedicated": false,
+                "archivedAt": null,
+                "expandedLabel": "CNPJ"
+              },
+              "comparand": "\\d{2}\\.?\\d{3}\\.?\\d{3}\\\/?.?\\d{4}\\\/?.?-?\\d{2}"
+            },
+            "operator": "matches_regex"
+          }
+        ],
+        "conditionChaining": "all"
+      }
+    ]
+  }
+}

@@ -1,0 +1,59 @@
+<section class="section-background py-5" data-section-id="{{ section.id }}" data-section-type="text-with-background">
+    <div class="row d-md-flex align-items-center p-5 px-md-0">
+        <div class="col-md-4 offset-md-1 text-white pt-5 pb-md-5">
+            <h2 class="display-4">{{ section.settings.title }}</h2>
+        </div>
+        <div class="fs-4 col-md-5 offset-md-1 text-light pb-5 pt-md-5">
+            <p>{{ section.settings.content }}</p>
+        </div>
+    </div>
+</section>
+
+<style>
+    .section-background{
+        background-color: {{ section.settings.background }};
+        {%- if section.settings.image -%}
+            background-image: url({{ section.settings.image | img_url: 'master' }});
+            background-size: cover;
+        {%- endif -%}
+    }
+</style>
+
+{% schema %}
+{
+    "name": "Text with background",
+    "settings": [
+        {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Título"
+        },
+        {
+            "type": "richtext",
+            "id": "content",
+            "label": "Content",
+            "default": "<p>Conteúdo</p>"
+        },
+        {
+            "type": "color",
+            "id": "background",
+            "label": "Background color",
+            "default": "#6A766F"
+        },
+        {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image",
+            "info": "Imagem"
+        }
+    ],
+    "presets": [
+        {
+            "category": "Custom Sections",
+            "name": "Text with background",
+            "settings": {}
+        }
+    ]
+}
+{% endschema %}

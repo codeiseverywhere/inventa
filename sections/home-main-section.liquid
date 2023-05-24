@@ -1,0 +1,164 @@
+{% if section.settings.show_home_banner %}
+  <section id="home-main-section" class="section my-0 py-4" data-section-id="home-main-section">
+    <div class="container">
+      <div class="row px-lg-4 px-xl-0 colum-direction position-relative">
+        <div class="col-lg-4 col-xl-3">
+          <div class="text-box-container bg-white custom-radius p-4">
+            <h1 class="display-6 lh-2 fw-bold">{{section.settings.title}}</h1>
+            <p class="my-4">{{section.settings.content | slice: 0, 200 }}</p>
+            {% if section.settings.button_url %}
+              <a href="{{section.settings.button_url }}" class="btn yellow-btn fw-bold py-3 px-4">{{section.settings.button_title }}</a>
+            {% endif %}
+          </div>
+        </div>
+        <div class="col-lg-8 col-xl-9 px-lg-4 px-xl-0">
+          <div class="banner-image-container">
+            <picture>
+              <source media="(min-width: 990px)" srcset="{{ section.settings.banner_image | img_url: 'master' }}">
+              <img src="{{ section.settings.mobile_image | img_url: 'master' }}" alt="{{ section.settings.mobile_image.alt }}">
+            </picture>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<style>
+  .banner-image-container {
+    height: 480px;
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .text-box-container {
+    position: absolute;
+    width: 465px;
+    margin: auto;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    height: fit-content;
+/*     max-height: 300px; */
+  }
+
+  .banner-image-container img {
+    border-radius: 8px;
+  }
+
+  .text-box-container p {
+    color: #777A7C;
+    font-size: 1.2rem;
+  }
+
+  .text-box-container a {
+    font-size: 1.3rem;
+    border-radius: 1.65rem;
+  }
+
+  @media (min-width: 600px){
+    .text-lg-breaking{
+      max-width: 320px;
+    }
+  }
+
+  @media (max-width: 1025px) {
+    .banner-image-container > img {
+      height: 100%;
+      max-width: auto;
+    }
+  }
+
+  @media (max-width: 990px) {
+    .text-box-container {
+      top: 420px;
+      right: 0;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .banner-image-container > img {
+      height: auto;
+    }
+
+    .text-box-container {
+      width: 60%;
+      top: 400px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .banner-image-container {
+      height: 285px;
+    }
+
+    .text-box-container {
+      width: 328px;
+      top: 320px;
+    }
+
+    .text-box-container a {
+      width: 100%;
+      font-size: 1.1rem;
+    }
+
+    #home-main-section {
+      margin-bottom: 20vw !important;
+    }
+  }
+</style>
+
+{% endif %}
+
+{% schema %}
+{
+  "name": "home-main-section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_home_banner",
+      "label": "Show Banner",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "O ponto de encontro entre lojistas e marcas"
+    },
+    {
+      "type": "textarea",
+      "id": "content",
+      "label": "Content",
+      "default": "Compre diretamente de mais de 1.000 fabricantes, tudo em um só lugar e com o melhor preço."
+    },
+    {
+      "type": "image_picker",
+      "id": "banner_image",
+      "label": "Desktop Banner"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "Mobile Banner"
+    },
+    {
+      "type": "text",
+      "id": "button_title",
+      "label": "Button Title",
+      "default": "Crie a sua conta para comprar"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "URL"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Custom Sections",
+      "name": "home-main-section",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,85 @@
+{
+  "sections": {
+    "header": {
+      "type": "promotion-page-header",
+      "blocks": {
+        "1b555d4c-399a-4730-84f5-e3802d1590ea": {
+          "type": "banner",
+          "settings": {
+            "promotion-banner-image": "shopify:\/\/shop_images\/Sem-Titulo-2Prancheta-2_d76ec4fc-2a2f-4729-af59-276b91b79fa6.png",
+            "banner_link": ""
+          }
+        }
+      },
+      "block_order": [
+        "1b555d4c-399a-4730-84f5-e3802d1590ea"
+      ],
+      "settings": {
+        "show-promo-banner": true
+      }
+    },
+    "description": {
+      "type": "promotion-page-description",
+      "settings": {
+        "title": "Mais vendidos",
+        "content": "Todos os Mais Vendidos das melhores marcas de maquiagem e skincare para sua loja. 😍 O pedido mínimo é apenas R$200,00 e todos produtos dessa página podem ser comprados em um único Pedido Multimarcas. Temos box e também kits de quantidades menores, aproveite! 🙂",
+        "image": "shopify:\/\/shop_images\/capa_perfil_cc81eaee-2b55-42bc-a342-cd61f2d2c804.png"
+      }
+    },
+    "carousal": {
+      "type": "promotion-product-carousal",
+      "settings": {
+        "show-priority-collection": false,
+        "title": "",
+        "collection": ""
+      }
+    },
+    "collections": {
+      "type": "promotion-page-collections",
+      "blocks": {
+        "ea7acc20-1926-4404-a888-d9a789a758a5": {
+          "type": "collection",
+          "settings": {
+            "promotion-collections": "mais-vendidos-rosto"
+          }
+        },
+        "9dbcf2ec-04c8-474c-b5db-ff7f2df5680a": {
+          "type": "collection",
+          "settings": {
+            "promotion-collections": "mais-vendidos-olhos"
+          }
+        },
+        "6ea5612c-d1eb-4f00-a414-687bcef3c4cc": {
+          "type": "collection",
+          "settings": {
+            "promotion-collections": "mais-vendidos-labios"
+          }
+        },
+        "0ea93e48-ddc3-4a9f-a7e8-92c7e648d673": {
+          "type": "collection",
+          "settings": {
+            "promotion-collections": "mais-vendidos-skin-care"
+          }
+        }
+      },
+      "block_order": [
+        "ea7acc20-1926-4404-a888-d9a789a758a5",
+        "9dbcf2ec-04c8-474c-b5db-ff7f2df5680a",
+        "6ea5612c-d1eb-4f00-a414-687bcef3c4cc",
+        "0ea93e48-ddc3-4a9f-a7e8-92c7e648d673"
+      ],
+      "settings": {
+        "show-promotion-collections": true,
+        "products_per_row": "4",
+        "default_products_per_page": 24,
+        "default_view_layout": "grid"
+      }
+    }
+  },
+  "order": [
+    "header",
+    "description",
+    "carousal",
+    "collections"
+  ]
+}

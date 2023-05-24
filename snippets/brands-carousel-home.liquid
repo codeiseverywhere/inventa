@@ -1,0 +1,54 @@
+{% if collectionArray.size > 0 %}
+  <section class="{{wrapperName}}-container">
+    <h2 class="fw-bold h2">{{ custom_title }}</h2>
+    <div class="generic-slider-wrapper {{wrapperName}} border-0 position-relative">
+      <button class="previous-slide">{%- render 'icon', icon: 'arrow-left' -%}</button>
+      <button class="next-slide">{%- render 'icon', icon: 'arrow-right' -%}</button>
+      <div class="row justify-content-center ps-2">
+        <div class="col-10 offset-1 generic-slider px-md-5 {{containerName}}">
+          {%- for product in collectionArray -%}
+            {%- render 'brand-item-home', product: product -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script defer>
+    new Glider(document.querySelector(".{{containerName}}"), {
+      type: 'carousel',
+      focusAt: 'center',
+      rewind: true,
+      slidesToShow: 2,
+      slidesToScroll: 2,
+      draggable: true,
+      arrows: {
+        prev: '.{{wrapperName}} .previous-slide',
+        next: '.{{wrapperName}} .next-slide'
+      },
+      responsive: [
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 3
+        }
+      },
+      {
+        breakpoint: 769,
+        settings: {
+          slidesToShow: 4,
+          slidesToScroll: 4
+        }
+      },
+      {
+        breakpoint: 1200,
+        settings: {
+          slidesToShow: 5,
+          slidesToScroll: 5
+        }
+      }
+      ]
+    })
+  </script>
+{% endif %}

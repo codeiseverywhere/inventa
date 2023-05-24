@@ -1,0 +1,2499 @@
+<!DOCTYPE html>
+<html
+  lang="{{ locale }}"
+  dir="{{ direction }}"
+  class="{{ checkout_html_classes }}"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, user-scalable=0"
+    />
+    <meta name="referrer" content="origin" />
+    <meta name="theme-color" content="{{ settings.accent_color }}">
+
+    <!-- Google Tag Manager -->
+    <script>
+      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js',userID:'{{ customer.id }}'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','{% if shop.name contains 'DEV' %}GTM-MBKM5XD{% else %}GTM-5SKRQ4V{% endif %}');
+    </script>
+    <!-- End Google Tag Manager -->
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    
+    <script>
+      function getCookie(cname) {
+        let name = cname + "=";
+        let ca = document.cookie.split(';');
+        for(let i = 0; i < ca.length; i++) {
+          let c = ca[i];
+          while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+          }
+          if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+          }
+        }
+        return null;
+      }
+
+      function getTrackingSessionId(){
+        const sessionStored = window.sessionStorage.getItem("inventaSessionId");
+        if(sessionStored) return sessionStored;
+        else {
+          const newSession = "inventa-session_" + Math.ceil(Math.random() * 10 * new Date().getTime()).toString().substring(0, 12);
+          window.sessionStorage.setItem("inventaSessionId", newSession);
+          return newSession;
+        }
+      }
+    </script>
+    
+    <script>
+      function tagManagerDriver(user) {
+        const queue = [];
+        let busy = false;
+  
+        window.addEventListener("event-pushed", () => {
+          if (!busy) {
+            pushDataLayer(queue.shift());
+          }
+        });
+  
+        function pushDataLayer({ event, payload, callback }) {
+          const utm_queries = {};
+          const queryParametersRaw = new URLSearchParams(window.location.search);
+          const queryParameters = Object.fromEntries(queryParametersRaw.entries());
+          for(const queryName in queryParameters){
+            if(queryName.toLowerCase().includes("utm")) utm_queries[queryName] = queryParameters[queryName];
+          }
+
+          busy = true;
+          payload.userID = user;
+          payload.event = event;
+          payload.deviceInfo = navigator.userAgent;
+          payload.utm_queries = utm_queries;
+          payload.clientId = getCookie("_ga");
+          payload.sessionId = getTrackingSessionId();
+          window.dataLayer.push({
+            ...payload,
+            event,
+            payload: JSON.stringify(payload),
+            eventCallback: () => {
+              if (typeof callback == "function") callback();
+              finishedTask();
+            },
+          });
+        }
+  
+        function finishedTask() {
+          if (queue.length) {
+            pushDataLayer(queue.shift());
+          } else {
+            busy = false;
+          }
+        }
+  
+        return {
+          pushEvent: (event, payload, callback) => {
+            queue.push({ event, payload, callback });
+            document.documentElement.dispatchEvent(
+              new CustomEvent("event-pushed", {
+                bubbles: true,
+              })
+            );
+          },
+        };
+      }
+  
+      const driver = new tagManagerDriver("{{ customer.id }}");
+
+      function addCoupon(code){
+        const url = window.location.replace(`/checkout?discount=${code}`);
+      }
+
+      function referralCoupon(code){
+        const url = window.location.replace('/checkout?'+ code);
+      }
+    </script>
+
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        const step = document.querySelector('div.step').getAttribute("data-step");
+        if(step === "thank_you"){
+          const css_sheet = `<link rel="stylesheet" href="{{ 'ty_page.css' | asset_url }}" />`;
+          const head = document.querySelector("head");
+          if(head) head.innerHTML += css_sheet;
+        }
+      })
+    </script>
+
+    <script>  
+      window.addEventListener("DOMContentLoaded", () => { 
+        function appendDisclaimer(){  
+          const container = document.querySelector('.step[data-step="thank_you"] div.step__sections');  
+            if(container){  
+              const disclaimer_message = "Não se preocupe, caso o vencimento do seus boletos cair em final de semana ou feriado, nós automaticamente prorrogamos a data de vencimento para o próximo dia útil"; 
+              const disclaimer_element = document.createElement("p"); 
+              disclaimer_element.style.marginTop = "1em"; 
+              disclaimer_element.style.fontSize = "0.8rem"  
+              disclaimer_element.innerText = disclaimer_message;  
+              container.appendChild(disclaimer_element);  
+            }else return setTimeout(appendDisclaimer, 750); 
+        }
+
+        async function changePaymentLabel(selector, text){
+          const element = document.querySelector(selector);
+          if(element) element.innerText = text;
+          else return setTimeout(() => {
+            changePaymentLabel(selector, text);
+          }, 500);
+        }
+
+        const step = document.querySelector('div.step').getAttribute("data-step");  
+        if(step === "thank_you"){ 
+          const payment_gateway = "{{ checkout.transactions[0].gateway }}"; 
+          if(payment_gateway.includes("Boleto parcelado") || payment_gateway.includes("Boleto a")) appendDisclaimer();
+          else if(payment_gateway.toLowerCase().includes("truepay") || payment_gateway.toLowerCase().includes("maquininha")) {
+            changePaymentLabel('.payment-method-list .payment-method-list__item__info', "Parcelado no Boleto TruePay"); 
+          }
+        }
+      })  
+    </script>
+    
+    <link
+      rel="shortcut icon"
+      href="{{ settings.favicon | img_url: '32x32' }}"
+      type="image/png"
+    />
+
+    <title>{{ page_title }}</title>
+
+    {{
+      content_for_header
+    }}
+
+    {{
+      checkout_stylesheets
+    }}
+
+    <link rel="stylesheet" href="{{ 'checkout.css' | asset_url }}" />
+    {% comment %}
+    {% assign validEmails = "erickdcarmo@gmail.com,papalocastro27@hotmail.com,lillo__@hotmail.com,lualveshair@gmail.com,renier.morais2@gmail.com,koliveir005@gmail.com,lbnsportnutrition@gmail.com,cgermano.paes@gmail.com" %}
+    {% unless validEmails contains customer.email %}
+    <style>
+      div[data-select-gateway="credit_card"] {
+        display: none !important;
+      }
+    </style>
+    {% endunless %}
+    {% endcomment %}
+     <style>
+    .hide__billingaddress-same{display:none !important;}
+    </style>
+  </head>
+  <body class="invisible-loading">
+    {% section 'whatsapp-button' %}
+    {% comment %}
+    <script defer>
+      window.addEventListener('load', () => {
+        const step = document.querySelector('div.step').getAttribute('data-step');
+        if(step && step == 'payment_method') setTimeout(() => {
+          if(typeof showWppText == 'function') showWppText('Ficou com alguma dúvida sobre o pagamento?', 'Olá, sou {{ customer.first_name }}, tenho uma duvida sobre o pagamento');
+        }, 20000);
+      })
+    </script>
+    {% endcomment %}
+    <!-- Google Tag Manager (noscript) -->
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id={% if shop.name contains 'DEV' %}GTM-MBKM5XD{% else %}GTM-5SKRQ4V{% endif %}"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
+      ></iframe
+    ></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    {{ skip_to_content_link }}
+
+    {%- comment -%}
+    <header class="banner" data-header role="banner">
+      <div class="wrap">
+        {{ content_for_logo }}
+      </div>
+    </header>
+    {%- endcomment -%}
+
+    {{ order_summary_toggle }}
+    <div class="content" data-content>
+      <div class="wrap">
+        <div class="main">
+          <header class="main__header" role="banner">
+            {{ content_for_logo }}
+            {{ breadcrumb }}
+            {{ alternative_payment_methods }}
+          </header>
+          <main class="main__content" role="main">
+            {{ content_for_layout }}
+          </main>
+          <footer class="main__footer" role="contentinfo">
+            {{ content_for_footer }}
+          </footer>
+        </div>
+        <aside class="sidebar" role="complementary">
+          <div class="sidebar__header">
+            {{ content_for_logo }}
+          </div>
+          <div class="sidebar__content">
+            {{ content_for_order_summary }}
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    {{ tracking_code }}
+
+    <script src="{{ 'checkout-tagManager.js' | asset_url }}"></script>
+
+    {%- assign items_discounts_applied = '' -%}
+
+    {%- comment -%} Here we are going to check all products minimum order to
+    check if all are valids {%- endcomment -%}
+    {%- assign itemsQty = 0 -%}
+    {%- assign vendors = "" -%}
+    {%- for item in checkout.line_items -%}
+    {%- if item.discount_allocations.size -%}
+      {%- for discount in item.discount_allocations -%}
+        {%- unless items_discounts_applied contains discount.discount_application.title or discount.discount_application.title == 'Desconto' -%}
+          {%- assign items_discounts_applied = items_discounts_applied | append: '$!$' | append: discount.discount_application.title -%}
+        {%- endunless -%}
+      {%- endfor -%}
+    {%- endif -%}
+    {% assign productVendorName = item.vendor %}
+    {% if productVendorName == "Inventa Comércio" %}
+      {% assign productTags = item.product.tags | join: "|||" %}
+      {% assign productVendorIdentifier = "Fornecedor_" %}
+      {% if productTags contains "Marca_" %}
+        {% assign productVendorIdentifier = "Marca_" %}
+      {% endif %}
+      {% assign productVendorName = productTags | split: productVendorIdentifier | last | strip | split: "|||" | first %}
+    {% endif %}
+    {%- assign itemsQty = itemsQty | plus: item.quantity -%}
+    {%- assign vendors = vendors | append: productVendorName | append: '$$' -%}
+    {%- endfor -%}
+    {%- assign vendors = vendors | split: '$$' | uniq -%}
+    {%- capture wk_seller_content -%}
+    {%- include 'wk-seller-listing-variable' -%}
+    {%- endcapture -%}
+    {%- assign vendors_no_min = '' -%}
+    <script>
+      const vendor_icons = [
+    {%- for vendor in vendors -%}
+    {%- assign handle = false -%}
+    {%- assign minimum = 0 -%}
+    {%- for name in shop.vendors -%}
+    {%- assign store_name = name | downcase -%}
+    {%- assign vendorName = vendor | replace: ",", "" -%}
+    {%- assign handle = vendorName | downcase | replace: "+", "" | replace: "/", "" | replace: " ", "-" | replace: "-&", "" | replace: "'", "" | replace: "--", "-" | replace: ".", "" | replace: "&", "-" | replace: "!", "" | replace: ",", "" | replace: "_", "-" | replace: "|", "" -%}
+    {% assign handle = handle | replace: "--", "-" | replace: "-39-", "" | replace: "-amp", "" %}
+    {%- endfor -%}
+    {%- assign icon_img = handle | handleize | append: '.png' -%}
+    {
+      vendor: "{{ vendor }}",
+      icon: '{% if icon_img != blank %}{{ icon_img | file_img_url: "70x70" }}{% else %}https://cdn.shopify.com/s/files/1/0507/3226/9775/files/icon_example.png?v=1633535704{% endif %}',
+      handle: '{{ handle | handleize }}'
+    },
+    {%- assign split_name = '"' | append: handle | append: '":' -%}
+    {%- assign minimum_metafields = shop.metafields.sellers | json -%}
+    {%- if minimum_metafields contains split_name -%}
+    {%- assign minimum = shop.metafields.sellers | json | split: split_name | last | split: ',' | first | plus: 0 | times: 100 -%}
+    {%- endif -%}
+    {%- assign vendor_total = 0 -%}
+    {%- for item in checkout.line_items -%}
+    {%- assign store_name = item.vendor | downcase -%}
+    {%- assign vendor_downcase = vendor | downcase -%}
+    {%- if store_name == vendor_downcase -%}
+    {%- assign properties = item.properties | json -%}
+    {%- assign subtotal = false -%}
+    {%- assign taxes = false -%}
+    {%- if properties contains "_precoOriginal$" -%}
+    {%- assign subtotal = properties | split: '_precoOriginal$",' | last | split: '],' | first | plus: 0 | times: 100 -%}
+    {%- endif -%}
+    {%- if properties contains "_imposto$" -%}
+    {%- assign taxes = properties | split: '_imposto$",' | last | split: '],' | first | plus: 0 | times: 100 -%}
+    {%- endif -%}
+    {%- if subtotal and taxes -%}
+    {%- assign vendor_total = vendor_total | plus: subtotal | plus: taxes -%}
+    {%- else -%}
+    {%- assign vendor_total = vendor_total | plus: item.original_line_price -%}
+    {%- endif -%}
+    {% comment %}
+    {%- if item.total_discount -%}
+    {%- assign vendor_total = vendor_total | minus: item.total_discount -%}
+    {%- endif -%}
+    {% endcomment %}
+    {%- endif -%}
+    {%- endfor -%}
+    {%- if vendor_total < minimum -%}
+    {%- assign vendors_no_min = vendors_no_min | append: vendor_downcase | append: '$$' -%}
+    {%- endif -%}
+    {%- endfor -%}
+    ];
+
+    </script>
+
+    <script>
+      const invalidProducts = [];
+      const allProducts = [];
+      {% for item in checkout.line_items %}
+        {% assign store_name = item.vendor | downcase %}
+        {% if vendors_no_min contains store_name %}
+        invalidProducts.push({
+          variant_id: {{ item.variant_id }},
+          quantity: {{ item.quantity }},
+          vendor: "{{ item.vendor }}"
+        });
+        {% endif %}
+        allProducts.push({
+          variant_id: {{ item.variant_id }},
+          quantity: {{ item.quantity }},
+          vendor: "{{ item.vendor }}"
+        });
+      {% endfor %}
+    </script>
+
+    {% render 'inventa-loader' %}
+    <div class="items-quantity d-none" quantity="{{ itemsQty }}"></div>
+  </body>
+  <script>
+    const customer = {
+      logged: {% if customer %}true{% else %}false{% endif %},
+      id: '{{ customer.id }}',
+      email: '{{ customer.email }}'
+    }
+  </script>
+  <script>
+    const products_applied_discounts = "{{ items_discounts_applied }}";
+    const shopGeneralMin = parseInt({{ shop.metafields.shop_info.minimum_order_value | times: 100 }});
+    const checkoutTotal = parseInt({{checkout.line_items_subtotal_price}});
+    
+    if (checkoutTotal < shopGeneralMin) window.location.replace('/cart');
+
+      const appliedDiscounts = [{% for discount_application in checkout.discount_applications %}
+      {% unless items_discounts_applied contains discount_application.title or discount_application.title contains 'Você salvou' or discount_application.title contains 'Você economizou' or discount_application.target_type == 'shipping_line' %}
+      {{ discount_application.total_allocated_amount }},
+      {% endunless %}
+      {% endfor %}
+    ]
+      const appliedDiscounts_names = [{% for discount_application in checkout.discount_applications %}
+      {% unless items_discounts_applied contains discount_application.title or discount_application.title contains 'Você salvou' or discount_application.title contains 'Você economizou' or discount_application.target_type == 'shipping_line' %}
+      {{ discount_application.title | json }},
+      {% endunless %}
+      {% endfor %}]
+
+       const default_province_code = "{{ customer.default_address.province_code }}";
+       const checkout_province_code = "{{ checkout.shipping_address.province_code }}";
+       const products_taxes = {};
+       const products_original_price = {};
+       const products_attributes = {};
+       const line_prices = {};
+       const products_prices = {};
+       const products_quantitys = {};
+       const products_discounts = {};
+         {%- for item in checkout.line_items -%}
+           {%- for tag in item.product.tags -%}
+             {% assign tagname = tag | downcase %}
+             {%- if tagname contains 'impostos:' -%}
+               {% unless customer.tags contains "cpf-user" %}
+                products_taxes[{{ item.variant_id }}] = '{{ tag | split: "IMPOSTOS:" | last }}'.split('|');
+              {%- endunless -%}
+              {%- endif -%}
+             {%- if tagname contains 'preco original:' -%}
+               products_original_price[{{ item.variant_id }}] = '{{ tag | split: "PRECO ORIGINAL:" | last | plus: 0 | times: item.quantity }}';
+              {%- endif -%}
+           {%- endfor -%}
+           {% if item.properties %}
+           products_attributes[{{ item.variant_id }}] = {{ item.properties | json }};
+           {% endif %}
+           products_prices[{{ item.variant_id }}] = {{ item.price | at_least: 0 }};
+           products_quantitys[{{ item.variant_id }}] = {{ item.quantity | at_least: 0 }};
+           line_prices[{{ item.variant_id }}] = {{ item.line_price | at_least: 0 }};
+           {%- if item.discount_allocations.size -%}
+            {%- for discount in item.discount_allocations -%}
+              {%- unless discount.discount_application.title == 'Desconto' or discount.discount_application.title contains 'IMPOSTOS' -%}
+                products_discounts[{{ item.variant_id }}] = {title: '{{ discount.discount_application.title }}', value: '{{ discount.amount }}'};
+              {%- endunless -%}
+            {%- endfor -%}
+          {%- endif -%}
+         {%- endfor -%}
+
+       {% comment %}
+       Date for calculating beforeShipping date
+       {% endcomment %}
+       const date = new Date('{{ "now" | date: "%Y-%m-%d" }}' + 'T00:00:01');
+       const cnpjInfo = {{ customer.metafields.customer_fields.data.cnpj | json }};
+       const inscricaoEstadualInfo = {{ customer.metafields.customer_fields.data.inscricao_estadual | json }};
+       const customerId = {{ customer.id | json}};
+       const pageHost = {{ request.host | json }};
+       const pagePath = {{ request.path | json }};
+       const corsUrl = "https://cors.inventashop.com.br/";
+       let shopifyShopUrl = "https://inventa.shop";
+       let shopifyApiUrl = "https://api.inventa.tec.br";
+       let shopifyApiKey = "LmRkuO9OI9";
+       let shopifyApiSecretKey = "42Ipvjz39M";
+       var freteCost = 0;
+       const step = document.querySelector('div.step').getAttribute('data-step');
+
+       if(!"{{ request.path }}".includes("stock_problems")){
+
+       if (pageHost.includes("dev")) {
+         shopifyShopUrl = "https://inventa-dev.myshopify.com";
+         shopifyApiUrl = "https://api.inventa.dev.br";
+         shopifyApiKey = "LMYzUdD0Wq";
+         shopifyApiSecretKey = "GHrI6Xg0Qc";
+       }
+                
+       const updateShippingStepStyle = () => {
+          const shippingLabel = document.querySelector("span.radio__label__primary[data-shipping-method-label-title]");
+          const labelSave = document.querySelector("label.radio__label span.radio__label__primary span.small-text");
+          const mainHeader = document.querySelector("#main-header");
+          const shippingCostElement = document.querySelector("span[data-checkout-total-shipping-target]");
+
+          if (labelSave) mainHeader.after(labelSave);
+          if (shippingLabel) shippingLabel.innerHTML = "Os produtos serão enviados por:";
+
+          if (shippingCostElement) {
+            const shippingCost = parseFloat(shippingCostElement.getAttribute("data-checkout-total-shipping-target")) / 100;
+            const initialShippingCostElement = document.querySelector("div[data-shipping-method] .content-box__small-text");
+
+            if (labelSave && shippingCost > 0) mainHeader.after(labelSave);
+
+            if (initialShippingCostElement) {
+              initialShippingCostElement.innerText = `R$ ${(shippingCost * 2).toFixed(2)}`;
+            } else {
+              const shippingSavingElement = document.querySelector(".section.section--shipping-method .section__header span.small-text")
+              if (shippingSavingElement){
+                const shippingSaving = parseFloat(shippingSavingElement.innerHTML.split("R$")[1]).toFixed(2);
+                initialShippingCostElement.innerText = `R$ ${shippingSaving}`;
+              }
+            }
+
+             if (shippingCost == 0) {
+              const shippingParentElement = initialShippingCostElement.parentNode;
+              shippingParentElement.removeChild(initialShippingCostElement);
+              shippingParentElement.removeChild(shippingParentElement.querySelector("br"));
+            }
+          }
+
+
+       }
+
+       if (step == 'shipping_method') {
+         document.addEventListener("DOMContentLoaded", () => {
+            setTimeout(() => {
+                  updateShippingStepStyle();
+              }, 100);
+         });
+       }
+
+        const createDataPayload = () => {
+          const currentStep = document.querySelector('div.step').getAttribute('data-step');
+          
+          {%- assign customerTags = customer.tags | join: ',' | downcase -%}
+          {%- assign customer_type = "control" -%}
+          {%- assign customer = checkout.customer -%}
+          {%- if customerTags contains 'test_experiment_group' -%}
+            {%- assign customer_type = "shipping_charged" -%}
+          {%- endif -%}
+
+          return {
+            step_name: currentStep,
+            user_id: {{ customer.id }},
+            user_type: "{{ customer_type }}",
+            email: "{{ customer.email }}",
+            user_total_orders: {{ customer.orders_count }},
+            user_address: {
+              adress: "{% if checkout.shipping_address %}{{ checkout.shipping_address.address1 }}, {{ checkout.shipping_address.address2 | remove: "|" | strip }}{% endif %}",
+              country: "{{ checkout.shipping_address.country }}",
+              state: "{{ checkout.shipping_address.province }} {{ checkout.shipping_address.province_code }}",
+              city: "{{ checkout.shipping_address.city }}",
+              postal_code: "{{ checkout.shipping_address.zip }}"
+            },
+            order_items: [
+              {% for lineItem in checkout.line_items %}
+                {
+                  variant_id: {{ lineItem.variant_id }},
+                  price: {{ lineItem.final_line_price }},
+                  quantity: {{ lineItem.quantity }},
+                  brand: "{{ lineItem.product.vendor }}",
+                  type: "{{ lineItem.product.type }}"
+                },
+              {% endfor %}
+            ],
+            coupon: {
+              {% for discount in checkout.discount_applications %}
+                {% if discount.type == "discount_code" %}
+                  name: "{{ discount.title }}",
+                  type: "{{ discount.value_type }}",
+                  value: "{{ discount.value }}",
+                  discount_applied: {{ discount.total_allocated_amount }}
+                {% endif %}
+              {% endfor %}
+            },
+            order_total: {{ checkout.total_price }},
+            shipping_cost: {% if checkout.shipping_method %}{{ checkout.shipping_method.price }}{% else %}0{% endif %},
+            total_discounts: {{ checkout.discounts_amount }},
+            payment_method: {
+              {% for paymentMethod in checkout.transactions limit: 1 %}
+                name: "{{ paymentMethod.gateway_display_name }}",
+                details: "{{ paymentMethod.payment_details }}",
+                status: "{{ paymentMethod.status }}"
+              {% endfor %}
+            },
+            valid_from: "2022-07-12 23:59:59",
+            valid_to: "2022-07-24 23:59:59"
+          }
+        }
+
+        const sendShippingInfo = (payload) => {
+          try {
+            fetch(`${corsUrl}${shopifyApiUrl}/data/shopify/step_payload`, {
+               method: 'POST',
+               body: JSON.stringify(payload),
+               headers: {
+                 'Content-Type': 'application/json',
+                 'origin': 'shopify',
+                 'api-key': shopifyApiKey,
+                 'secret-key': shopifyApiSecretKey
+               }
+             })
+             .then(response => response.json())
+             .then(data => {
+               console.log("Success");
+             });
+          } catch (error) {
+            console.error("Error sending shipping information");
+          }
+         };
+
+          {% if customer %} 
+             sendShippingInfo(createDataPayload());  
+          {% endif %}
+
+//       if(step && step == 'payment_method'){
+//         const url = new URL(window.location.href);
+//         const parameter = url.searchParams.get("hidePayment");
+//         const paymentToDelete = document.querySelector("div[data-select-gateway='66426798287']");
+// 
+//         if (parameter && paymentToDelete) {
+//           paymentToDelete.remove();
+//         }
+//       }
+
+       window.addEventListener('load', () => {
+        const shippingInfoContainer = document.querySelector(".review-block__content .address--tight");
+
+        if (shippingInfoContainer) {
+          const shippingInfo = shippingInfoContainer.innerHTML;
+          if (shippingInfo.includes("|")) {
+            shippingInfoContainer.innerHTML = shippingInfo.replaceAll("| ",", ").replaceAll(",  ","").replaceAll(" , , ",", ");
+          }
+
+          if (step == 'shipping_method') {
+            if (shippingInfo.includes("|||")) {
+              shippingInfoContainer.innerHTML = shippingInfo.replaceAll("|||",", ");
+            }else{
+              const responseUrl = '';
+              responseUrl = window.location.href;
+              const webPath = responseUrl.split('/');
+              const getPara1 = webPath[webPath.length - 1];
+              const getPara2 = webPath[webPath.length - 3];
+              const hashPara = getPara1.toString().split('?');
+              window.location.href = "/"+getPara2+"/checkouts/"+hashPara[0]+"?step=contact_information";
+            }
+          }
+
+        }
+                               
+         function loadComplement(element, display = "none") {
+          const addressComplementInput = `
+          <div data-address-field="address5" data-autocomplete-field-container="true" class="field field--show-floating-label" style="display: ${display} ;"> \
+            <div class="field__input-wrapper"> \
+              <label class="field__label field__label--visible" for="checkout_shipping_address_address5">Ponto de referência</label> \
+              <input placeholder="Ponto de referência" autocomplete="shipping address-line5" autocorrect="off" data-backup="address5" class="field__input" aria-required="false" size="4" maxlength="50" type="text" name="checkout[shipping_address][address5]" id="checkout_shipping_address_address5"> \
+            </div> \
+          </div>`;
+
+          if (element) {
+            element.classList.add("movedown");
+            element.insertAdjacentHTML('beforeend', addressComplementInput);
+          }
+        }
+    
+      if (Shopify.Checkout.step ==  "payment_method") {
+          const currentState = "{{checkout.shipping_address.province_code}}";
+          const disclaimerStates = "AM, MT, PI, CE, MS, BA, PE";
+          // const billingAddressContainer = document.querySelector(".section.section--billing-address");
+          const paymentContainer = document.querySelector(".section.section--payment-method .section__header");
+          const disclaimerContainer = document.querySelector(".stateDisclaimer");
+          const disclaimerState = `<div class="stateDisclaimer section__text" style="padding: 2px;"><p style="line-height: 1em;"><small>Caso seu estado não possua acordo vigente referente ao ICMS Substituição tributária, (Protocolo) deve-se observar a possibilidade de cobrança do imposto por antecipação pelo Unidade Federada destinatária.</small></p><p style="line-height: 1em;"><small>O que é ICMS antecipado? <br /> O ICMS antecipado é aquele que o estado cobra quando a mercadoria entra em seu território, mesmo antes de chegar ao estabelecimento destinatário. O Responsável pelo recolhimento é o Destinatário (quem compra a mercadoria). Verifique a necessidade de pagamento do imposto, para evitar que o produto fique retido na Barreira Fiscal do seu Estado. A Inventa não se responsabiliza pelo recolhimento dos impostos.”</small></p></div>`;
+          
+          if (paymentContainer && disclaimerContainer == null && disclaimerStates.includes(currentState)) {
+            paymentContainer.insertAdjacentHTML('beforeend', disclaimerState);
+          }
+        }
+
+        if (Shopify.Checkout.step === 'contact_information') {
+
+          function validateCep(input) {
+            if (input) {
+              const cepValidation = /^\d{5}-?\d{3}$/g;
+              const cepError = '<small id="cepError" class="mp-contact-error d-block mt-1">O CEP informado está invalido</small>';
+              const cepErrorElement = document.querySelector("#cepError");
+              
+              if (!input.value.match(cepValidation)) {
+                input.classList.add("mp-error-border");
+                if (!cepErrorElement) input.insertAdjacentHTML('afterend', cepError);
+              } else {
+                input.classList.remove("mp-error-border");
+                if (cepErrorElement) cepErrorElement.remove();
+              }
+            }
+          }
+
+          const addressSelectElement = document.querySelector("#checkout_shipping_address_id");
+          const cepInputElement = document.querySelector("#checkout_shipping_address_zip");
+
+          if (cepInputElement) {
+            cepInputElement.addEventListener('input', (event) => {
+              validateCep(event.target);
+            });
+          }
+
+          setTimeout(function(){ 
+            const StreetAddress = '{{ checkout.shipping_address.address1 }}';
+            const onlyStreet = StreetAddress.split(",");
+            const ProvinceName = '{{ checkout.shipping_address.province_code }}';
+            const CityName = '{{ checkout.shipping_address.city }}';
+            const emptyFields = CityName.split("|||");
+            const telephoneInput = document.querySelector("#telefone-aux");
+
+            if (telephoneInput) {
+              telephoneInput.dispatchEvent(new window.Event('input', { bubbles: true }));
+            }
+
+            if(onlyStreet[0] && document.getElementById("checkout_shipping_address_street")){  
+              document.getElementById("checkout_shipping_address_street").value=onlyStreet[0];  
+            }
+            if(emptyFields[0] && document.getElementById("checkout_shipping_address_city")){ 
+              document.getElementById("checkout_shipping_address_city").value=emptyFields[0];
+            }
+            if(emptyFields[1] && document.getElementById("checkout_shipping_address_neighborhood")){ 
+              document.getElementById("checkout_shipping_address_neighborhood").value=emptyFields[1];
+            }
+            if(document.getElementById("checkout_shipping_address_address5")){
+              if(emptyFields[2]){ 
+                document.getElementById("checkout_shipping_address_address5").value=emptyFields[2];
+              }
+            }
+            
+            const pro__code = ProvinceName;
+            const $proSelect = document.querySelector('#checkout_shipping_address_province');
+            const $proOptions = Array.from($proSelect.options);
+            const proOptionToSelect = $proOptions.find(item => item.value === pro__code);
+            if (proOptionToSelect) {
+              proOptionToSelect.selected = true;
+            }
+          }, 3000);
+
+          const forminformation = document.querySelector('.step form[data-customer-information-form="true"]');
+          forminformation.setAttribute('id','userform');
+
+          document.getElementById("continue_button").addEventListener("click", function(e) {
+            e.preventDefault();
+            let cityEleValue = "";
+            let neighEleValue = "";
+            let refEleValue = "";
+            const complementInput = document.getElementById("checkout_shipping_address_supplement");
+
+            if (complementInput.value != '' &&
+                document.getElementById("checkout_shipping_address_city").value != '' &&
+                document.getElementById("telefone-aux").value != '' &&
+                document.getElementById("checkout_shipping_address_street_number").value != '' &&
+                document.getElementById("checkout_shipping_address_neighborhood").value != '' &&
+                document.getElementById("checkout_shipping_address_zip").value != '' &&
+                document.getElementById("checkout_shipping_address_company").value != '' &&
+                document.getElementById("checkout_shipping_address_first_name").value != '' &&
+                document.getElementById("checkout_shipping_address_street").value != ''
+             ) {
+
+              if (document.getElementById("checkout_shipping_address_city")) {
+                cityEleValue = document.getElementById("checkout_shipping_address_city").value;
+              }
+              if (document.getElementById("checkout_shipping_address_neighborhood")) {
+                neighEleValue = document.getElementById("checkout_shipping_address_neighborhood").value;
+              }
+              
+              if (document.getElementById("checkout_shipping_address_address5")) {
+                refEleValue = document.getElementById("checkout_shipping_address_address5").value;
+              }
+
+              if (document.getElementById("checkout_shipping_address_neighborhood").value != ''){
+                document.getElementById("checkout_shipping_address_city").value = '';
+                if (refEleValue != '') {
+                  document.getElementById("checkout_shipping_address_city").value = cityEleValue+'|||'+neighEleValue+'|||'+refEleValue;
+                } else {
+                  document.getElementById("checkout_shipping_address_city").value = cityEleValue+'|||'+neighEleValue+'|||';
+                }
+              }
+
+              document.getElementById("userform").submit();
+              return true;
+            }
+
+            if (complementInput.value == '') {
+              complementInput.value = "N\/A";
+              complementInput.classList.remove("mp-error-border");
+              complementInput.closest(".field__input-wrapper").querySelector(".mp-contact-error").remove();
+              setTimeout(function() {
+                document.getElementById("continue_button").click();
+              }, 500);
+            }
+          });
+
+          const numberAddressElement = document.querySelector("#mp-container-input-element");
+          const addressElement = document.querySelector('#mp-street');
+          const nameElement = document.querySelector("div[data-address-field='first_name']");
+          const editCheckout = document.querySelector(".edit_checkout");
+
+          // window.addEventListener('load', () => {
+
+          const firstNameInput = document.querySelector("#checkout_shipping_address_first_name");
+          const lastNameInput = document.querySelector("#checkout_shipping_address_last_name");
+          const phoneInput = document.querySelector("#telefone-aux");
+          const cnpjInput = document.querySelector("#checkout_shipping_address_company");
+          const razaoSocialValue = {{ customer.metafields.customer_fields.data.razao_social | json }};
+          const cnpjValue = {{ customer.metafields.customer_fields.data.cnpj | json }};
+          const phoneValue = {{ customer.phone | json }};
+
+          const get_first_name = "{{ checkout.customer.first_name }}";
+          const first_nameInput = document.querySelector("#checkout_shipping_address_first_name");
+
+          if (lastNameInput) {
+            lastNameInput.value = "."
+            lastNameInput.closest(".field__input-wrapper").style.visibility = "hidden";
+          }
+
+          if (firstNameInput && razaoSocialValue && razaoSocialValue != "") 
+          {
+            firstNameInput.value = razaoSocialValue;
+          }
+
+          if (cnpjInput && cnpjValue && cnpjValue != "") 
+          {
+            cnpjInput.value = cnpjValue;
+            // cnpjInput.style.backgroundColor = '#efefef';
+            // cnpjInput.readOnly = true;
+          }
+
+          if (phoneInput && phoneValue && phoneValue != "") 
+          {
+            phoneInput.value = phoneValue;
+          }
+
+          // });
+
+          if (addressElement){
+            if (addressElement.style.display == 'block') {
+              loadComplement(numberAddressElement, "block");
+            } else {
+              loadComplement(numberAddressElement);
+            }
+          }
+
+          const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+              if (mutation.attributeName == "style" || mutation.attributeName == "class") {
+                if (!document.querySelector('#mp-street').classList.contains('mp-display-none')) {
+                  const addressComplementElement = document.querySelector('div[data-address-field="address3"]');
+                  const addressBairroElement = document.querySelector('div[data-address-field="address4"]');
+                  const addressRefElement = document.querySelector('div[data-address-field="address5"]');
+                  if (addressComplementElement) {
+                    addressComplementElement.parentNode.removeChild(addressComplementElement);
+                  }
+                  if (addressBairroElement) {
+                    addressBairroElement.parentNode.removeChild(addressBairroElement);
+                  }
+                  if (addressRefElement) {
+                    addressRefElement.parentNode.removeChild(addressRefElement);
+                  }
+
+                  loadComplement(numberAddressElement, "block");
+
+                  const inputAddressLabel = document.querySelector('div[data-address-field="address1"] .field__label');
+                  const inputAddress = document.querySelector('div[data-address-field="address1"] input');
+                  const inputAddressNumberLabel = document.querySelector('div[data-address-field="address2"] .field__label');
+                  const inputAddressNumber = document.querySelector('div[data-address-field="address2"] input');
+                  const addressError = document.querySelector('div[data-address-field="address2"] #error-for-address2');
+
+                  if (inputAddressLabel) {
+                    inputAddressLabel.innerHTML = "Rua *";
+                    inputAddress.placeholder = "Rua";
+                  }
+
+                  if (inputAddressNumberLabel) {
+                    inputAddressNumberLabel.innerHTML = "Número *";
+                    inputAddressNumber.placeholder = "Número";
+                  }
+                  
+                  if (addressError) {
+                    addressError.innerHTML = "Insira o número";
+                  }
+
+                } else {
+                  const addressComplementElement = document.querySelector('div[data-address-field="address3"]');
+                  const addressBairroElement = document.querySelector('div[data-address-field="address4"]');
+                  const addressRefElement = document.querySelector('div[data-address-field="address5"]');
+                  if (addressComplementElement) {
+                    addressComplementElement.parentNode.removeChild(addressComplementElement);
+                  }
+                  if (addressBairroElement) {
+                    addressBairroElement.parentNode.removeChild(addressBairroElement);
+                  }
+                  if (addressRefElement) {
+                    addressRefElement.parentNode.removeChild(addressRefElement);
+                  }
+                }
+              }
+            });
+          });
+          if (addressElement){
+          observer.observe(addressElement, {attributes: true});  
+          }
+
+          if (nameElement) {
+            observer.observe(nameElement, {attributes: true});
+          }
+          
+          observer.observe(document.body, {attributes: true});
+
+          const zipfield = document.querySelector('.field__input--zip');
+            
+          if (zipfield) {
+            zipfield.addEventListener('blur', (event) => {
+              setTimeout(function(){  
+
+                const nameElement = document.querySelector("div[data-address-field='first_name']");
+                const compElement = document.querySelector("div[data-address-field='company']");
+                const phoneElement = document.querySelector("div[data-address-field='phone']");
+
+                const ref = document.querySelector('div#mp-container-input-element');
+
+                insertBefore(nameElement, ref);
+                insertBefore(compElement, ref);
+                insertBefore(phoneElement, ref);
+
+              }, 100);
+            });
+          }
+
+          const referenceField = document.querySelector('#checkout_shipping_address_id');
+
+          if (referenceField) {
+            referenceField.addEventListener('change', (event) => {
+
+              const [option] = event.target.selectedOptions;
+              const datavalues = JSON.parse(option.dataset.properties);
+              const citycombine = datavalues.city;
+              const fields = citycombine.split("|||");
+              const customerComplement = '{{ checkout.shipping_address.address2 }}';
+              const provinceCode = '{{ checkout.shipping_address.province_code }}';
+
+              setTimeout(function(){
+                if(datavalues.address1 && document.getElementById("checkout_shipping_address_street_number")) {
+                  document.getElementById("checkout_shipping_address_street").value = datavalues.address1;  
+                }
+                if(datavalues.address2 && document.getElementById("checkout_shipping_address_street_number")) {  
+                  document.getElementById("checkout_shipping_address_street_number").value = datavalues.address2;
+                }
+                if(fields[0] && document.getElementById("checkout_shipping_address_city")) { 
+                  document.getElementById("checkout_shipping_address_city").value = fields[0];
+                }
+                if(fields[1] && document.getElementById("checkout_shipping_address_city")) { 
+                  document.getElementById("checkout_shipping_address_neighborhood").value = fields[1];
+                }
+                if(customerComplement && document.getElementById("checkout_shipping_address_supplement")) { 
+                  document.getElementById("checkout_shipping_address_supplement").value = customerComplement;
+                }
+                if(fields[2] && document.getElementById("checkout_shipping_address_address5")) { 
+                  document.getElementById("checkout_shipping_address_address5").value = fields[2];
+                }
+                
+                const province__code = provinceCode;
+                const $select = document.querySelector('#checkout_shipping_address_province');
+                const $options = Array.from($select.options);
+
+                // const optionToSelect = $options.find(item => item.value === province__code);
+                // optionToSelect.selected = true;
+
+                if (cnpjInput && cnpjValue && cnpjValue != "")
+                {
+                  cnpjInput.value = cnpjValue;
+                  // cnpjInput.style.backgroundColor = '#efefef';
+                  // cnpjInput.readOnly = true;
+                }
+                 const phoneInputf = document.getElementById("telefone-aux");
+
+                if (phoneInputf && phoneValue && phoneValue != "") 
+                {
+                  phoneInputf.value = phoneValue;
+                }
+                if (first_nameInput && get_first_name && get_first_name != "") 
+                {
+                  first_nameInput.value = get_first_name;
+                }    
+              
+                const referenceElement = document.querySelector(".movedown");
+                const ref = document.querySelector("div[data-address-field='phone']");
+                insertAfter(referenceElement, ref);
+              }, 3000);  
+
+            });
+          }
+
+          if (zipfield) {
+            zipfield.addEventListener('blur', (event) => {
+          
+              setTimeout(function(){  
+
+                const nameElement = document.querySelector("div[data-address-field='first_name']");
+                const compElement = document.querySelector("div[data-address-field='company']");
+                const phoneElement = document.querySelector("div[data-address-field='phone']");
+                const ref = document.querySelector('div#mp-container-input-element');
+
+                insertBefore(nameElement, ref);
+                insertBefore(compElement, ref);
+                insertBefore(phoneElement, ref);
+              }, 100);
+            });
+          }
+
+      if (referenceField) {
+        referenceField.addEventListener('change', (event) => {
+        
+        setTimeout(function(){ 
+          if (cnpjInput && cnpjValue && cnpjValue != "") {
+                cnpjInput.value = cnpjValue;
+                // cnpjInput.style.backgroundColor = '#efefef';
+                // cnpjInput.readOnly = true;
+              }
+
+          if (phoneInput && phoneValue && phoneValue != "") {
+                phoneInput.value = phoneValue;
+
+              }
+          if (first_nameInput && get_first_name && get_first_name != "") {
+                first_nameInput.value = get_first_name;
+              }    
+          const referenceElement = document.querySelector(".movedown");
+          const ref = document.querySelector("div[data-address-field='phone']");
+          insertAfter(referenceElement, ref);
+
+          }, 100);
+
+        });
+      }
+
+        }
+
+         if (Shopify.Checkout.step === 'thank_you' || pagePath.includes("order")) {
+           const sectionsContainer = document.querySelector(".step__sections .section__content");
+           {% if order %}
+             const orderId = {{order.id}};
+           {% endif %}
+           let hunterNames = {{ shop.metafields.shop_info.hunters | json }}.split(",");
+           hunterNames = hunterNames.map(function (el) {
+             return el.trim();
+           });
+           hunterNames.sort();
+           let selectOptions = '';
+
+           hunterNames.forEach( hunter => {
+             selectOptions += `<option value="${hunter}">${hunter}</option>`;
+           });
+           
+           if ("{{ checkout.transactions[0].gateway }}" == "Recebíveis da maquininha de cartão"){
+            const customerName = "{{ checkout.customer.first_name | camelcase }}";
+            const orderNumber = "{{ checkout.order_number }}";
+            const newTruePayContainer = `<div class="content-box truepay-description" style="border:none;margin-bottom:40px;"><p style="font-size: 1.3em;">Obrigado ${customerName}, seu pedido já está em processamento!</p><p style="font-size: 1.3em;">Para finalizá-lo e liberar o seu crédito, conclua seu cadastro: </p><p style="margin: 15px 0;"><a href="https://truepay.app/access" target="_blank" class="btn" style="background-color:#000!important;font-weight:bold;color:#fff;letter-spacing:1px;">Cadastre-se na TruePay</a><a href="https://truepay.app/access" target="_blank" style="margin-left:40px;"><img src="{{ 'truepay-link.png' | file_img_url: '100x' }}" style="vertical-align: middle;" /></a></p><p style="font-size: 1.3em;">Se ficar com dúvidas, fale com a gente no <a href="https://wa.me/5511974787600?text=Olá, sou ${customerName} e tenho dúvidas sobre minha compra ${orderNumber}" target="_blank" style="font-weight:bold;">WhatsApp</a></p></div>`;
+            /*const waContainer = `<div class="whatsap-container"><a href="https://wa.me/5511996802265?text=Olá, gostaria de saber mais sobre a Inventa" onclick="closeWppText();" class="text-decoration-none text-white p-3 d-flex align-items-center justify-content-center" target="_blank" rel="noopener" aria-describedby="a11y-new-window-message"><svg version="1.1" id="Layer_1" width="40" height="40" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 308 308" style="enable-background:new 0 0 308 308;" xml:space="preserve"><g id="XMLID_468_"><path id="XMLID_469_" fill="#FFF" d="M227.904,176.981c-0.6-0.288-23.054-11.345-27.044-12.781c-1.629-0.585-3.374-1.156-5.23-1.156
+c-3.032,0-5.579,1.511-7.563,4.479c-2.243,3.334-9.033,11.271-11.131,13.642c-0.274,0.313-0.648,0.687-0.872,0.687
+c-0.201,0-3.676-1.431-4.728-1.888c-24.087-10.463-42.37-35.624-44.877-39.867c-0.358-0.61-0.373-0.887-0.376-0.887
+c0.088-0.323,0.898-1.135,1.316-1.554c1.223-1.21,2.548-2.805,3.83-4.348c0.607-0.731,1.215-1.463,1.812-2.153
+c1.86-2.164,2.688-3.844,3.648-5.79l0.503-1.011c2.344-4.657,0.342-8.587-0.305-9.856c-0.531-1.062-10.012-23.944-11.02-26.348 c-2.424-5.801-5.627-8.502-10.078-8.502c-0.413,0,0,0-1.732,0.073c-2.109,0.089-13.594,1.601-18.672,4.802
+c-5.385,3.395-14.495,14.217-14.495,33.249c0,17.129,10.87,33.302,15.537,39.453c0.116,0.155,0.329,0.47,0.638,0.922
+c17.873,26.102,40.154,45.446,62.741,54.469c21.745,8.686,32.042,9.69,37.896,9.69c0.001,0,0.001,0,0.001,0
+c2.46,0,4.429-0.193,6.166-0.364l1.102-0.105c7.512-0.666,24.02-9.22,27.775-19.655c2.958-8.219,3.738-17.199,1.77-20.48 C233.168,179.508,230.845,178.393,227.904,176.981z"/><path id="XMLID_470_" fill="#FFF" d="M156.734,0C73.318,0,5.454,67.354,5.454,150.143c0,26.777,7.166,52.988,20.741,75.928L0.212,302.716
+c-0.484,1.429-0.124,3.009,0.933,4.085C1.908,307.58,2.943,308,4,308c0.405,0,0.813-0.061,1.211-0.188l79.92-25.396
+c21.87,11.685,46.588,17.853,71.604,17.853C240.143,300.27,308,232.923,308,150.143C308,67.354,240.143,0,156.734,0z
+M156.734,268.994c-23.539,0-46.338-6.797-65.936-19.657c-0.659-0.433-1.424-0.655-2.194-0.655c-0.407,0-0.815,0.062-1.212,0.188 l-40.035,12.726l12.924-38.129c0.418-1.234,0.209-2.595-0.561-3.647c-14.924-20.392-22.813-44.485-22.813-69.677
+c0-65.543,53.754-118.867,119.826-118.867c66.064,0,119.812,53.324,119.812,118.867
+C276.546,215.678,222.799,268.994,156.734,268.994z"/></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg><span class="wpp-text">Tem alguma pergunta?</span></a></div>`;
+            document.querySelector("body").insertAdjacentHTML('beforeend', waContainer); */
+            const truePayDescription = document.querySelector(".truepay-description");
+            if (!truePayDescription) {
+              sectionsContainer.insertAdjacentHTML('afterbegin', newTruePayContainer);
+              const titleElement = document.querySelector(".os-header__title");
+              titleElement.innerHTML = "Pedido aguardando cadastro";
+              titleElement.setAttribute('style', 'font-size: 2.3em !important');
+            }
+          }
+
+           const hunterContainer = `
+           <div class="content-box">
+             <div class="content-box__row">
+               <div class="hunterCheckboxContainer" data-gift-note-html>
+                 <input type="checkbox" class="input-checkbox" id="hasHunter">
+                 <label for="hasHunter">Fui atendido por um representante</label>
+                 <div class="selectContainer">
+                   <select placeholder="Representante" class="hunterName field__input field__input--select">
+                     <option value="" selected disabled hidden>Seleccione um representante</option>
+                     ${selectOptions}
+                     <option value="outro">Outro</option>
+                   </select>
+                   <div class="field__caret">
+                     <svg id="caret-down">
+                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">
+                         <path d="M0 3h10L5 8" fill-rule="nonzero"></path>
+                       </svg>
+                     </svg>
+                   </div>
+                   <div class="field field--required field--show-floating-label hunterOtherName d-none">
+                     <div class="field__input-wrapper">
+                       <input value="" placeholder="Nome do representante" class="field__input" aria-required="true" size="30" type="text" id="hunterNameInput">
+                     </div>
+                   </div>
+                 </div>
+               </div>
+             </div>
+           </div>`;
+
+           sectionsContainer.innerHTML = sectionsContainer.innerHTML + hunterContainer;
+           const selectHunter = document.querySelector(".hunterName");
+           const hunterOtherName = document.querySelector(".hunterOtherName");
+           const hunterNameInput = document.querySelector("#hunterNameInput");
+           let timeout = null;
+
+           selectHunter.addEventListener('input', () => {
+             const selectValue = selectHunter.value;
+             const messageContainer = document.querySelector(".hunterCheckboxContainer .field__message");
+             if (messageContainer) {
+               messageContainer.remove();
+             }
+             if (selectValue == "outro") {
+               hunterOtherName.classList.remove("d-none");
+               hunterNameInput.focus();
+             } else {
+               hunterOtherName.classList.add("d-none");
+               saveHunter(orderId, selectValue);
+             }
+           });
+
+           hunterNameInput.addEventListener('input', () => {
+             const messageContainer = document.querySelector(".hunterCheckboxContainer .field__message");
+             if (messageContainer) {
+               messageContainer.remove();
+             }
+             clearTimeout(timeout);
+             timeout = setTimeout(function () {
+               const inputValue = hunterNameInput.value.trim();
+               if (inputValue.length > 2){
+                 saveHunter(orderId, inputValue);
+               }
+             }, 1000);
+           });
+
+           const saveHunter = (orderId, hunterName) => {
+             fetch(`${corsUrl}${shopifyApiUrl}/data/shopify/assign_hunter/${orderId}`, {
+               method: 'POST',
+               body: JSON.stringify({hunter: hunterName}),
+               headers: {
+                 'Content-Type': 'application/json',
+                 'origin': 'shopify',
+                 'api-key': shopifyApiKey,
+                 'secret-key': shopifyApiSecretKey
+               }
+             })
+             .then(response => response.json())
+             .then(data => {
+               const hunterCheckboxContainer = document.querySelector(".hunterCheckboxContainer");
+               const messageContainer = `<p class="field__message">Representante salvo, obrigado!</p>`
+
+               hunterCheckboxContainer.insertAdjacentHTML('beforeend', messageContainer);
+             });
+           };
+         }
+       });
+       const itemsArray = [];
+       const items_vendorOrigin = {};
+       {%- for item in checkout.line_items -%}
+         {%- assign origin = '' -%}
+         {% assign productVendorName = item.vendor %}
+         {% if productVendorName == 'Inventa Comércio' %}
+            {% assign productTags = item.product.tags | join: '|||' %}
+            {% assign productVendorIdentifier = 'Fornecedor_' %}
+            {% if productTags contains 'Marca_' %}
+              {% assign productVendorIdentifier = 'Marca_' %}
+            {% endif %}
+            {% assign productVendorName = productTags | split: productVendorIdentifier | last | strip | split: '|||' | first %}
+         {% endif %}
+         {%- for tag in item.product.tags -%}
+           {%- if tag contains 'Origem' -%}
+             {%- assign origin = tag | replace: 'Origem_', '' -%}
+           {%- endif -%}
+         {%- endfor -%}
+         itemsArray.push("{{ origin }}".toLowerCase());
+         items_vendorOrigin[{{ item.variant_id }}] = {
+           vendor: "{{ productVendorName }}",
+           company: "{{ item.vendor }}",
+           origin: "{{ origin }}".toLowerCase()
+         };
+       {%- endfor -%}
+
+       if(step != 'thank_you'){
+        let params = (new URL(document.location)).searchParams;
+        let referral_discount = params.get("discount");
+         window.addEventListener('load', () => {
+            if(!referral_discount && localStorage.getItem('referralCoupon') ){
+             referralCoupon(localStorage.getItem('referralCoupon'));
+             localStorage.removeItem("referralCoupon");
+            }
+          });
+       }
+       
+       if(step != 'thank_you'){
+         window.addEventListener('load', () => {
+            const coupon = window.sessionStorage.getItem('discountToApply');
+            if(coupon){
+              const { code } = JSON.parse(coupon);
+              window.sessionStorage.removeItem('discountToApply');
+              if(!appliedDiscounts_names.includes(code)){
+                addCoupon(code);
+              }
+            }
+         })
+
+         window.addEventListener('load', () => {
+           const contato_info = document.querySelector('.section .review-block .review-block__content');
+           if(contato_info){
+             const first_name = "{{ checkout.customer.first_name }}";
+             const last_name = "{{ checkout.customer.last_name }}";
+             const phone = "{{ checkout.customer.phone }}";
+             const email = "{{ checkout.customer.email }}";
+
+             const data = [];
+             if(first_name.length) data.push(first_name);
+             if(last_name.length) data.push(last_name);
+             if(phone.length) data.push(phone);
+             if(email.length) data.push(email);
+
+             contato_info.innerHTML = `
+               <span>${data.join(', ')}</span>
+             `;
+           }
+
+          const customerStateCode = "{{ checkout.shipping_address.province_code }}";
+          const customerDefaultCode = "{{ customer.default_address.province_code }}"
+          const zipCode = "{{ checkout.shipping_address.zip }}"
+          ? "{{ checkout.shipping_address.zip }}"
+          : "{{ customer.default_address.zip }}"
+          const vendor_origins = [];
+
+          for(const item in items_vendorOrigin){
+            const { vendor, origin, company } = items_vendorOrigin[item];
+            if(!vendor_origins.find(e => e.supplier == vendor)) vendor_origins.push({
+              supplier: vendor,
+              company: company,
+              origin: getStateCode(origin),
+              destination: customerStateCode || customerDefaultCode,
+              destination_zip_code: zipCode.replace(/[^0-9.]/g, ''),
+              destination_city: formatCity("{{ checkout.shipping_address.city }}"),
+              retailer_id: "{{ customer.id }}"
+            });
+          }
+
+          const corsApi = "https://cors.inventashop.com.br/";
+          const freteApi = "https://api.inventa.tec.br";
+
+          function formatCity(input) {
+            const city = input.split("|||")[0];
+
+            return city.trim();
+          }
+
+          if (Shopify.Checkout.step != 'contact_information'){
+            fetch(`${corsApi}${freteApi}/data/shopify/estimate_shipping/checkout`,{
+              method: 'POST',
+              headers: {
+                'origin': 'shopify',
+                'Content-Type': 'application/json',
+                'api-key': 'LMYzUdD0Wq',
+                'secret-key': 'GHrI6Xg0Qc',
+              },
+              body: JSON.stringify({items: vendor_origins})
+            }).then(res => res.json())
+            .then(res => {
+              let daysToAdd = 0;
+              const vendorWhitelist = {{ shop.metafields.vendor_free_shipping.whitelist | json }};
+
+              if(Array.isArray(res)){
+                const vendor_stimates = [];
+                const vendorShippingDetails = [];
+
+                res.map(e => {
+                  const local_date = new Date('{{ "now" | date: "%Y-%m-%d" }}' + 'T00:00:01');
+                  const daysToAdd = e.shipping_estimate;
+                  const estimateShippingDate = local_date.setDate(local_date.getDate() + daysToAdd);
+                  let vendorHasToPayShipping = true;
+                  
+                  vendor_stimates.push({vendor: e.supplier, supplier: e.company, frete_estimate: new Date(estimateShippingDate).getTime()});
+
+                  if (vendorWhitelist.includes(e.supplier)) vendorHasToPayShipping = false;
+                  vendorShippingDetails.push({vendor: e.supplier, shipping_was_charged: vendorHasToPayShipping? "yes" : "no"})
+                });
+                vendor_stimates.sort((a, b) => {
+                  if(a.frete_estimate > b.frete_estimate) return 1;
+                  if(a.frete_estimate < b.frete_estimate) return -1;
+                  return 0;
+                })
+                window.localStorage.setItem('new_order_fretes', JSON.stringify(vendor_stimates));
+                
+                //Adding stimate shipping attributte to forms
+                const order_shippings = JSON.stringify(vendor_stimates);
+                const shipping_details = JSON.stringify(vendorShippingDetails);
+                // console.log({order_shippings});
+                // console.log({shipping_details});
+                if(order_shippings){
+                  const edit_checkout_forms = document.querySelectorAll('form.edit_checkout');
+                  for(let i = 0; i < edit_checkout_forms.length; i++){
+                    const shippingEstimateExist = edit_checkout_forms[i].querySelector('input[name="checkout[note_attributes][shipping_stimate]"]');
+                    const vendorShippingDetailExist = edit_checkout_forms[i].querySelector('input[name="checkout[note_attributes][shipping_details]"]');
+
+                    if (!shippingEstimateExist) addNoteAttribute("shipping_stimate", order_shippings, edit_checkout_forms[i]);
+                    if (!vendorShippingDetailExist) addNoteAttribute("shipping_details", shipping_details, edit_checkout_forms[i]);
+                  }
+                }
+
+                function addNoteAttribute(attributeName, attributeValue, formObject) {
+                  const input = document.createElement('input');
+                  input.setAttribute('name', `checkout[attributes][${attributeName}]`);
+                  input.setAttribute('type', 'hidden');
+                  input.setAttribute('value', attributeValue);
+                  input.value = attributeValue;
+                  formObject.append(input);
+                }
+  
+                const shipping_info = document.querySelector('.review-block .review-block__content[data-review-section="shipping-cost"]');
+                if(shipping_info){
+                  shipping_info.parentElement.querySelector('.review-block__label').innerText = 'Frete';
+                  const shipping_method = '{{ checkout.shipping_method.title }}';
+                  const shipping_price = '{{ checkout.shipping_method.price }}';
+                  const options = {
+                    weekday: 'long',
+                    month: 'long',
+                    day: 'numeric'
+                  }
+                  const estimatedShippingDate = new Date(vendor_stimates[vendor_stimates.length - 1].frete_estimate);
+                  const shipping_data = "Receberá <span class='mobile-hidden'>seu pedido </span>até " + estimatedShippingDate.toLocaleString('pt-BR', options) + "</span>";
+      
+                  const data = [];
+                  if(shipping_method.length && shipping_price.length) data.push(`${shipping_method} - ${parseInt(shipping_price) > 0 ? formatPrice(parseInt(shipping_price)) : '<strong class="value">Grátis</strong>'}`);
+                  else{
+                    if(shipping_method.length) data.push(shipping_method);
+                    if(shipping_price.length) data.push(shipping_price);
+                  }
+                  if(shipping_data.length) data.push(shipping_data);
+      
+                  shipping_info.innerHTML = `
+                    <p>${data.join(', ')}</p>
+                  `;
+                }
+                if(step == 'shipping_method'){
+                  const shipping_method = document.querySelector('.section.section--shipping-method');
+                  const shippingWarning = document.querySelector('[data-shipping-warning]');
+                  if(shipping_method && !shippingWarning){
+                    const estimates_element = document.createElement('div');
+                    const estimates_title = document.createElement('h2');
+                    estimates_title.classList.add('section__title');
+                    estimates_title.classList.add('mb-3');
+                    estimates_title.classList.add('mt-4');
+                    estimates_title.innerText = 'Estimativa de entrega';
+                    estimates_element.append(estimates_title);
+                    vendor_stimates.map(e => {
+                      const { vendor, frete_estimate } = e;
+                      const vendor_img = vendor_icons.find(i => i.vendor.toLowerCase() == vendor.toLowerCase());
+                      const vendorUrl = vendor_img? vendor_img.icon : "default";
+                      const element = estimates_element.querySelector(`#estimates-${frete_estimate}`);
+                      if(element){
+                        const fornecedor_line = document.createElement('div');
+                        fornecedor_line.classList.add('fornecedor_line');
+                        fornecedor_line.innerHTML = `
+                          <div class="icon_wrapper">
+                            <img src="${vendorUrl}" />
+                          </div>
+                          <p>${vendor}</p>
+                        `;
+                        // fornecedor_line.innerHTML += "<span>Frete Grátis</span>";
+                        element.append(fornecedor_line);
+                      }else{
+                        const newDate = document.createElement('div');
+                        newDate.id = `estimates-${frete_estimate}`;
+                        newDate.classList.add('mb-3');
+                        newDate.classList.add('estimates_container');
+                        newDate.innerHTML = `
+                          <h3>Receba até ${new Date(frete_estimate).toLocaleDateString('pt-BR', {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })}</h3>
+                          <div class="fornecedor_line">
+                            <div class="icon_wrapper">
+                              <img src="${vendorUrl}" />
+                            </div>
+                            <p>${vendor}</p>
+                            ${validateFreeShippingSeal(vendor)}
+                          </div>
+                        `;
+                        estimates_element.append(newDate);
+                      }
+                    })
+                    estimates_element.classList.add('section__content');
+                    shipping_method.append(estimates_element);
+                  }
+                }
+              } 
+            })
+          }
+          const descontoForms = document.querySelector('.sidebar .sidebar__content .order-summary__section[data-reduction-form="update"]');
+          let totalNode;
+
+          function validateFreeShippingSeal(vendor) {
+            const freeShippingVendorList = "{{ shop.metafields.vendor_free_shipping.whitelist | join: ',' }}".split(",");
+
+            if (freeShippingVendorList.includes(vendor)) {
+              return `<div class="ms-auto"><small>Frete Grátis</small><svg class="free-shipping-seal" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.52042 2.14597C6.2921 2.08439 7.02469 1.78094 7.61389 1.27883C8.98886 0.10709 11.0111 0.10709 12.3861 1.27883C12.9753 1.78094 13.7079 2.08439 14.4796 2.14597C16.2804 2.28968 17.7103 3.71965 17.8541 5.52044C17.9156 6.29212 18.2191 7.02471 18.7212 7.61391C19.8929 8.98888 19.8929 11.0112 18.7212 12.3861C18.2191 12.9753 17.9156 13.7079 17.8541 14.4796C17.7103 16.2804 16.2804 17.7104 14.4796 17.8541C13.7079 17.9157 12.9753 18.2191 12.3861 18.7212C11.0111 19.893 8.98886 19.893 7.61389 18.7212C7.02469 18.2191 6.2921 17.9157 5.52042 17.8541C3.71963 17.7104 2.28965 16.2804 2.14595 14.4796C2.08437 13.7079 1.78092 12.9753 1.2788 12.3861C0.107067 11.0112 0.107067 8.98888 1.2788 7.61391C1.78092 7.02471 2.08437 6.29212 2.14595 5.52044C2.28965 3.71965 3.71963 2.28968 5.52042 2.14597ZM14.4485 8.44855C14.9172 7.97992 14.9172 7.22012 14.4485 6.7515C13.9799 6.28287 13.2201 6.28287 12.7515 6.7515L8.8 10.703L7.24853 9.15149C6.7799 8.68287 6.0201 8.68287 5.55147 9.15149C5.08284 9.62012 5.08284 10.3799 5.55147 10.8486L7.95147 13.2486C8.4201 13.7172 9.1799 13.7172 9.64853 13.2486L14.4485 8.44855Z" fill="#0ed511"/></svg></div>`;
+            }
+
+            return "";
+          }
+            
+          function preUpdateView(){
+            const step = document.querySelector('div.step').getAttribute('data-step');
+            if(step == 'shipping_method'){
+              const customerCity = "{{ customer.default_address.city }}";
+              const customerAddress = document.querySelector('address.address.address--tight');
+              const shippingLabelTitle = document.querySelector('label.radio__label span.radio__label__primary');
+              const labelSave = document.querySelector('label.radio__label span.radio__label__primary span.small-text');
+              const shippingLabel = document.querySelector('.radio__label__accessory .content-box__emphasis');
+              const shippingWarningAlert = document.querySelector('[data-shipping-warning] .notice__text');
+
+              if (shippingLabel) {
+                const shippingText = shippingLabel.innerHTML.trim();
+                if (shippingText == "Grátis") {
+                  if (labelSave) {
+                    shippingLabel.innerHTML = `<h3>${labelSave.innerHTML.trim()}</h3>`;
+                    labelSave.classList.add("d-none");
+                  }
+                  // if (shippingLabelTitle) {
+                  //   shippingLabelTitle.innerHTML = "Grátis";
+                  //   shippingLabelTitle.classList.add("fs-5")
+                  // }
+                }
+              }
+
+//               if (shippingWarningAlert) {
+//                 if (shippingWarningAlert.innerHTML.includes("Motivo:")) {
+//                   shippingWarningAlert.innerHTML = shippingWarningAlert.innerHTML.replace("Motivo:","<br /> Motivo: <br />");
+//                 }
+//               }
+//               if(labelSave){
+//                 labelSave.innerText = labelSave.innerText.replace(/Você salvou/g, 'Você economizou')
+//               }
+              const shippingContainer = document.querySelector('.section.section--shipping-method .section__content .content-box__row');
+
+              if (shippingContainer) {
+                shippingContainer.style.padding = '0';
+              }
+
+            }
+            const vendors = [];
+             const asideBar = document.getElementById('order-summary');
+             asideBar.classList.remove('order-summary--is-collapsed');
+             asideBar.classList.add('order-summary--is-expanded');
+             const showText = document.querySelector('.order-summary-toggle__text.order-summary-toggle__text--show');
+             const hideText = document.querySelector('order-summary-toggle__text.order-summary-toggle__text--hide');
+             if(showText && hideText){
+               showText.classList.remove('order-summary-toggle__text--show');
+               showText.classList.add('order-summary-toggle__text--hide');
+               hideText.classList.remove('order-summary-toggle__text--hide');
+               hideText.classList.add('order-summary-toggle__text--show');
+             }
+             const subtotalTitle = document.querySelector(".subtotal_title");
+             const title = document.createElement('h3');
+             let credit = null;
+             title.innerText = 'Resumo de compra';
+             title.classList.add('subtotal_title');
+             if (!subtotalTitle) {
+              asideBar.prepend(title);
+              asideBar.append(totalNode);
+             }
+             if(descontoForms) {
+               asideBar.append(descontoForms);
+             }
+             
+             {%- if customer -%}
+             {%- unless customer.tags contains "cpf-user" -%}
+             {% assign credit = 0 %}
+             {% assign spent = 0 %}
+             {% for tag in customer.tags %}
+             {% if tag contains 'credit:' %}
+             {% assign credit = tag | split: ':' | last %}
+             {% assign creditDue = 90 %}
+             {% endif %}
+             {% if tag contains 'spent:' %}
+             {% assign found-spent = tag | split: ':' %}
+             {% assign spent = spent | plus: found-spent[1] %}
+             {% endif %}
+             {% endfor %}
+             {% if customer.tags contains 'credit30' %}
+             {% assign creditDue = 30 %}
+             {% elsif customer.tags contains 'credit15' %}
+             {% assign creditDue = 15 %}
+             {% endif %}
+             {% assign credit = credit | minus: spent %}
+             {% assign cents = credit | modulo: 1 %}
+             {% assign credit = credit | minus: cents %}
+             {% if credit > 0 %}
+             credit = document.createElement('div');
+             credit.classList.add('table-footer_icon');
+             credit.innerHTML = `
+               <img src="{{ 'coin-icon.png' | asset_img_url }}" alt="mini-cart">
+               <p>Pague em {{ creditDue }} dias compras de até <span style="white-space: nowrap;">{{ credit | times: 100 | money }}</span></p>
+             `;
+             
+             {% endif %}
+             {%- endunless -%}
+
+             {%- endif -%}
+            {% comment %}
+             if(step == 'contact_information'){
+               const frete = document.createElement('div');
+               frete.classList.add('table-footer_icon');
+               frete.innerHTML = `
+                 <img src="{{ 'truck-icon.png' | asset_img_url }}" alt="mini-cart">
+                 <p>Frete grátis acima de {{ shop.metafields.shop_info.minimum_order_value | times: 100 | money }} para todo o Brasil.</p>
+               `;
+               asideBar.append(frete);
+             }
+            {% endcomment %}
+             const lightButtonWrapper = document.querySelector(".light-button_wrapper");
+             const wrapper = document.createElement('div');
+             wrapper.classList.add('light-button_wrapper');
+             const continueShopping = document.createElement('button');
+             continueShopping.classList.add('light-button');
+             continueShopping.innerText = 'Adicionar mais produtos';
+             continueShopping.onclick = () => {
+               window.location.replace('/');
+             }
+             if (!lightButtonWrapper) {
+              wrapper.append(continueShopping);
+              asideBar.append(wrapper);
+              if (credit) {
+                asideBar.append(credit);
+              }
+             }
+
+            const loading_payonsite = document.querySelector('div.content-box__row--secondary div.blank-slate');
+            if(loading_payonsite && step == 'payment_method'){
+              setTimeout(() => {
+                preUpdateView();
+              }, 100);
+            }else{
+              updateView();
+              document.body.classList.remove('invisible-loading');
+              document.querySelector('body').classList.remove('invisible-loading');
+            }
+            
+          }
+           //identify checkout step
+           const step = document.querySelector('div.step').getAttribute('data-step');
+           //Change breadcrumb position
+           const breacrumbNav = document.querySelector('nav');
+           const node = breacrumbNav.parentElement.removeChild(breacrumbNav);
+           node.innerHTML = node.innerHTML.replace('<ol ', '<div ').replace('</ol>', '</div>');
+           node.classList.add('custom_navbar');
+           const anchorTags = node.querySelectorAll('a.breadcrumb__link, span.breadcrumb__text');
+           for(let i = 0; i < anchorTags.length; i++){
+             anchorTags[i].style.whiteSpace = 'nowrap';
+           }
+           document.body.prepend(node);
+           const olBreadcrumb = document.querySelector('.breadcrumb');
+           olBreadcrumb.innerHTML = olBreadcrumb.innerHTML.replace(/<li /g, '<div ').replace(/<\/li>/g, '</div>')
+           const breadCrumbElements = olBreadcrumb.querySelectorAll('div.breadcrumb__item');
+           breadCrumbElements[0].classList.add('first-element');
+           breadCrumbElements[breadCrumbElements.length - 1].classList.add('last-element');
+
+           if(step == 'contact_information' || step == 'payment_method'){
+             const labels = document.querySelectorAll('div.field.field--required');
+             for(let i = 0; i < labels.length; i++){
+               const input = labels[i].querySelector('input[type="text"]');
+               if(input) input.placeholder = input.placeholder + ' *';
+               const actualLabel = labels[i].querySelector('label.field__label').innerHTML;
+               labels[i].querySelector('label.field__label').innerHTML = actualLabel + ' *';
+             }
+           }
+
+           if(step == 'payment_method'){
+            setTimeout(function(){ 
+            var targetSpan = document.querySelectorAll('.payment-method-wrapper h3 span');
+            for(var i=0; i<targetSpan.length;i++){
+              if(targetSpan[i].textContent === "Boleto Bancário"){
+                targetSpan[i].innerHTML="Boleto à vista";
+              }
+            }
+               }, 2000);
+            
+            const selectaddressfield = document.querySelector('#checkout_billing_address_id');
+            const billing_address_exist = document.querySelector('div[data-different-billing-address]');
+            if(billing_address_exist){
+                  billing_address_exist.classList.add("hide__billingaddress-same");
+            } 
+            if (selectaddressfield) {
+              selectaddressfield.addEventListener('change', (event) => {
+              const [option] = event.target.selectedOptions;
+              const datavalues = JSON.parse(option.dataset.properties);
+              const citycombine = datavalues.city;
+              const numero = datavalues.address2;
+              const streetaddress = datavalues.address1;
+              const fields = citycombine.split("|||");
+              const customerComplement = '{{ checkout.shipping_address.address2 }}';
+              setTimeout(function(){
+                   if(fields[0] == '' || fields[0] === undefined){
+                    document.querySelector('#checkout_billing_address_city').value='';
+                }else{
+                  document.querySelector('#checkout_billing_address_city').value='';
+                  document.querySelector('#checkout_billing_address_city').value=fields[0];
+                  }
+                
+                  if(fields[1] == '' || fields[1] === undefined){
+                  document.querySelector('#checkout_billing_address_neighborhood').value='';
+                }else{
+                  document.querySelector('#checkout_billing_address_neighborhood').value='';
+                  document.querySelector('#checkout_billing_address_neighborhood').value=fields[1];
+                  }
+                  document.querySelector('#checkout_billing_address_street').value='';
+                  document.querySelector('#checkout_billing_address_street').value=streetaddress;
+                document.querySelector('#checkout_billing_address_supplement').value='';
+                document.querySelector('#checkout_billing_address_supplement').value=customerComplement;
+                document.querySelector('#checkout_billing_address_street_number').value='';
+                document.querySelector('#checkout_billing_address_street_number').value=numero; 
+            }, 2000);     
+            });
+          }    
+
+            const cnpjValue = {{ customer.metafields.customer_fields.data.cnpj | json }};
+            const submitButton = document.querySelector("#continue_button");
+
+            setTimeout(function(){ 
+              const cnpjPaymentInput = document.querySelector("#checkout_localized_fields_tax_credential_br");
+              if (cnpjPaymentInput && cnpjValue && cnpjValue != "") {
+                cnpjPaymentInput.value = cnpjValue;
+                // cnpj_Payment_Input.readOnly = true;
+                // cnpj_Payment_Input.style.backgroundColor = '#efefef';
+              }
+
+              if (cnpjPaymentInput) {
+                removeSpecialCharacters(cnpjPaymentInput);
+                cnpjPaymentInput.addEventListener("input", () => {
+                  removeSpecialCharacters(cnpjPaymentInput);
+                });
+              }
+            }, 100);
+
+            submitButton.addEventListener("click", () => {
+              const phoneNumberInput = document.querySelector("#checkout_billing_address_phone");
+              validatePhoneNumber(phoneNumberInput);
+            });
+
+
+            function removeSpecialCharacters(input) {
+              input.value = input.value.replace(/[^0-9\/\-.]/g, '');
+            }
+
+            function validatePhoneNumber(input) {
+              if (input) {
+                const inputValue = input.value.replace("+55", '');
+                const phoneRegexValidation = /^\s*(\d{2}|\d{0})[-. ]?(\d{5}|\d{4})[-. ]?(\d{4})[-. ]?\s*$/g;
+                if (!inputValue.match(phoneRegexValidation)) {
+                  input.classList.add("mp-error-border");
+
+                  const errorElementObserver = new MutationObserver((mutations) => {
+                    const errorContainer = document.querySelector(".notice.notice--error .notice__text");
+                    if (document.contains(errorContainer)) {
+                      errorContainer.innerText = "Por favor insira um telefone válido";
+                      errorElementObserver.disconnect();
+                    }
+                  });
+
+                  errorElementObserver.observe(document, {attributes: false, childList: true, characterData: false, subtree:true});
+                } else {
+                  input.classList.remove("mp-error-border");
+                }
+              }
+            }
+
+          }
+
+           //Empty aside bar content to inject the correct one
+           const asideBar = document.getElementById('order-summary');
+           const iconsElement = document.getElementById('partial-icon-symbols');
+           const iconsNode = iconsElement.parentElement.removeChild(iconsElement);
+         const freeCostContainer = document.querySelector('tr.total-line--shipping .total-line__price span');
+           document.body.append(iconsNode);
+         if (freeCostContainer) {
+           freteCost = freeCostContainer.getAttribute('data-checkout-total-shipping-target');
+         }
+           const productsTable = asideBar.querySelector('table.product-table');
+           const total = document.querySelector('div[data-order-summary-section="payment-lines"]');
+           totalNode = total.parentElement.removeChild(total);
+           asideBar.innerHTML = '';
+           asideBar.append(productsTable);
+
+           preUpdateView();
+         });
+
+         window.addEventListener('load', () => {
+         const itemsQty = document.querySelector('.items-quantity');
+         if(itemsQty){
+           const quantity = parseInt(itemsQty.getAttribute('quantity'));
+           const mobileTotal = document.querySelector('.total-recap');
+           mobileTotal.style.marginTop = '0';
+           mobileTotal.innerHTML += `
+             <span>(${quantity} ite${quantity > 1 ? 'ns' : 'm'})</span>
+           `;
+         }
+
+         '<p class="text-red fw-bold text-center py-4 my-3 rounded d-none" id="customer_error-message" style="background-color: #FFF1F1;">Não incluímos Fornecedores ou produtos abaixo do pedido mínimo</p>'
+         let rejectedProds = window.localStorage.getItem('noMinProds');
+         if(rejectedProds){
+           rejectedProds = JSON.parse(rejectedProds);
+           const vendors = [];
+           for(let i = 0; i < rejectedProds.length; i++){
+             const { vendor } = rejectedProds[i];
+             if(!vendors.some(vendorName => vendorName == vendor)) vendors.push(vendor);
+           }
+           if(vendors.length){
+             const errorElement = document.createElement('p');
+             errorElement.classList.add('error-message');
+             const vendorsElement = vendors.map(vendor => `<a href="/pages/fornecedores/${vendor.replace(/ /g, '-').replace(/'/g, '').replace(/-&/g, '').replace(/amp;/g, '').replace(/\./g, '').toLowerCase()}">${vendor}</a>`)
+             const lasts = vendorsElement.length > 1 ? vendorsElement.slice(-2).join(' e ') : vendorsElement[0];
+             const first = vendorsElement.length > 2 ? vendorsElement.slice(0, -2).join(', ') : '';
+             const errorText = `Não incluímos os produtos da${vendorsElement.length > 1 ? 's' : ''} loja${vendorsElement.length > 1 ? 's' : ''} ${first ? first + ', ' : ''}${lasts} pois estão abaixo do pedido mínimo`;
+             errorElement.innerHTML = errorText;
+             document.getElementById('order-summary').prepend(errorElement);
+           }
+         }
+       })
+       }else{
+        {%- assign FE_Saved = '' -%}
+        {%- for attr in order.attr -%}
+        {%- assign attr_name = attr | first -%}
+        {%- if attr_name == 'shipping_stimate'  -%}
+        {%- assign FE_Saved = attr | last -%}
+        {%- endif -%}
+        {%- endfor -%}
+        const order_FESaved = "{{ FE_Saved }}";
+        const frete_estimates = order_FESaved.length ? order_FESaved : window.localStorage.getItem('new_order_fretes');
+        if(frete_estimates){
+          try {
+            fetch(`${corsUrl}${shopifyApiUrl}/data/shopify/estimate_shipping/{{ checkout.order_number }}`, {
+              method: 'POST',
+              headers:{
+                'api-key': 'LMYzUdD0Wq',
+                'secret-key': 'GHrI6Xg0Qc',
+                'origin': 'shopify',
+                'Content-Type': 'application/json'
+              },
+              body: frete_estimates
+            }).then(res => {
+              if(res.status == 200) window.localStorage.removeItem('new_order_fretes');
+              else{
+                if(driver) driver.pushEvent('freteStimate-error', {
+                  error: `Api code ${res.status}`,
+                  order: "{{ checkout.order_number }}"
+                })
+              }
+            })
+          } catch (error) {
+            if(driver) driver.pushEvent('freteStimate-error', {
+              error,
+              order: "{{ checkout.order_number }}"
+            });
+          }
+        }
+
+        const map = document.querySelector('.map.default-background');
+        if(map) {
+          map.parentElement.parentElement.style.display = 'none';
+        }
+
+         const address_tags = document.querySelectorAll('address.address');
+         const customer_email = "{{ checkout.customer.email }}";
+           const billing_address = {
+             name: "{{ checkout.billing_address.name }}",
+             street: "{{ checkout.billing_address.street }}",
+             state: "{{ checkout.billing_address.province }}",
+             state_code: "{{ checkout.billing_address.province_code }}",
+             phone: "{{ checkout.billing_address.phone }}"
+           };
+           const shipping_address ={
+             name: "{{ checkout.shipping_address.name }}",
+             street: "{{ checkout.shipping_address.street }}",
+             state: "{{ checkout.shipping_address.province }}",
+             state_code: "{{ checkout.shipping_address.province_code }}",
+             phone: "{{ checkout.shipping_address.phone }}"
+           }
+           if(address_tags[0]){
+             const address = [];
+             for(let string in shipping_address){
+               if(string == 'name' || string == 'phone' || string == 'email') continue;
+               address.push(shipping_address[string]);
+             }
+             address_tags[0].innerText = address.join(', ');
+           }
+           if(address_tags[1]){
+        const address = [];
+             for(let string in billing_address){
+               if(string == 'name' || string == 'phone' || string == 'email') continue;
+               address.push(billing_address[string]);
+             }
+             address_tags[1].innerText = address.join(', ');
+           }
+         const title = document.querySelector('.content-box__row.content-box__row--no-border h2');
+         if(title) { 
+          title.innerText = 'Informação do pedido';
+          title.classList.add('order-title');
+          const link = document.createElement('a');
+          link.setAttribute('href', '/account');
+          link.setAttribute('target', '_blank');
+          link.innerText = 'Acompanhe o pedido';
+          title.append(link);
+         }
+         {%- assign frete = false -%}
+         {%- for tag in customer.tags -%}
+         {%- if tag contains 'FRETE:' -%}
+         {%- assign frete = tag | split: 'FRETE:' | last -%}
+         {%- break -%}
+         {%- endif -%}
+         {%- endfor -%}
+
+         const frete_method = '{{ checkout.shipping_method.title }}';
+         const frete_price = '{{ checkout.shipping_method.price }}';
+         const order_note = '{%- if frete -%}{{ frete }}{%- endif -%}';
+         let frete_descrip;
+         if(frete_method.length && frete_price.length) {
+           frete_descrip = frete_method + ' - ' + (parseInt(frete_price) > 0 ? formatPrice(parseInt(frete_price)) : 'Grátis');
+         }else{
+           if(frete_method.length) frete_descrip = frete_method;
+           if(frete_price.length) frete_descrip = frete_price;
+         }
+         if(order_note.length){
+           try {
+             /* const parsed_note = JSON.parse(order_note.replace(/&quot;/g, '"')); */
+             const shipping_before_text = `Data de entrega: ${order_note}`;
+             if(frete_descrip && frete_descrip.length) frete_descrip += `, ${shipping_before_text}`;
+             else frete_descrip = shipping_before_text;
+           } catch (error) {
+             console.error(error)
+           }
+         }
+
+         const columns = title.parentElement.parentElement.querySelectorAll('.section__content__column.section__content__column--half');
+         const h3Elements = columns[0].querySelectorAll('h3');
+         const pElements = columns[0].querySelectorAll('p');
+         const ele_frete_title = h3Elements[h3Elements.length - 1];
+         const ele_frete_desc = pElements[pElements.length - 1];
+         if(ele_frete_title) ele_frete_title.innerText = 'Dados de entrega';
+         if(ele_frete_desc) ele_frete_desc.innerText = frete_descrip;
+
+         const info_customer = [];
+         if(billing_address.name.length) info_customer.push(billing_address.name);
+         if(billing_address.phone.length) info_customer.push(billing_address.phone);
+         if(customer_email.length) info_customer.push(customer_email);
+         pElements[0].innerText = info_customer.join(', ');
+
+         try {
+           let impostos = 0;
+           for(const variant_id in products_original_price){
+             const original_price = parseFloat(products_original_price[variant_id]);
+             const imposto_raw = (products_taxes.length > 0)? products_taxes[variant_id].find(e => e.includes('{{checkout.shipping_address.province_code}}')) : undefined;
+             const imposto = imposto_raw? parseFloat(imposto_raw.split(':')[1]) : 0;
+             impostos += (original_price * (imposto));
+             const itemRow = document.querySelector(`tr[data-variant-id="${variant_id}"]`);
+
+             if(itemRow){
+              const delEl = itemRow.querySelector("del");
+              if(delEl) {
+                if(products_discounts[variant_id]){
+                  const tierDiscounts = products_discounts[variant_id]? parseFloat(products_discounts[variant_id].value) : 0;
+                  const old_price = (original_price * 100) + tierDiscounts;
+                  delEl.innerText = formatPrice(old_price);
+                }else{
+                  delEl.classList.add("d-none");
+                }
+              }
+
+              if (imposto > 0) {
+                 const tax = document.createElement('small');
+                 const br = document.createElement('br');
+                 tax.innerText = `+${formatPrice(original_price * (imposto))} ICMS ST`;
+                 itemRow.querySelector('td.product__price').append(br);
+                 itemRow.querySelector('td.product__price').append(tax);
+              }
+             }
+             const itemSubtotal = document.querySelector(`tr[data-variant-id="${variant_id}"] td.product__price span.order-summary__emphasis`);
+             if(itemSubtotal) itemSubtotal.innerText = formatPrice(original_price * 100);
+           }
+           const taxes = document.querySelector('.total-line--taxes.total-line');
+           if(impostos > 0){
+             const subtotalSpan = document.querySelector('span[data-checkout-subtotal-price-target]');
+             if(subtotalSpan){
+               const oldSubtotal = subtotalSpan.getAttribute('data-checkout-subtotal-price-target');
+               subtotalSpan.innerText = formatPrice((oldSubtotal) - impostos);
+             }
+             if(taxes){
+               taxes.querySelector('.total-line__name').innerText = 'Impostos';
+               taxes.querySelector('.total-line__price span').innerText = formatPrice(impostos);
+               taxes.classList.remove('hidden');
+             }else{
+               const tr = document.createElement('tr');
+               tr.classList.add('total-line--taxes');
+               tr.classList.add('total-line');
+               const th = document.createElement('th');
+               th.classList.add('total-line__name');
+               th.innerHTML = `
+                 <span>Impostos</span>
+               `;
+               tr.append(th);
+               const td = document.createElement('td');
+               td.classList.add('total-line__price');
+               td.innerHTML = `
+                 <span class="skeleton-while-loading order-summary__emphasis">${formatPrice(impostos)}</span>
+               `;
+               tr.append(td);
+               const tbody = document.querySelector('div[data-order-summary-section="payment-lines"] tbody.total-line-table__tbody');
+               if(tbody) tbody.append(tr);
+             }
+           }else if(taxes){
+             taxes.parentElement.removeChild(taxes);
+           }
+         } catch (error) {
+           console.log('Taxes failed: ', error);
+         }
+
+         const frete_line = document.querySelector('tbody.total-line-table__tbody .total-line.total-line--shipping .total-line__price span');
+         if(frete_line) {
+           frete_line.classList.add('order-summary__emphasis');
+           frete_line.classList.remove('order-summary__small-text');
+           const price = frete_line.getAttribute('data-checkout-total-shipping-target');
+           if(price && parseInt(price) > 0){
+             frete_line.innerText = formatPrice(parseInt(price));
+           }else{
+             frete_line.innerText = 'Grátis';
+           }
+         }
+
+         let total_discount = 0;
+         if(appliedDiscounts.length){
+           for(let i = 0; i < appliedDiscounts.length; i++) total_discount += appliedDiscounts[i];
+         }
+
+
+         const tbody = document.querySelector('div[data-order-summary-section="payment-lines"] tbody.total-line-table__tbody');
+         if(total_discount > 0){
+            const tr = document.createElement('tr');
+            tr.classList.add('total-line--discounts');
+            tr.classList.add('total-line');
+            const th = document.createElement('th');
+            th.classList.add('total-line__name');
+            th.innerHTML = `
+              <span>Descontos</span>
+            `;
+            tr.append(th);
+            const td = document.createElement('td');
+            td.classList.add('total-line__price');
+            td.innerHTML = `
+              <span class="skeleton-while-loading order-summary__emphasis">- ${formatPrice(total_discount)}</span>
+            `;
+            tr.append(td);
+            
+            if(tbody) tbody.append(tr);
+         }
+
+         if (step == 'thank_you' || pagePath.includes("order")) {
+          {% for discount_application in checkout.discount_applications %}
+            {% if discount_application.type == "discount_code" %}
+              const couponDiscountValue = "{{discount_application.total_allocated_amount | money }}";
+              const couponValueElement = `<tr class="total-line total-line--discounts"><th class="total-line__name" scope="row"><span>Desconto por cupom</span></th><td class="total-line__price"><span class="skeleton-while-loading order-summary__emphasis" data-checkout-total-discounts-target="${couponDiscountValue}">- ${couponDiscountValue}</span></td></tr>`;
+            
+              if (tbody) tbody.insertAdjacentHTML('beforeend', couponValueElement);
+            {% endif %}
+          {% endfor %}
+         }
+
+         const back_btn = document.querySelector('.step__footer__continue-btn.btn');
+         if(back_btn) back_btn.setAttribute('href', '/');
+
+         setTimeout(() => {
+           document.body.classList.remove('invisible-loading');
+           document.querySelector('body').classList.remove('invisible-loading');
+         }, 1000)
+       }
+      function updateView(){
+        const calculatingTributes = document.querySelector('#calculating-taxes__content');
+        const loading_payonsite = document.querySelector('div.content-box__row--secondary div.blank-slate');
+        const payment_loaded = document.querySelector('div[data-select-gateway="ticket"]');
+
+        if(loading_payonsite || !payment_loaded && step == 'payment_method'){
+          setTimeout(() => {
+            updateView();
+          }, 300)
+        }else{
+          //Start subtotal-impostos calculation
+          let subtotal_price = 0;
+          let taxes_price = 0;
+          let discount = 0;
+          
+          const mpBoletoLabel = document.querySelector('div[data-select-gateway="ticket"] label span');
+
+          if (mpBoletoLabel) {
+            mpBoletoLabel.innerText = "Boleto à vista";
+          }
+
+        {% assign customer_tags = customer.tags | join: "," | downcase %}
+        {% unless customer_tags contains "estado" %}
+          const table_footer = document.querySelector('tfoot.total-line-table__footer');
+         if(table_footer){
+           const disclaimer = document.createElement('tr');
+           disclaimer.innerHTML = `
+           <td colspan="2">
+            <p style="text-align: start; line-height: 1; margin-top: 1.5rem;">
+                <small style="padding: 0.5rem 0;">O valor do pedido pode variar dependendo dos impostos do endereço de entrega</small>
+              </p>
+            </td>
+           `;
+           table_footer.appendChild(disclaimer)
+         }
+        {% endunless %}
+          let hasTaxes;
+          for(const variant_id in products_prices){
+            const price = products_prices[variant_id];
+            const line_price = line_prices[variant_id];
+            const attributes = products_attributes[variant_id];
+            //const taxes = products_taxes[variant_id];
+            //const original_price = (parseFloat(products_original_price[variant_id] ? products_original_price[variant_id] : 0) * 100);
+            let original_price;
+            let taxes = null;
+            let discount_line=0;
+            let hasTaxes = false;
+            const quantity = products_quantitys[variant_id];
+            const province_code = checkout_province_code ? checkout_province_code : default_province_code;
+            
+            attributes.map(e => {
+              const name = e[0];
+              const value = e[1];
+              switch(name){
+                case "_precoOriginal$":
+                  subtotal_price += (value * 100);
+                  original_price = (value * 100);
+                  hasTaxes = true;
+                  break;
+                case "_estado":
+                  break;
+                case "_descontoPorQuantidade":
+                  discount += (value * 100);
+                  discount_line = (value * 100);
+                  if (!hasTaxes) subtotal_price += discount_line;
+                  break;
+                case "_descontoDoImposto$":
+                  break;
+                case "_imposto$":
+                  taxes_price += (value * 100);
+                  taxes = (value * 100);
+                  break;
+                case "_imposto%":
+                  break;
+                case "_descontoImpostoPorCPF":
+                  // hasTaxes = false;
+                  taxes = 0;
+              }
+            });
+            
+            if(taxes != null && taxes >= 0){
+              const itemRow = document.querySelector(`tr[data-variant-id="${variant_id}"]`);
+              if(itemRow){
+                const del = itemRow.querySelector("del")
+
+                if(del) {
+                  if(products_discounts[variant_id]){
+                    const old_price = (original_price) + parseInt(taxes);
+                    del.innerText = formatPrice(old_price);
+                  }else{
+                    del.classList.add("d-none");
+                  }
+                }
+                if (taxes > 0) {
+                  const tax = document.createElement('small');
+                  tax.innerText = `(${formatPrice(taxes)} ICMS ST)`;
+                  const br = document.createElement('br');
+                  itemRow.querySelector('td.product__price').append(br);
+                  itemRow.querySelector('td.product__price').append(tax);
+                }
+              }
+            }
+            const itemRow = document.querySelector(`tr[data-variant-id="${variant_id}"] td.product__price span.order-summary__emphasis`);
+
+            if(original_price){
+              if (!taxes) taxes = 0;
+              if(itemRow) itemRow.innerText = formatPrice(original_price + parseFloat(taxes) - parseFloat(discount_line));
+            }else{
+              if(itemRow) itemRow.innerText = formatPrice(line_price);
+              subtotal_price += (line_price);
+            }
+          }
+
+            const taxes = document.querySelector('.total-line--taxes.total-line');
+            const subtotal = document.querySelector('.total-line.total-line--subtotal');
+            if(subtotal){
+              subtotal.querySelector('.total-line__price span').innerText = formatPrice(subtotal_price);
+            }
+            if(taxes){
+              if(taxes_price > 0){
+                taxes.querySelector('.total-line__name').innerText = 'Impostos';
+                taxes.querySelector('.total-line__price span').innerText = formatPrice(taxes_price);
+                taxes.classList.remove('hidden');
+              } else{
+                taxes.parentElement.removeChild(taxes);
+              }
+            }else if(taxes_price > 0){
+              const tr = document.createElement('tr');
+              tr.classList.add('total-line--taxes');
+              tr.classList.add('total-line');
+              const th = document.createElement('th');
+              th.classList.add('total-line__name');
+              th.innerHTML = `
+                <span>Impostos</span>
+              `;
+              tr.append(th);
+              const td = document.createElement('td');
+              td.classList.add('total-line__price');
+              td.innerHTML = `
+                <span class="skeleton-while-loading order-summary__emphasis">${formatPrice(taxes_price)}</span>
+              `;
+              tr.append(td);
+              const tbody = document.querySelector('div[data-order-summary-section="payment-lines"] tbody.total-line-table__tbody');
+              if(tbody) tbody.append(tr);
+            }
+            
+            subtotalContainer = document.querySelector(".total-line-table__tbody");
+            if (discount > 0){
+              const totalDiscountsElement = `<tr class="total-line total-line--discounts"><th class="total-line__name" scope="row"><span>Desconto por quantidade</span></th><td class="total-line__price"><span class="skeleton-while-loading order-summary__emphasis" data-checkout-total-discounts-target="${discount * 100}">- ${formatPrice(discount)}</span></td></tr>`;
+              
+              if (subtotalContainer) subtotalContainer.insertAdjacentHTML('beforeend', totalDiscountsElement);
+            }
+
+            {% for discount_application in checkout.discount_applications %}
+              {% if discount_application.type == "discount_code" %}
+                const couponDiscountValue = "{{discount_application.total_allocated_amount | money }}";
+                const couponValueElement = `<tr class="total-line total-line--discounts"><th class="total-line__name" scope="row"><span>Desconto por cupom</span></th><td class="total-line__price"><span class="skeleton-while-loading order-summary__emphasis" data-checkout-total-discounts-target="${couponDiscountValue}">- ${couponDiscountValue}</span></td></tr>`;
+              
+              if (subtotalContainer) subtotalContainer.insertAdjacentHTML('beforeend', couponValueElement);
+                
+              {% endif %}
+            {% endfor %}
+
+            if(appliedDiscounts.length){
+              let totalDiscounts = 0;
+              for(let i = 0; i < appliedDiscounts.length; i++) totalDiscounts += appliedDiscounts[i];
+
+              if(totalDiscounts > 0){
+                const tr = document.createElement('tr');
+                tr.classList.add('total-line');
+                const th = document.createElement('th');
+                th.classList.add('total-line__name');
+                th.innerHTML = '<span>Desconto</span>';
+                const td = document.createElement('td');
+                td.classList.add('total-line__price');
+                td.innerHTML = `<span class="order-summary__emphasis skeleton-while-loading">-${formatPrice(totalDiscounts)}</span>`;
+                tr.append(th);
+                tr.append(td);
+                const tbody = document.querySelector('div[data-order-summary-section="payment-lines"] tbody.total-line-table__tbody');
+                if(tbody) tbody.append(tr);
+              }
+            }
+            //End subtotal-impostos calculation
+
+            //Getting frete price
+            const step = document.getElementsByClassName('step')[0] || '';
+            if(step && step.getAttribute('data-step') == 'contact_information'){
+              const frete = document.querySelector('span.order-summary__emphasis[data-checkout-total-shipping-target]');
+              const totalLineShippingContainer = document.querySelector('tr.total-line.total-line--shipping');
+              //data-checkout-total-shipping-target
+              if(frete){
+                const totalPrice = document.querySelector('.order-summary__emphasis.total-recap__final-price');
+                totalPrice.innerText = formatPrice(parseInt(totalPrice.getAttribute('data-checkout-payment-due-target')) - parseInt(frete.getAttribute('data-checkout-total-shipping-target')));
+  
+                const totalResumePrice = document.querySelector('td.total-line__price.payment-due span.payment-due__price[data-checkout-payment-due-target]');
+                totalResumePrice.innerText = formatPrice(parseInt(totalResumePrice.getAttribute('data-checkout-payment-due-target')) - parseInt(frete.getAttribute('data-checkout-total-shipping-target')));
+              }
+              if (totalLineShippingContainer) {
+                totalLineShippingContainer.style.display = 'none';
+              }
+            }
+
+          if(step && step.getAttribute('data-step') == 'contact_information'){
+            const fullSection = document.querySelector('div.step__sections');
+            const requiredMessage = document.createElement('p');
+            const phoneValue = {{ customer.phone | json }};
+            requiredMessage.classList.add('p-message');
+            requiredMessage.innerText = '* campos obrigatórios';
+            fullSection.append(requiredMessage);
+
+            const companyValue = document.querySelector('div.field[data-address-field="company"]');
+            companyValue.style.width = '50%';
+            const telefoneNode = document.querySelector('div.field[data-address-field="phone"]');
+            telefoneNode.style.width = '100%';
+            const input = telefoneNode.querySelector('input');
+            input.setAttribute('autocomplete', 'nope');
+            const copyInput = document.createElement('input');
+            copyInput.setAttribute('data-backup', 'phone');
+            copyInput.classList.add('visually-hidden');
+            copyInput.setAttribute('aria-required', 'true');
+            copyInput.value = input.value;
+            copyInput.setAttribute('name', 'checkout[shipping_address][phone]');
+            copyInput.setAttribute('data-phone-formatter-country-code', '55');
+            copyInput.setAttribute('type', 'tel');
+            const oldId = input.id;
+            document.querySelector('div.address-fields[data-address-fields]').append(copyInput);
+            input.setAttribute('id', 'telefone-aux');
+            if (phoneValue && phoneValue != "") {
+              input.value = phoneValue;
+            }
+            input.addEventListener('input', (e) => {
+              copyInput.value = e.target.value;
+            })
+            const cityField = document.querySelector('div.field[data-address-field="city"]');
+            if(cityField) {
+              cityField.style.width = '50%';
+              //cityField.style.display = 'block';
+            }
+            const stateField = document.querySelector('div.field[data-address-field="province"]');
+            if(stateField){
+              stateField.style.width = '50%';
+              //stateField.style.display = 'block';
+            }
+            const countryField = document.querySelector('div.field[data-address-field="country"]');
+            if(countryField){
+              countryField.querySelector('select').value = 'Colombia';
+              const event = new Event('change', { bubbles: true});
+              countryField.dispatchEvent(event);
+              countryField.querySelector('select').value = 'Brazil';
+              const newEvent = new Event('change', { bubbles: true});
+              countryField.dispatchEvent(newEvent);
+            }
+            const cepField = document.querySelector('div.field[data-address-field="zip"]');
+            if(cepField) {
+              cepField.style.width = '50%';
+              cepField.addEventListener('change', () => {
+                const countryField = document.querySelector('div.field[data-address-field="country"] select')
+                if(countryField){
+                  countryField.dispatchEvent(new Event('change', {bubbles: true}));
+                }
+              })
+            }
+            const address2Label = document.querySelector('div[data-address-field="address2"] label');
+            if(address2Label) address2Label.innerText = 'Complemento';
+            const address2Input = document.querySelector('div[data-address-field="address2"] input');
+            if(address2Input) address2Input.placeholder = 'Complemento';
+            const section = document.querySelector('div.section--contact-information');
+            //section.append(telefoneNode);
+            section.style.height = '73px';
+            document.querySelector('div.section--shipping-address[data-shipping-address]').style.paddingTop = '30px';
+          }else{
+            const contentBox = document.querySelector('.content-box');
+            contentBox.style.border = 'none';
+            const contentTable = contentBox.querySelector('.content-box__row');
+            if(contentTable){
+              contentTable.style.padding = '0';
+              contentTable.style.paddingBottom = '15px';
+              contentTable.style.borderBottom = '1px solid #EDEDED';
+            }
+          }
+
+          // if(step && step.getAttribute('data-step') == 'payment_method'){
+          //   const avistaPayment = document.createElement('span');
+          //   avistaPayment.innerText = "À vista ou cartão parcelado";
+          //   const wrapper = document.querySelector('h3.radio__label__primary');
+          //   if(wrapper) {
+          //     wrapper.innerHTML = '';
+          //     wrapper.append(avistaPayment);
+          //   }
+          //   else{
+          //     const img = document.querySelector('.offsite-payment-gateway-logo');
+          //     if(img){
+          //       img.parentElement.append(avistaPayment);
+          //       img.parentElement.removeChild(img);
+          //     }
+          //   }
+          // }
+
+          if(step && step.getAttribute('data-step') == 'payment_method'){
+            // const avistaPayment = document.createElement('span');
+            // avistaPayment.innerText = "À vista ou cartão parcelado";
+            const wrapper = document.querySelector('h3.radio__label__primary');
+            // if(wrapper) {
+            //   wrapper.innerHTML = '';
+            //   wrapper.append(avistaPayment);
+            // }
+            // else{
+            //   const img = document.querySelector('.offsite-payment-gateway-logo');
+            //   if(img){
+            //     img.parentElement.append(avistaPayment);
+            //     img.parentElement.removeChild(img);
+            //   }
+            // }
+
+            const paymentBox = document.querySelector('div[data-payment-method]');
+            {%- if customer -%}
+            {% assign credit = 0 %}
+            {% assign spent = 0 %}
+            {% for tag in customer.tags %}
+            {% if tag contains 'credit:' %}
+            {% assign credit = tag | split: ':' | last %}
+            {% assign creditDue = 90 %}
+            {% endif %}
+            {% if tag contains 'spent:' %}
+            {% assign found-spent = tag | split: ':' %}
+            {% assign spent = spent | plus: found-spent[1] %}
+            {% endif %}
+            {% endfor %}
+            {% if customer.tags contains 'credit30' %}
+            {% assign creditDue = 30 %}
+            {% elsif customer.tags contains 'credit15' %}
+            {% assign creditDue = 15 %}
+            {% endif %}
+            {% assign credit = credit | minus: spent %}
+            {% assign cents = credit | modulo: 1 %}
+            {% assign credit = credit | minus: cents %}
+            {% if credit > 0 %}
+            const paragraph = document.createElement('p');
+            paragraph.classList.add('credit-message');
+            paragraph.style.marginBottom = '15px';
+            paragraph.innerHTML = `Pague em {{ creditDue }} dias compras de até <span style="white-space: nowrap;">{{ credit | times: 100 | money }}</span>`;
+            
+            if(paymentBox) paymentBox.appendChild(paragraph);
+            {% endif %}
+            {%- endif -%}
+
+            const vencimiento_paragraph = document.createElement('p');
+            vencimiento_paragraph.innerText = '*Prazos de vencimento passam a contar a partir do dia da compra';
+            vencimiento_paragraph.classList.add('credit-message');
+            vencimiento_paragraph.classList.add('mt-0');
+            if(paymentBox) paymentBox.append(vencimiento_paragraph);
+            
+            const ICMSST_Disclaimer = document.createElement('p');
+            ICMSST_Disclaimer.innerText = '*Caso não recolha o ICMS-ST, o valor será ajustado no boleto para pagamento';
+            ICMSST_Disclaimer.classList.add('credit-message');
+            ICMSST_Disclaimer.classList.add('mt-0');
+            if(paymentBox) paymentBox.append(ICMSST_Disclaimer);
+          }
+
+          const radioButtons = document.querySelectorAll('.radio-wrapper .radio__label');
+          for(let i = 0; i < radioButtons.length; i++){
+            Object.assign(radioButtons[i].style, {
+              "display": "flex",
+              "align-items": "center"
+            })
+            Object.assign(radioButtons[i].parentElement.style, {
+              "padding": "0",
+              "height": "60px",
+              "display": "flex",
+              "align-items": "center",
+            })
+          }
+          const radioLabels = document.querySelectorAll('div.radio__label label, label.radio__label, div.radio__label h3');
+
+          const radioButtonsContainers = document.querySelectorAll('.content-box .radio-wrapper.content-box__row');
+
+          for (let i = 0; i < radioButtonsContainers.length; i++) {
+            radioButtonsContainers[i].addEventListener("click", () => {
+              radioButtonsContainers[i].querySelector(".input-radio").click();
+            });
+          }
+          
+          for(let i = 0; i < radioLabels.length; i++) {
+            const labelText = radioLabels[i].textContent.trim();
+            const customRadio = document.createElement('div');
+            const hasDescription = document.querySelector(".truepay-desc");
+            customRadio.innerHTML = `
+              <svg width="30" class="img_radio-tick" height="23" viewBox="0 0 30 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 11L10.6667 20L28 2" stroke="white" stroke-width="5"/>
+              </svg>
+            `;
+            customRadio.classList.add('custom-radio');
+            if (labelText == "Recebíveis da maquininha de cartão" && !hasDescription) {
+              const truepayDescription = `<p class="small-text d-inline" style="margin-left:67px;font-weight:100;">TruePay é um parceiro da Inventa que permite você utilizar o saldo das suas maquininhas SEM TAXA, liberando mais capital e prazo (até 90 dias) para você comprar.</p><p class="small-text d-inline" style="margin-left:67px;margin-top:10px;font-weight:100;">Escolhendo essa opção ao término do pagamento você será redirecionado para se cadastrar no site da TruePay.</p>`;
+              const truePayIcon = `<div class="radio__label__accessory" style="top: 20px;"><h3 class="visually-hidden">Pague com:</h3><ul role="list" data-brand-icons-for-gateway="truepay"><li class="payment-icon payment-icon--truepay" data-payment-icon="truepay" aria-current="false" style="margin-left: 0.25em;width:80px;"><span class="visually-hidden">TruePay</span></li></ul></div>`;
+              radioLabels[i].insertAdjacentHTML('afterend', truePayIcon);
+              radioLabels[i].insertAdjacentHTML('beforeend', truepayDescription);
+              radioLabels[i].style["flex-wrap"] = "wrap";
+              radioLabels[i].closest(".radio-wrapper.content-box__row").classList.add("truepay-container");
+            }
+            radioLabels[i].prepend(customRadio);
+          }
+          const radioInputs = document.querySelectorAll('input[type="radio"]');
+          for(let i = 0; i < radioInputs.length; i++){
+            const parent = radioInputs[i].parentElement;
+            const node = radioInputs[i].parentElement.removeChild(radioInputs[i]);
+            parent.parentElement.prepend(node);
+          }
+
+          const radioAux = document.querySelector('div.content-box div.radio-wrapper.content-box__row');
+          if(radioAux){
+            if(!radioAux.querySelector('.custom-radio')){
+              const customRadio = document.createElement('div');
+              customRadio.innerHTML = `
+                <svg width="30" class="img_radio-tick" height="23" viewBox="0 0 30 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M2 11L10.6667 20L28 2" stroke="white" stroke-width="5"/>
+                </svg>
+              `;
+              customRadio.classList.add('custom-radio');
+              customRadio.classList.add('selected');
+              radioAux.prepend(customRadio);
+            }
+          }
+
+          const descontosActions = document.querySelectorAll('div[data-reduction-form] form.edit_checkout.animate-floating-labels');
+          const previousCoupons = window.sessionStorage.getItem('couponsQty');
+          const couponsQuantity = document.querySelectorAll('.tags-list .tag').length;
+          if(previousCoupons){
+            if(parseInt(previousCoupons) < parseInt(couponsQuantity)){
+              /* window.dataLayer.push({
+                event: 'applyCoupon'
+              }) */
+              driver.pushEvent('applyCoupon', {});
+            }else if(parseInt(previousCoupons) > parseInt(couponsQuantity)){
+              /* window.dataLayer.push({
+                event: 'removeCoupon'
+              }) */
+              driver.pushEvent('removeCoupon', {});
+            }
+          }
+          window.sessionStorage.setItem('couponsQty', couponsQuantity);
+          for(let i = 0; i < descontosActions.length; i++){
+            descontosActions[i].addEventListener('submit', () => {
+              const content_boxes = document.querySelectorAll('.content-box');
+              const htmlsBoxes = [];
+              for(let j = 0; j < content_boxes.length; j++){
+                htmlsBoxes.push(content_boxes[j].innerHTML);
+              }
+              const checker = setInterval(() => {
+                if(!calculatingTributes){
+                  let found = false;
+                  const content_boxes = document.querySelectorAll('.content-box');
+                  for(let j = 0; j < content_boxes.length; j++){
+                    if(content_boxes[j].innerHTML != htmlsBoxes[j]) {
+                      found = true;
+                      break;
+                    }
+                  }
+                  if(found){
+                    document.body.classList.add('invisible-loading');
+                    window.location.reload();
+                    clearInterval(checker)
+                  }
+                }
+              }, 250);
+            })
+          }
+         }
+      } 
+      }else{
+        document.querySelector('body').classList.remove('invisible-loading');
+      }
+
+      function insertBefore(el, referenceNode) {
+          referenceNode.parentNode.insertBefore(el, referenceNode);
+      }
+      function insertAfter(newNode, existingNode) {
+          existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
+      }
+
+      function formatPrice(number) {
+        const floatNum = number / 100;
+        return new Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL'}).format(floatNum);
+      }
+  </script>
+  <script defer>
+    const customerName = "{{ checkout.customer.first_name | camelcase }}";
+    const orderNumber = "{{ checkout.order_number }}";
+    
+    /*function showWppText(text = 'Tem alguma pergunta?', message = `Olá, sou ${customerName} e tenho dúvidas sobre minha compra ${orderNumber}`){
+      const wppText =  document.querySelector('.wpp-text');
+      if(wppText) {
+        const link = wppText.parentElement;
+        const url = new URL(link.getAttribute('href'));
+        const params = url.searchParams;
+        params.set('text', message);
+        url.search = params.toString();
+        link.setAttribute('href', url.toString());
+        wppText.innerText = text;
+        wppText.classList.add('text-show');
+      }
+    }
+    
+    function closeWppText(){
+      const wppText = document.querySelector('.wpp-text');
+      if(wppText) wppText.classList.remove('text-show');
+    }*/
+
+    {% comment %}
+    let idleTime = 0;
+    const idleTime_interval = setInterval(() => {
+      idleTime += 1000;
+      if(idleTime >= 6000 && typeof showWppText == 'function') {
+        showWppText('Tem alguma pergunta?', `Olá, sou ${customerName} e tenho dúvidas sobre minha compra ${orderNumber}`);
+        clearInterval(idleTime_interval);
+      }
+    }, 1000);
+    window.addEventListener('mousemove', resetIdleTime);
+    window.addEventListener('keypress', resetIdleTime);
+
+    function resetIdleTime(){
+      idleTime = 0;
+    }
+    {% endcomment %}
+  </script>
+  {{
+    checkout_scripts
+  }}
+
+  <script src="{{ 'datalayer.js' | asset_url }}" defer></script>
+  <script src="{{ 'checkout.js' | asset_url }}" defer></script>
+  <script src="{{ 'getStateCode.js' | asset_url }}" defer></script>
+</html>

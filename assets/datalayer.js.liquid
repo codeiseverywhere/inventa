@@ -1,0 +1,22 @@
+{%- assign properties = item.properties | json -%}
+{%- assign taxes = 0 -%}
+{%- for item in checkout.line_items -%}
+	{%- if properties contains "_imposto$" -%}
+    	{%- assign taxes = properties | split: '_imposto$",' | last | split: '],' | first | plus: 0 -%}
+    {%- endif -%}
+{% endfor %}
+
+window.addEventListener("DOMContentLoaded", () => {
+	const step = document.querySelector('div.step').getAttribute("data-step");
+	if(step === "thank_you"){
+  		window.dataLayer = window.dataLayer || []
+		dataLayer.push({
+  			'event': 'checkout:thank_you',
+  			'totalPrice': '{{ checkout.total_price }}',
+    		'orderNumber': '{{ checkout.order_number }}',
+    		'currency':'{{shop.currency}}',
+    		'tax': '{{ taxes }}',
+    		'shipping': '{{ checkout.shipping_price }}'
+		})
+	}
+})

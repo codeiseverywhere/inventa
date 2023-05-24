@@ -1,0 +1,464 @@
+{% raw %}{% assign topBrands = {% endraw %}' {{ shop.metafields.brands.top }} '{% raw %} %}{% endraw %}
+{% raw %}{% assign customerState = "" %}{% endraw %}
+{% raw %}{% assign vendorDiscounts = {% endraw %}' {{ shop.metafields.brands.discounts }} '{% raw %} %}{% endraw %}
+{% raw %}{% assign minimumMetafield = {% endraw %}' {{ shop.metafields.sellers | json}} '{% raw %} %}{% assign collectionHandle  = {% endraw %} "{{collection.handle}}" {% raw %} %}{% endraw %}
+
+{% raw %}{% assign customerCPF = false %}{% endraw %}
+{% raw %}{% assign productCPF = false %}{% endraw %}
+{% raw %}{% assign productVendorName = product.vendor %}{% endraw %}
+{% raw %}{% assign productVendorNameEncoded = product.vendor | url_encode %}{% endraw %}
+{% raw %}{% assign vendorLink = "/collections/vendors?q=" | append: productVendorNameEncoded %}{% endraw %}
+
+{% raw %}
+{% if product.tags contains "cpf-only-required" %}
+  {% assign productCPF = true %}
+{% endif %}
+{% if product.vendor == "Inventa Comércio" %}
+  {% assign productTags = product.tags | join: "|||" %}
+  {% assign productVendorIdentifier = "Fornecedor_" %}
+  {% if productTags contains "Marca_" %}
+    {% assign productVendorIdentifier = "Marca_" %}
+  {% endif %}
+  {% assign productVendorName = productTags | split: productVendorIdentifier | last | strip | split: "|||" | first %}
+  {% assign vendorNameUrl = productVendorName | handle %}
+  {% assign vendorLink = "/collections/" | append: vendorNameUrl %}
+{% endif %}
+{% endraw %}
+
+{% if customer %}
+  {% assign customerTags = customer.tags | downcase | join: "," %}
+  {% if customerTags contains 'estado:' %}
+    {% assign stateTag = customerTags | split: "estado:" | last | strip | slice: 0, 2 %}
+    {% raw %}{% assign customerState = {% endraw %} {{ stateTag | json}} {% raw %} %}{% endraw %}
+  {% endif %}
+  {% if customerTags contains 'cpf-user' %}
+    {% raw %}{% assign customerCPF = true %}{% endraw %}
+  {% endif %}
+{% endif %}
+
+{% raw %}
+{% assign root_url = {% endraw %}"{%- if routes.root_url != "/" -%}{{ routes.root_url }}{%- endif -%}"{% raw %} %}
+{% assign currencyFormat = {% endraw %}{{ shop.money_format | json }}{% raw %} %}
+{% assign swatch_options = '' | downcase | replace: ', ', ',' | split: ","  %}
+{% assign image_options  = '' | downcase | replace: ', ', ',' | split: ","  %}
+{% assign text_options   = '' | downcase | replace: ', ', ',' | split: ","  %}
+{% assign show_selected_variant_info = true %}
+
+{% assign image_size     = '360x504' %}
+{% assign images_count   = product.images | size %}
+{% assign variants_count = product.variants | size %}
+{% assign options_count  = product.options | size %}
+{% assign no_image = 'https://cdn.shopify.com/s/images/themes/product-1.png' %}
+
+{% assign featured_image            = product.featured_image %}
+{% assign product_price             = product.price %}
+{% assign product_handle = product.handle %}
+{% assign product_sku = product.sku %}
+{% assign product_compare_at_price  = product.compare_at_price %}
+{% assign second_image_index        = 2 %}
+{% assign selected_or_first_available_variant = product.selected_or_first_available_variant %}
+
+{% if show_selected_variant_info and product.selected_variant %}
+{% assign selected_or_first_available_variant = product.selected_variant %}
+{% assign product_price             = selected_or_first_available_variant.price %}
+{% assign product_compare_at_price  = selected_or_first_available_variant.compare_at_price %}
+{% if selected_or_first_available_variant.image %}
+{% assign featured_image  = selected_or_first_available_variant.image %}
+{% endif %}
+{% for image in product.images %}
+{% if image.id == featured_image.id %}
+{% if forloop.index == images_count %}
+{% assign second_image_index = 1 %}
+{% else %}
+{% assign second_image_index = forloop.index | plus: 1 %}
+{% endif %}
+{% endif %}
+{% endfor %}
+{% endif %}
+{%- assign product_form_classes = 'product-item__action-list button-stack' -%}
+{%- assign form_id = 'product_form_id_' | append: product.id | append: '_' | append: section.id -%}
+{%- assign productQty = 1 -%}
+{%- assign stepQuantity = 1 -%}
+{%- assign maxQuantity = 0 -%}
+{% assign suggested_price = false %}
+{% assign productOriginalPrice = 0 %}
+{% assign productTaxPrice = 0 %}
+{%- assign noShowTo = false -%}
+{%- assign ultimasunidades = false -%}
+{%- for tag in product.tags -%}
+{% assign tagName = tag | downcase %}
+{%- if tagName contains "pedido máximo_" -%}
+{%- assign maxQuantity = tagName | split: '_' | last | plus: 0 -%}
+{%- endif -%}
+{%- if tagName contains 'ultimasunidades' -%}
+  {%- assign ultimasunidades = tag | split: ':' | last | plus: 0 -%}
+{%- endif -%}
+{% if tagName contains "preço de varejo sugerido" %}
+{% assign price = tagName | split: '_' | last | plus: 0 %}
+{% if price > 0 %}
+{% assign suggested_price = price %}
+{% endif %}
+{% continue %}
+{% endif %}
+{%- if tagName contains "pedido mínimo (produto)" -%}
+{%- assign productQty = tagName | split: '_' | last | plus: 0 | at_least: 1 -%}
+{%- endif -%}
+{%- if tagName contains "quantidade_aumento:" -%}
+  {%- assign stepQuantity = tagName | split: ':' | last | plus: 0 | at_least: 1 -%}
+{%- endif -%}
+{% if tagName contains "impostos:" %}
+{% assign taxAmount = tagName | split: customerState | last | split: "|" | first | remove: ":" | divided_by: 100 %}
+{% endif %}
+{% if tagName contains "preco original:"%}
+{% assign productOriginalPrice = tagName | remove: "preco original:" | plus: 0 %}
+{% assign productTaxPrice = productOriginalPrice | times: taxAmount | round: 2 %}
+{% endif %}
+{% if tagName contains "noshow" %}
+    {%- assign noShowTo = tag | split: ':' | last | downcase -%}
+{% endif %}
+{%- endfor -%}
+
+<div{% if showPageData %} data-page="{{page}}"{% endif %} class="spf-col-xl-3 spf-col-lg-4 spf-col-md-6 spf-col-sm-6 spf-col-6">
+<div class="spf-product-card spf-product-card__left spf-product-card__template-2 mb-3{% unless product.available %} spf-soldout{% endunless %}">
+  <div class="spf-product-card__inner border-radius-sm border-width-thin color-border-020">
+    {% assign originalPriceToCompare = product_price %}
+    
+    {% if productOriginalPrice > 0 %}
+      {% assign originalPriceToCompare = productOriginalPrice %}
+    {% endif %}
+    {% assign promotionPrice = product_compare_at_price | minus: originalPriceToCompare %}
+    {% assign promotionPercentage = promotionPrice | times: 100.0 | divided_by: product_compare_at_price | round: 1 %}
+    {% unless collectionHandle == 'marcas' %}
+      {% unless product.available %}
+      <span translatable class="spf-product__label spf-product__label-soldout">{{translation.product.sold_out | default: "Sold out"}}</span>
+      {% elsif product_compare_at_price > originalPriceToCompare %}
+      <span translatable class="spf-product__label spf-product__label-sale sale-text">{{promotionPercentage}}% de desconto</span>
+      {% endunless %}
+    {% endunless %}
+    <a class="spf-product-card__image-wrapper{% if images_count > 1 %} hover-effect{% endif %}" href="{%- if collectionHandle == 'marcas' -%}{{ vendorLink }}{%- else -%}{{root_url}}{{ product.url | within: collection }}{%- endif -%}">
+      {% if images_count > 0 %}
+        {% for image in product.images %}
+          <img
+            data-variants="{% if image.variant_ids %}{{image.variant_ids | join: ','}}{% endif %}"
+            class="spf-product-card__image spf-product-card__image-{% if featured_image.id == image.id %}main{% elsif forloop.index == second_image_index %}secondary{% else %}hidden{% endif %}"
+            srcset="{%- if image.width >= 100 -%}{{ image.src | img_url: '150x' }} 150w,{%- endif -%}
+              {%- if image.width >= 250 -%}{{ image.src | img_url: '250x' }} 250w{%- endif -%}"
+            src="{{ image.src | img_url: '250x' }}"
+            sizes="(max-width: 100px) 150px, (max-width: 250px) 250px"
+            alt="{{ image.alt | escape }}"
+            loading="lazy"
+            class="motion-reduce"
+            width="{{ image.width }}"
+            height="{{ image.height }}"
+          >
+        {% endfor %}
+      {% else %}
+        <img data-variants="" class="spf-product-card__image spf-product-card__image-main" src="{{no_image}}" alt="{{product.title | escape}}">
+      {% endif %}
+    </a>
+    {% if images_count > 1 %}
+    <div class="spf-product-card__images-navigation">
+      <span class="image-navigation prev"><svg width="25" height="25" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1203 544q0 13-10 23l-393 393 393 393q10 10 10 23t-10 23l-50 50q-10 10-23 10t-23-10l-466-466q-10-10-10-23t10-23l466-466q10-10 23-10t23 10l50 50q10 10 10 23z"/></svg></span>
+      <span class="image-navigation next"><svg width="25" height="25" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1171 960q0 13-10 23l-466 466q-10 10-23 10t-23-10l-50-50q-10-10-10-23t10-23l393-393-393-393q-10-10-10-23t10-23l50-50q10-10 23-10t23 10l466 466q10 10 10 23z"/></svg></span>
+    </div>
+    {% endif %}
+  </div>
+
+  {% assign minimum_order = 0 %}
+  {% assign productVendor = productVendorName | replace: "+", "" | downcase | replace: "/", "" | replace: " ", "-" | replace: "-&", "" | replace: "'", "" | replace: "--", "-" | replace: ".", "" | replace: "&", "-" | replace: "!", "" | replace: ",", "" | replace: "_", "-" | replace: "|", "" %}
+  {% assign productVendorImg = productVendorName | downcase | replace: "/", "" | replace: " ", "-" | replace: "-&", "" | replace: "'", "-" | replace: "--", "-" | replace: ".", "" | replace: "&", "-" | replace: "!", "" | replace: ",", "" | replace: "_", "-" %}
+  {% assign productVendor = productVendor | replace: "--", "-" %}
+  {% assign split_name = '"' | append: productVendor | append: '":' %}
+  {% if minimumMetafield contains split_name %}
+  {% assign minimum_order = minimumMetafield | split: split_name | last | split: ',' | first | remove: "}" | plus: 0 %}
+  {% endif %}
+  {% assign imageUrl = productVendorImg | handle | append: ".png" %}
+  {% assign topBrandVendor = productVendorName | remove: "'" %}
+
+  {%- if collectionHandle == 'marcas' -%}
+    <div class="spf-product__info">
+      <div class="row">
+        <div class="col-4">
+          <div class="vendor-img border border-light rounded">
+            <div class="position-absolute w-100 h-100 d-flex justify-content-center align-items-center">
+              <img
+                class="img-fluid m-auto"
+                src="{{ imageUrl | file_img_url: '50x' }}"
+                srcset="{{ imageUrl | file_img_url: '50x' }} 100w"
+                sizes="(max-width: 120px) 50px"
+                alt="Imagem de loja {{ wk_store_names[forloop.index0] }}"
+                loading="lazy"
+                class="motion-reduce"
+                width="50px"
+                height="50px"
+                onerror="this.onerror=null; this.srcset='{{ 'icon-1.png' | file_img_url: '50x' }}'"
+              >
+            </div>
+          </div>
+        </div>
+        <div class="col-8 p-md-0 lh-sm">
+          <a href="{{ vendorLink }}" class="d-block color-main-100 fs-4">
+            <span>{{ productVendorName | truncate: 14, '...' }}</span>
+            {% if topBrands contains topBrandVendor %}{% endraw %}{% render "icon-top-brand" %}{% raw %}{% endif %}
+          </a>
+          <span class="d-inline fornecedor-min color-main-080"> &nbsp;{% if minimum_order != 0 and minimum_order != "0" %}Min. R${{ minimum_order | round  }}{% else %}Sem mínimo{% endif %}</span>
+        </div>
+      </div>
+    </div>
+  {%- else -%}
+    <div class="spf-product__info">
+      {% if product.vendor %}
+      {% assign productVendor = product.vendor | replace: "'", "" %}
+      {% if vendorDiscounts contains productVendor %}
+        {% assign lastValidCharacter = vendorDiscounts | split: productVendor | last | slice: 0, 1 %}
+        {% if lastValidCharacter == '"' %}
+          <div class="position-relative">
+            <a href="{{root_url}}{{ product.url | within: collection }}" class="discount-label">
+              <small class="px-1 promotion-pill">DESCONTO POR VOLUME</small>
+            </a>
+          </div>
+        {% endif %}
+      {% endif %}
+      <div class="spf-product-card__vendor">
+        <div class="d-flex align-items-center">
+          <a class="color-main-080" href="{{ vendorLink }}">
+            {{ productVendorName | upcase | truncate: 14, '...' }} <span class="d-inline-block fornecedor-min me-2"> &nbsp;{% if minimum_order != 0 and minimum_order != "0" %}Min. R${{ minimum_order | round  }}{% else %}Sem mínimo{% endif %}</span>
+            {% if topBrands contains topBrandVendor %}{% endraw %}{% render "icon-top-brand", iconSize: 13 %}{% raw %}{% endif %}
+          </a>
+        </div>
+      </div>
+      {% endif %}
+      <div class="h4 spf-product-card__title mb-2">
+        <a href="{{root_url}}{{ product.url | within: collection }}" class="color-main-100">{{ product.title | truncate: 50, '...' }}</a>
+      </div>
+      <div class="product-card_ultimas-unidades">
+        {%- unless ultimasunidades == false -%}
+          {%- if ultimasunidades > 0 -%}
+          <span>RESTAM {{ ultimasunidades }} UN.</span>
+          {%- else -%}
+          <span>RESTAM POUCOS</span>
+          {%- endif -%}
+        {%- endunless -%}
+      </div>
+
+      {% capture productPrice %}
+        <div class="spf-product-card__price-wrapper product-item__price-list mb-2 d-flex card-product-price">
+          {% if product_compare_at_price > originalPriceToCompare %}
+          <div>
+            <span class="spf-product-card__oldprice text-decoration-line-through d-block fs-6{% unless currencyFormat contains 'money' %} money{% endunless %}">{{ product_compare_at_price | money }}</span>
+            <span class="spf-product-card__price fw-bold fs-5{% unless currencyFormat contains 'money' %} money{% endunless %}">{% if productOriginalPrice > 0 %} {{productOriginalPrice | money}} {% else %} {{ product_price | money }} {% endif %}</span>
+            <small class="d-block">{% if productTaxPrice > 0 and customerCPF == false %}+ {{ productTaxPrice | money }} ICMS ST{% else %} &nbsp; {% endif %}</small>
+          </div>
+          {% else %}
+          <div>
+            <span class="d-block fs-6 product-card__oldprice">&nbsp;</span>
+            <span class="spf-product-card__price fw-bold fs-5{% unless currencyFormat contains 'money' %} money{% endunless %}">{% if productOriginalPrice > 0 %} {{productOriginalPrice | money}} {% else %} {{ product_price | money }} {% endif %}</span>
+            <small class="d-block">{% if productTaxPrice > 0 and customerCPF == false %}+ {{ productTaxPrice | money }} ICMS ST{% else %} &nbsp; {% endif %}</small>
+          </div>
+          {% endif %}
+          {% if suggested_price %}
+          <span class="align-self-end flex-grow-1 text-end pt-3">{{ suggested_price | money }} <br /><small>revenda</small></span>
+          {% endif %}
+        </div>
+      {% endcapture %}
+      {% capture productPriceBlocked %}
+        <div class="price-container">
+          <div class="spf-product-card__price-wrapper color-main-100 product-item__price-list mb-2 fs-5 d-flex align-items-end">
+            R$ <div class="ms-2 color-main-100 mt-2">{% endraw %}{% render 'icon-padlock' %}{% raw %}</div>
+          </div>
+          <div class="resell-price spf-product-card__price-wrapper product-item__price-list mb-2 d-flex">
+            <span class="color-main-080 fst-italic">{% if suggested_price %}Revenda por {{ suggested_price | money }} {% else %} &nbsp; {% endif %}</span>
+          </div>
+        </div>
+      {% endcapture %}
+      {% if customer %}
+        {% if customerCPF == false or customerCPF == true and productCPF == true %}
+          {{ productPrice }}
+        {% else %}
+          {{ productPriceBlocked }}
+        {% endif %}
+      {% else %}
+        {% if productCPF == true %}
+          {{ productPrice }}
+        {% else %}
+          {{ productPriceBlocked }}
+        {% endif %}
+      {% endif %}
+
+      {% for option in product.options %}
+      {% assign option_index = 'option' | append: forloop.index %}
+      {% assign option_index_number = forloop.index %}
+      {% assign option_name  = option.name | downcase %}
+      {% if option.values.size > 1 %}
+      {% if swatch_options contains option_name or text_options contains option_name or image_options contains option_name %}
+      <div class="spf-product__swatchs">
+        {% for value in option.values %}
+        {% assign available = false %}
+        {% assign swatch_image = false %}
+        {% for variant in product.variants %}
+          {% if variant[option_index] == value %}
+            {% if swatch_image == false and variant.image %}
+              {% assign swatch_image = variant.image.src %}
+            {% endif %}
+            {% if variant.available %}
+              {% assign available = true %}
+            {% endif %}
+            {% if variant.inventory_quantity == 0 %}
+              {% assign out_of_stock = true %}
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+        
+        {% assign option_value  = value | downcase %}
+        <span data-option="{{option_index_number}}" class="spf-product__swatch{% if selected_or_first_available_variant[option_index] == value %} is-selected{% endif %}" title="{{value | escape}}">
+          <span translatable class="spf-product__swatch-inner">
+            {% if image_options contains option_name and swatch_image %}
+            <span class="spf-product__swatch-image" style="background-image: url('{{ swatch_image | img_url: '24x' }}')"></span>
+            {% elsif swatch_options contains option_name %}
+            {% if swatches[option_name] and swatches[option_name][option_value] %}
+            {% if swatches[option_name][option_value].mode == 1 %}
+            <span class="spf-product__swatch-color" style="background-color: {{ swatches[option_name][option_value].color_1 }}"></span>
+            {% elsif swatches[option_name][option_value].mode == 2 %}
+            <span class="spf-product__swatch-color" style="background-color: {{ swatches[option_name][option_value].color_1 }}"></span>
+            <span class="spf-product__swatch-color" style="border-right-color: {{ swatches[option_name][option_value].color_2 }}"></span>
+            {% elsif swatches[option_name][option_value].mode == 3 %}
+            <span class="spf-product__swatch-image" style="background-image: url('{{ swatches[option_name][option_value].image }}')"></span>
+            {% endif %}
+            {% elsif option_name contains 'colo' %}
+            {% assign value_handle = option_value | handle %}
+            {% assign value_jpg    = value_handle | append: '.jpg' %}
+            {% assign value_png    = value_handle | append: '.png' %}
+            {% assign value_jpeg   = value_handle | append: '.jpeg' %}
+            <span class="spf-product__swatch-image" style="background-color: {{ option_value | replace:"'", "\'" | escape_once }};{% if images contains value_jpg %}background-image: url('{{ value_jpg | asset_img_url: '50x' | prepend: 'https:' }}'){% elsif images contains value_png %}background-image: url('{{ value_png | asset_img_url: '50x' | prepend: 'https:' }}'){% elsif images contains value_jpeg %}background-image: url('{{ value_jpeg | asset_img_url: '50x' | prepend: 'https:' }}'){% endif %}"></span>
+            {% else %}
+            <span class="spf-product__swatch-text">{{value}}</span>
+            {% endif %}
+            {% else %}
+            <span class="spf-product__swatch-text">{{value}}</span>
+            {% endif %}
+          </span>
+        </span>
+        {% endfor %}
+      </div>
+      {% endif %}              {% endif %}              {% endfor %}
+    </div>
+
+    {%- if customer -%}
+      {%- capture buyButton -%}
+        <div>
+          {%- assign quick_buy_classes = 'product-item__action-button py-3 px-0 px-sm-2 btn btn-outline-dark w-100 border-custom' -%}
+          {% assign selling_policy = product.selected_or_first_available_variant.inventory_policy | downcase %}
+          {% assign minimumAmountToBuy = productQty | at_least: stepQuantity %}
+          {% assign variantCanBeBought = false %}
+            {% if selling_policy == 'continue' or product.selected_or_first_available_variant.inventory_management == nil %}
+              {% assign variantCanBeBought = true %}
+            {% endif %}
+          {%- if product.available and variantCanBeBought == true or product.selected_or_first_available_variant.inventory_quantity >= minimumAmountToBuy -%}
+          {%- if product.variants.size == 1 -%}
+          {% assign qty_in_cart = 0 %}
+          {% endraw %}
+          {% assign carts_qtys_noraw = "" %}
+          {% for item in cart.items %}
+          {% assign item_val = item.variant_id | append: ':' | append: item.quantity %}
+          {% assign carts_qtys_noraw = carts_qtys_noraw | append: item_val | append: '|||' %}
+          {% endfor %}
+          {% raw %}
+          {% assign carts_qtys = {% endraw %}"{{ carts_qtys_noraw }}"{% raw %} %}
+
+          <form action="/cart/add.js" product-id="{{ product.selected_or_first_available_variant.id }}" accept-charset="UTF-8" method="POST" class="add-product" enctype="multipart/form-data">
+            <input type="hidden" name="quantity" value="1">
+            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+            <input type="hidden" name="properties[_estado]" value="{{customerState}}">
+          </form>
+
+          {% if customer %}
+            <div product-id="{{ product.selected_or_first_available_variant.id }}" image-associated="{{ product.images[0].src | img_url: '320x320' }}" class="border-custom rounded cart-controls d-flex align-items-center justify-content-center text-secondary fs-4 position-relative quantity-controls">
+              <button onclick="lessProduct(event, '{{ product.selected_or_first_available_variant.id }}')" class="d-flex align-items-center position-absolute less-product">
+                <svg width="24" height="2" viewBox="0 0 24 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="24" height="2" fill="#777A7C"/>
+                </svg>
+              </button>
+
+              {% assign id_variant = product.selected_or_first_available_variant.id %}
+              {% if carts_qtys contains id_variant %}
+              {% assign split_id = id_variant | append: ':' %}
+              {% assign qty_in_cart = carts_qtys | split: split_id | last | split: '|||' | first | plus: 0 %}
+              {% endif %}
+              <input type="hidden" data-variant-id="{{ id_variant }}" data-vendor="{{ productVendorName }}" data-sku="{{ product_sku }}" data-title="{{ product.title }}" {% if customer %}data-price="{{ product_price }}"{% endif %}>
+              <input type="number" name="no-serialize" product-title="{{ product.title | truncate: 25, '...' }}" onchange="changeInput(event, '{{ product.selected_or_first_available_variant.id }}')" value="{{ qty_in_cart }}" old-value="{{ qty_in_cart }}" min="{{ productQty }}" {% if maxQuantity > 0 %}max="{{ maxQuantity }}" {% endif %} data-step-quantity="{{ stepQuantity }}" {% if product.first_available_variant.inventory_management == "shopify" and selling_policy == 'deny'  %} instock="{{ product.selected_or_first_available_variant.inventory_quantity }}" {% endif %} class="text-center value-control border-0">
+
+              <button onclick="addProduct(event, '{{ product.selected_or_first_available_variant.id }}')" class="d-flex align-items-center position-absolute add-product">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M11 13V24H13V13H24V11H13V0H11V11H0V13H11Z" fill="#777A7C"/>
+                </svg>
+              </button>
+            </div>
+          {% else %}
+            {% render 'toggle-prices' %}
+          {% endif %}
+
+          {%- else -%}
+            <a href="{{ product.url | within: collection }}" class="{{ quick_buy_classes }} mt-2 line-height-20">Escolha uma opçāo</a>
+          {%- endif -%}
+          {%- else -%}
+          <button class="{{ quick_buy_classes | replace: 'button--primary', 'button--disabled' }} mt-2 line-height-20" disabled>Esgotado</button>
+          {%- endif -%}
+
+          {%- assign quick_view_classes = 'product-item__action-button button button--small py-3 py-sm-0 button--ternary hidden-phone' -%}
+
+          <div class="quantity-messages">
+            {% if productQty > 0 and stepQuantity > 1 %}
+              {% assign minBoxes = productQty | divided_by: stepQuantity | ceil | at_least: 1 %}
+              <small class="d-block minimum-order">Caixa {{ stepQuantity }}un (Min {{ minBoxes }}cx)</small>
+            {% elsif productQty > 1 %}
+              <small class="d-block minimum-order">Quantidade mínima {{productQty}} un.</small>
+            {% endif %}
+            {% if maxQuantity > 0 %}
+              <small class="d-block">Quantidade máxima {{ maxQuantity }} un.</small>
+            {% endif %}
+
+            {% if product.first_available_variant.inventory_management == "shopify" and selling_policy == 'deny' %}
+              {% if product.first_available_variant.inventory_quantity > 0 %}
+                <div class="err_outofstock" id="outofstock-{{ product.selected_or_first_available_variant.id }}" style="display:none;"><small>Desculpe, este produto não tem mais estoque</small></div>
+              {% endif %}
+            {% endif %}
+
+          </div>            
+        </div>
+      {%- endcapture -%}
+
+      {% if customerCPF == true and productCPF == true %}
+        {{ buyButton }}
+      {% elsif customerCPF == false %}
+        {% unless noShowTo and customerState and noShowTo contains customerState %}
+          {%- if product.tags contains "ie_products" -%}
+            {%- if customer.tags contains "ie_products_ok" -%}
+              {{ buyButton }}
+            {%- else -%}
+              {% endraw %}{% render 'ie-alert' %}{% raw %}
+            {%- endif -%}
+          {%- else -%}
+            {{ buyButton }}
+          {%- endif -%}
+        {% else %}
+          <div>
+            <div class="not-available-shipping rounded fs-4 fw-bold d-flex justify-content-center align-items-center">
+              <span>Indisponível</span>
+            </div>
+            <div class="quantity-message">
+              <p class="text-center"><small>Marca não atende a região</small></p>
+            </div>
+          </div>
+        {% endunless %}
+      {% else %}
+        {% endraw %}{% render 'cnpj-alert' %}{% raw %}
+      {% endif %}
+    {%- else -%}
+      {% endraw %}{% render 'toggle-prices' %}{% raw %}
+    {%- endif -%}
+  {%- endif -%}
+
+</div>
+</div>
+
+{% endraw %} 

@@ -1,0 +1,180 @@
+{% if section.settings.show_home_campaign_banner %}
+  <section id="home-main-section" class="section my-0 py-4" data-section-id="home-main-section">
+  <div class="container">
+    <div class="row px-lg-4 px-xl-0 colum-direction">
+      <div class="col-lg-4 col-xl-3 position-relative">
+        <div class="text-box-container bg-white custom-radius p-4 ">
+          <h1 class="display-6 lh-2 fw-bold">{{section.settings.campaign_title}}</h1>
+          <p class="my-4">{{section.settings.campaign_content | slice: 0, 200 }}</p>
+          {% if section.settings.campaign_button_url %}
+            <a href="{{section.settings.campaign_button_url }}" class="btn yellow-btn fw-bold py-3 px-4">{{section.settings.campaign_button_title }}</a>
+          {% endif %}
+        </div>
+      </div>
+  
+      <div class="col-lg-8 col-xl-9 px-lg-4 px-xl-0">
+        <div class="banner-image-container">
+          {% if section.settings.campaign_banner_url %}
+            <a href="{{section.settings.campaign_banner_url}}">
+          {% endif %}  
+            <picture>
+              <source media="(min-width: 990px)" srcset="{{ section.settings.campaign_desktop_image | img_url: 'master' }}">
+              <img src="{{ section.settings.campaign_mobile_image | img_url: 'master' }}" alt="{{ section.settings.campaign_mobile_image.alt }}">
+            </picture>
+          {% if section.settings.campaign_banner_url %}  
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  </section>
+
+<style>
+  .banner-image-container {
+    height: 480px;
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .text-box-container {
+    position: absolute;
+    width: 465px;
+    margin: auto;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    height: fit-content;
+    max-height: 300px;
+  }
+
+  .banner-image-container img {
+    border-radius: 8px;
+  }
+
+  .text-box-container p {
+    color: #777A7C;
+    font-size: 1.2rem;
+  }
+
+  .text-box-container a {
+    font-size: 1.3rem;
+    border-radius: 1.65rem;
+  }
+
+  @media (min-width: 600px){
+    .text-lg-breaking{
+      max-width: 320px;
+    }
+  }
+
+  @media (max-width: 1025px) {
+    .banner-image-container > img {
+      height: 100%;
+      max-width: auto;
+    }
+  }
+
+  @media (max-width: 990px) {
+    .text-box-container {
+      top: 900px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .banner-image-container > img {
+      height: auto;
+    }
+
+    .text-box-container {
+      width: 60%;
+      top: 100vw;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .banner-image-container {
+      height: 285px;
+    }
+
+    .text-box-container {
+      width: 328px;
+      top: 600px;
+      position:initial;
+    }
+
+    .colum-direction{
+      flex-direction:column-reverse;
+    }
+
+    .text-box-container a {
+      width: 100%;
+      font-size: 1.1rem;
+    }
+
+    #home-main-section {
+      margin-bottom: 10vw !important;
+    }
+  }
+</style>
+
+{% endif %}
+
+{% schema %}
+{
+  "name": "home-main-campaign-sec",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_home_campaign_banner",
+      "label": "Show Campaign Banner",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "campaign_title",
+      "label": "Title",
+      "default": "O ponto de encontro entre lojistas e marcas"
+    },
+    {
+      "type": "textarea",
+      "id": "campaign_content",
+      "label": "Content",
+      "default": "Compre diretamente de mais de 1.000 fabricantes, tudo em um só lugar e com o melhor preço."
+    },
+    {
+      "type": "image_picker",
+      "id": "campaign_desktop_image",
+      "label": "Desktop Banner"
+    },
+    {
+      "type": "image_picker",
+      "id": "campaign_mobile_image",
+      "label": "Mobile Banner"
+    },
+    {
+      "type": "url",
+      "id": "campaign_banner_url",
+      "label": "Banner URL"
+    },
+    {
+      "type": "text",
+      "id": "campaign_button_title",
+      "label": "Button Title",
+      "default": "Crie a sua conta para comprar"
+    },
+    {
+      "type": "url",
+      "id": "campaign_button_url",
+      "label": "Button URL"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Custom Sections",
+      "name": "home-main-campaign-section"
+    }
+  ]
+}
+{% endschema %}

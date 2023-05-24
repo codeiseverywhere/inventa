@@ -1,0 +1,64 @@
+{
+  "sections": {
+    "header": {
+      "type": "promotion-page-header",
+      "blocks": {
+        "800a5f42-9ae1-483d-86ec-415dcf28c840": {
+          "type": "banner",
+          "settings": {
+            "promotion-banner-image": "shopify:\/\/shop_images\/InventaBLZ_Slideshow_Desk_9d5391f2-9fc9-406c-89e0-8eecb680578f.png",
+            "banner_link": ""
+          }
+        }
+      },
+      "block_order": [
+        "800a5f42-9ae1-483d-86ec-415dcf28c840"
+      ],
+      "settings": {
+        "show-promo-banner": true
+      }
+    },
+    "description": {
+      "type": "promotion-page-description",
+      "settings": {
+        "title": "Inventa Beleza",
+        "content": "Aqui você encontra as principais marcas de Maquiagem e Skincare para sua loja, com muitas opções Cruelty-Free e Veganas, também disponíveis para compra com CPF. 🙂 O pedido mínimo é de apenas R$200,00 e todos produtos dessa página podem ser comprados em um único Pedido Multimarcas, aproveite! 😍",
+        "image": "shopify:\/\/shop_images\/capa_perfil_cc81eaee-2b55-42bc-a342-cd61f2d2c804.png"
+      }
+    },
+    "carousal": {
+      "type": "promotion-product-carousal",
+      "settings": {
+        "show-priority-collection": true,
+        "title": "Título da coleção",
+        "collection": ""
+      }
+    },
+    "collections": {
+      "type": "promotion-page-collections",
+      "blocks": {
+        "50bb270b-a476-4ee7-b5da-9be785de2aff": {
+          "type": "collection",
+          "settings": {
+            "promotion-collections": "pedido-multi-marcas"
+          }
+        }
+      },
+      "block_order": [
+        "50bb270b-a476-4ee7-b5da-9be785de2aff"
+      ],
+      "settings": {
+        "show-promotion-collections": true,
+        "products_per_row": "4",
+        "default_products_per_page": 24,
+        "default_view_layout": "grid"
+      }
+    }
+  },
+  "order": [
+    "header",
+    "description",
+    "carousal",
+    "collections"
+  ]
+}

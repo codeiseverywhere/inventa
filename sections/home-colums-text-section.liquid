@@ -1,0 +1,57 @@
+<section id="home-columns-text-section" class="section my-0 py-5" data-section-id="home-columns-text-section">
+  <div class="container">
+    <div class="row py-5">
+      <div class="col-12 col-lg-4 py-2 mt-4 mt-lg-0">
+        <h3 class="h2 fw-bold">Compre de mais de 1.000 marcas independentes</h3>
+        <p class="text-secondary mb-0 pb-0">Todos os seus fornecedores em um único lugar</p>
+        <a href="/collections/marcas" class="d-block text-primary mt-4">
+          <span class="d-inline-block pe-3 fw-bold">Aproveite a oportunidade</span>
+          {%- render 'icon', icon: 'arrow-right-custom' -%}
+        </a>
+      </div>
+      <div class="col-12 col-lg-4 py-2 mt-4 mt-lg-0">
+        <h3 class="h2 fw-bold">Parcelamento em até 90 dias s/ juros</h3>
+        <p class="text-secondary">Disponível, sob análise de crédito,<br/> imediatamente após o cadastro.</p>
+      </div>
+      <div class="col-12 col-lg-4 py-2 mt-4 mt-lg-0">
+        <h3 class="h2 fw-bold">Até 60% de desconto</h3>
+        <p class="text-secondary">Ofertas exclusivas todas as semanas <br /> em diversas marcas.</p>
+        <a href="/collections/promocoes-1" class="d-block text-primary mt-4">
+          <span class="d-inline-block pe-3 fw-bold">Conheça as marcas</span>
+          {%- render 'icon', icon: 'arrow-right-custom' -%}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  #home-columns-text-section {
+    background-color: #EDFBF4;
+  }
+
+  #home-columns-text-section p {
+    font-size: 1.2rem;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "home-columns-text-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Título"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Custom Sections",
+      "name": "home-columns-text-section",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

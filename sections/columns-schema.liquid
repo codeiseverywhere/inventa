@@ -1,0 +1,115 @@
+<section class="section m-0" id="section-{{ section.id }}" data-section-id="{{ section.id }}" data-section-type="columns-schema">
+  <div class="container py-5">
+    <div class="row">
+      <div class="col-12 col-lg-8 offset-lg-2 px-5 text-center">
+        <h2 class="fs-1 fw-light">{{ section.settings.title }}</h2>
+        <h3 class="fs-3 mt-4 px-lg-5 mx-lg-5 text-secondary">{{ section.settings.subtitle }}</h3>
+      </div>
+    </div>
+    <div class="row mt-5">
+      <div class="col-12 col-lg-10 offset-lg-1">
+        <div class="row">
+          {%- for block in section.blocks -%}
+            <div class="block{{ forloop.index }} col-12 col-lg-2 {% if forloop.first %}offset-lg-2{% endif %} text-center mb-5 mb-lg-0">
+              <div class="d-flex align-items-center justify-content-center">
+                <div class="rounded-circle circle d-flex align-items-center justify-content-center">
+                  <span class="fw-bold">{{ block.settings.title }}</span>
+                </div>
+              </div>
+              {{ block.settings.content }}
+            </div>
+            {%- unless forloop.last -%}
+              <div class="col-12 col-lg-1 text-center py-4 py-lg-1  d-none d-lg-block">
+                <img src="{{ 'arrows.png' | asset_img_url }}" class="img-fluid lazyload image--fade-in mt-4">
+              </div>
+            {%- endunless -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  #section-{{ section.id }} {
+    background-color: {{ section.settings.background-color }};
+  }
+
+  {%- for block in section.blocks -%}
+    .block{{ forloop.index }} .circle {
+      background-color: {{ block.settings.background-color }};
+      color: {{ block.settings.font-color }};
+    }
+  {%- endfor -%}
+
+  .circle {
+    height: 120px;
+    width: 120px;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Columns schema",
+  "max_blocks": 3,
+  "settings": [
+    {
+      "type": "color",
+      "id": "background-color",
+      "label": "Background color",
+      "default": "#f9f8f6"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Título"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Subtítulo"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Item",
+      "settings": [
+        {
+          "type": "color",
+          "id": "background-color",
+          "label": "Background color",
+          "default": "#222"
+        },
+        {
+          "type": "color",
+          "id": "font-color",
+          "label": "Font color",
+          "default": "#fff"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Título"
+        },
+        {
+          "type": "textarea",
+          "id": "content",
+          "label": "Content",
+          "default": "<p>Conteúdo</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "category": "Custom Sections",
+      "name": "Columns schema",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

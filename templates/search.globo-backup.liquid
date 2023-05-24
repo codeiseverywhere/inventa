@@ -1,0 +1,260 @@
+{% paginate search.results by 10 %}
+
+<div class="page-width">
+	{% if search.performed == false %}
+	<div class="text-center">
+		<h1 class="h2">Resultados de busca</h1>
+		{% else %}
+		<div class="text-center">
+			<h1 class="h2">
+				<span class="visually-hidden">{{ 'general.search.heading' | t: count: search.results_count }}:</span>
+				{{ 'general.search.results_with_count' | t: terms: search.terms, count: search.results_count }}
+			</h1>
+			{% endif %}
+			<div class="grid">
+				<div class="grid__item medium-up--six-tenths medium-up--push-two-tenths">
+					{% if search.performed and search.results_count == 0 %}
+					<div class="rte search--no-results-found">
+						<p>{{ 'general.search.no_results' | t }}</p>
+					</div>
+					{% endif %}
+					<form action="{{ routes.search_url }}" method="get" role="search" class="search-form search-page-form">
+						<div class="input-group input-group--nowrap">
+							<div class="input-group__field input-group__field--connected search-form__input-wrapper">
+								<input
+								type="search"
+								name="q"
+								value="{{ search.terms | escape }}"
+								placeholder="{{ 'general.search.placeholder' | t }}"
+								role="combobox"
+								aria-autocomplete="list"
+								aria-owns="predictive-search-results"
+								aria-expanded="false"
+								aria-label="{{ 'general.search.placeholder' | t }}"
+								aria-haspopup="listbox"
+								class="search-form__input"
+								data-search-page-predictive-search-input
+								data-base-url="{{ routes.search_url }}"
+								/>
+								<input type="hidden" name="options[prefix]" value="last" aria-hidden="true" />
+
+								<button type="reset" class="search-form__clear-action" aria-label="{{ 'general.search.clear_search_term' | t }}" data-search-page-predictive-search-clear>
+									{% include 'icon-close' %}
+								</button>
+
+								<div class="predictive-search-wrapper" data-predictive-search-mount="default"></div>
+							</div>
+
+							<button type="submit" class="search-form__connected-submit" aria-label="{{ 'general.search.submit' | t }}" data-search-page-predictive-search-submit>
+								{% include 'icon-search' %}
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	{% if search.performed %}
+	{% if search.results_count > 0 %}
+	<hr aria-hidden="true" />
+	{% endif %}
+
+	<h2 class="visually-hidden">{{ 'general.search.heading' | t: count: search.results_count }}</h2>
+
+	<ul class="page-width list-view-items">
+		{% for item in search.results %}
+		<li class="list-view-item">
+			{% if item.object_type == 'product' %}
+          {% comment %}
+    Renders a product card using "List" style
+
+    Accepts:
+    - product: {Object} Product Liquid object (required)
+    - show_vendor: {Boolean} Show the product's vendor depending on the section setting (optional)
+
+    Usage:
+    {% include 'product-card-list', product: product, show_vendor: section.settings.show_vendor %}
+    {% endcomment %}
+
+    <div class="product-card product-card--list">
+    	<a class="full-width-link" href="{{ product.url }}">
+    		<span class="visually-hidden">{{ product.title }}</span>
+    	</a>
+
+    	<div class="list-view-item__link">
+    		<div class="list-view-item__image-column">
+    			<div class="list-view-item__image-wrapper product-card__image-wrapper">
+    				{% unless item.featured_media == null %}
+    				<img class="list-view-item__image" src="{{ item.featured_media | img_url: '95x95', scale: 2 }}" alt="{{ item.featured_media.alt }}">
+    				{% endunless %}
+    			</div>
+    		</div>
+
+    		<div class="list-view-item__title-column">
+    			<div class="list-view-item__title" aria-hidden="true">
+    				<span class="product-card__title">{{ item.title }}</span>
+    			</div>
+    			<div class="list-view-item__vendor">{{ item.vendor }}</div>
+    		</div>
+
+    		<div class="list-view-item__price-column">
+      {% comment %}
+    Renders a list of product's price (regular, sale, unit)
+    Accompanies product listings (collection page, search result) and not updated dynamically
+    Accepts:
+    - variant: {Object} Variant Liquid object (optional)
+    - product: {Object} Product Liquid object (optional)
+    - show_vendor: {Boolean} Show the product's vendor depending on the section setting (optional)
+
+    Usage:
+    {% include 'product-price-listing', product: product %}
+    {% endcomment %}
+    {%- liquid
+    	if product.title
+    	assign compare_at_price = product.compare_at_price
+    	assign price = product.price
+    	assign available = product.available
+    	assign variant = product.variants.first
+    	else
+    	assign compare_at_price = 1999
+    	assign price = 1999
+    	assign available = true
+    	endif
+
+    	assign money_price = price | money
+    	-%}
+
+    	<dl class="price price--listing
+    	{%- if available == false %} price--sold-out {% endif -%}
+    	{%- if compare_at_price > price %} price--on-sale {% endif -%}
+    	{%- if product.price_varies == false and product.compare_at_price_varies %} price--compare-price-hidden {% endif -%}
+    	{%- if variant.unit_price_measurement %} price--unit-available {% endif -%}"
+    	>
+    	{% if show_vendor and product %}
+    	<div class="price__vendor price__vendor--listing">
+    		<dt>
+    			<span class="visually-hidden">{{ 'products.product.vendor' | t }}</span>
+    		</dt>
+    		<dd>
+    			{{ product.vendor }}
+    		</dd>
+    	</div>
+    	{% endif %}
+
+  {%- comment -%}
+    Explanation of description list:
+      - div.price__regular: Displayed when there are no variants on sale
+      - div.price__sale: Displayed when a variant is a sale
+      - div.price__unit: Displayed when the first variant has a unit price
+      - div.price__availability: Displayed when the product is sold out
+      {%- endcomment -%}
+      <div class="price__regular">
+      	<dt>
+      		<span class="visually-hidden visually-hidden--inline">{{ 'products.product.regular_price' | t }}</span>
+      	</dt>
+      	<dd>
+      		<span class="price-item price-item--regular">
+      			{%- if product.price_varies -%}
+      			{{ 'products.product.from_lowest_price_html' | t: lowest_price: money_price }}
+      			{%- else -%}
+      			{{ money_price }}
+      			{%- endif -%}
+      		</span>
+      	</dd>
+      </div>
+      <div class="price__sale">
+      	<dt>
+      		<span class="visually-hidden visually-hidden--inline">{{ 'products.product.sale_price' | t }}</span>
+      	</dt>
+      	<dd>
+      		<span class="price-item price-item--sale">
+      			{%- if product.price_varies -%}
+      			{{ 'products.product.from_lowest_price_html' | t: lowest_price: money_price }}
+      			{%- else -%}
+      			{{ money_price }}
+      			{%- endif -%}
+      		</span>
+      	</dd>
+      	<div class="price__compare">
+      		<dt>
+      			<span class="visually-hidden visually-hidden--inline">{{ 'products.product.regular_price' | t }}</span>
+      		</dt>
+      		<dd>
+      			<s class="price-item price-item--regular">
+      				{{ compare_at_price | money }}
+      			</s>
+      		</dd>
+      	</div>
+      </div>
+      <div class="price__unit">
+      	<dt>
+      		<span class="visually-hidden visually-hidden--inline">{{ 'products.product.unit_price_label' | t }}</span>
+      	</dt>
+      	<dd class="price-unit-price">
+      		{%- capture unit_price_separator -%}
+      		<span aria-hidden="true">/</span><span class="visually-hidden">{{ 'general.accessibility.unit_price_separator' | t }}&nbsp;</span>
+      		{%- endcapture -%}
+      		{%- capture unit_price_base_unit -%}
+      		<span>
+      			{%- if variant.unit_price_measurement -%}
+      			{%- if variant.unit_price_measurement.reference_value != 1 -%}
+      			{{- variant.unit_price_measurement.reference_value -}}
+      			{%- endif -%}
+      			{{ variant.unit_price_measurement.reference_unit }}
+      			{%- endif -%}
+      		</span>
+      		{%- endcapture -%}
+
+      		<span>{{ variant.unit_price | money }}</span>{{- unit_price_separator -}}{{- unit_price_base_unit -}}
+      	</dd>
+      </div>
+      <div class="price__badges price__badges--listing">
+      	<span class="price__badge price__badge--sale" aria-hidden="true">
+      		<span>{{ 'products.product.on_sale' | t }}</span>
+      	</span>
+      	<span class="price__badge price__badge--sold-out">
+      		<span>{{ 'products.product.sold_out' | t }}</span>
+      	</span>
+      </div>
+  </dl>
+
+</div>
+</div>
+</div>
+
+{% else %}
+<div class="product-card product-card--list">
+	<a href="{{ item.url }}" class="full-width-link">
+		<span class="visually-hidden">{{ item.title }}</span>
+	</a>
+	<div class="list-view-item__link">
+		<div class="list-view-item__image-column">
+			<div class="list-view-item__image-wrapper product-card__image-wrapper">
+				{% unless item.image == null %}
+				<img class="list-view-item__image" src="{{ item.image.src | img_url: '600x600' }}" alt="{{ item.image.alt | escape }}">
+				{% endunless %}
+			</div>
+		</div>
+
+		<div class="list-view-item__title-column">
+			<div class="list-view-item__title" aria-hidden="true">
+				<span class="product-card__title">{{ item.title }}</span>
+			</div>
+			<div>
+				{% if item.published_at %}{{ item.published_at | date: format: "date" }} &#8212; {% endif %}
+				{{ item.content | strip_html | truncate: 200 }}
+			</div>
+		</div>
+	</div>
+</div>
+{% endif %}
+</li>
+{% endfor %}
+</ul>
+
+
+{% endif %}
+
+{% endpaginate %}

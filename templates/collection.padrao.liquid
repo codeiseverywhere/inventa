@@ -1,0 +1,42 @@
+{% if collection.current_vendor != blank %}
+	{% section 'brand-page-header' %}
+	{% comment %} with filter's app {% endcomment %}
+	{% section 'brand-page-padro-body' %}
+
+	{% comment %} without filter's app 
+	{% section 'collection-template' %}
+	{% endcomment %}
+{% else %}
+	{% comment %}
+	{% section 'banner-tutorial' %}
+	{% if collection.handle == 'marcas' %}
+		<section class="headerContainer color-background-main-020 py-4 text-center text-white fw-light">
+			<div class="row">
+				<div class="col-12 col-md-6 offset-md-3">
+					<h1 class="display-5 fw-bold color-main-100">Novas marcas toda semana</h1>
+					<h2 class="fs-5 color-main-100">Descubra novos fornecedores e compre direto da fábrica com condições especiais de pagamento</h2>
+				</div>
+			</div>
+		</section>
+		{% section 'letters-filter' %}
+	{% endif %}
+	{% endcomment %}
+	{% if collection.url != "/collections/bs-co" %}
+		{% section 'banners-collection' %}
+		{% section 'banners-collection-mobile' %}
+		{% section 'banners-categories' %}
+		{% section 'collection-template-padrao' %}
+	{% endif %}
+{% endif %}
+{% if collection.handle == 'marcas' %}
+	{% render 'destaques-slider', custom_title: 'Produtos que estão bombando' %}
+{% else %}
+	{% section 'static-promotion-list' %}
+	{% section 'static-recently-viewed-products' %}
+{% endif %}
+
+<script type="text/javascript">
+	{% if collection.url == "/collections/bs-co" %}
+		window.location.replace("https://inventa.shop/collections/vendors?q=BS%26CO");
+	{% endif %}
+</script>

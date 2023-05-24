@@ -1,0 +1,173 @@
+<section id="home-destaques-section" class="section my-0 py-5" data-section-id="home-destaques-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-lg-10 offset-lg-1">
+        <div class="destaques-categorias-slider-wrapper position-relative px-5 text-center">
+          <button class="previous-slide">{%- render 'icon', icon: 'arrow-left' -%}</button>
+          <button class="next-slide">{%- render 'icon', icon: 'arrow-right' -%}</button>
+          <div class="destaques-categorias-slider">
+            <div class="m-3 text-start">
+              <a href="/collections/chocolates">
+                <img 
+                  class="lazyload custom-radius"
+                  src="{{ 'Categoria_Chocolates.png' | file_img_url: '400x400', crop: 'bottom' }}"
+                  alt="Categoria Chocolates"
+                />
+                <span class="d-block small text-primary mt-3">Mercearia</span>
+                <h3 class="fw-bold h2 lh-1">Chocolates</h3>
+              </a>
+            </div>
+            <div class="m-3 text-start">
+              <a href="/collections/maquiagem">
+                <img 
+                  class="lazyload custom-radius"
+                  src="{{ 'Categoria_Maquiagens.png' | file_img_url: '400x400', crop: 'bottom' }}"
+                  alt="Categoria Maquiagens"
+                />
+                <span class="d-block small text-primary mt-3">Beleza e bem-estar</span>
+                <h3 class="fw-bold h2 lh-1">Maquiagens</h3>
+              </a>
+            </div>
+            <div class="m-3 text-start">
+              <a href="/collections/bebidas">
+                <img 
+                  class="lazyload custom-radius"
+                  src="{{ 'Categoria_Bebidas.png' | file_img_url: '400x400', crop: 'bottom' }}"
+                  alt="Categoria Bebidas"
+                />
+                <span class="d-block small text-primary mt-3">Mercearia</span>
+                <h3 class="fw-bold h2 lh-1">Bebidas</h3>
+              </a>
+            </div>
+            <div class="m-3 text-start">
+              <a href="collections/vendors?q=Embelleze">
+                <img 
+                  class="lazyload custom-radius"
+                  src="{{ 'colecao-cabelos.png' | file_img_url: '400x400', crop: 'bottom' }}"
+                  alt="Categoria Cabelos"
+                />
+                <span class="d-block small text-primary mt-3">Beleza e Bem-Estar</span>
+                <h3 class="fw-bold h2 lh-1">Cabelos</h3>
+              </a>
+            </div>
+            <div class="m-3 text-start">
+              <a href="/collections/higiene-pessoal">
+                <img 
+                  class="lazyload custom-radius"
+                  src="{{ 'Categoria_Higiene_pessoal.png' | file_img_url: '400x400', crop: 'bottom' }}"
+                  alt="Categoria Higiene Pessoal"
+                />
+                <span class="d-block small text-primary mt-3">Beleza e Bem-Estar</span>
+                <h3 class="fw-bold h2 lh-1">Higiene Pessoal</h3>
+              </a>
+            </div>
+            <div class="m-3 text-start">
+              <a href="/collections/alimentos">
+                <img 
+                  class="lazyload custom-radius"
+                  src="{{ 'Catergoria_Alimentos.png' | file_img_url: '400x400', crop: 'bottom' }}"
+                  alt="Categoria Alimentos"
+                />
+                <span class="d-block small text-primary mt-3">Mercearia</span>
+                <h3 class="fw-bold h2 lh-1">Alimentos</h3>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .destaques-categorias-slider-wrapper .previous-slide,
+  .destaques-categorias-slider-wrapper .next-slide {
+    position: absolute;
+    padding: 0 12px;
+    z-index: 1;
+    font-size: 1.7rem;
+    width: auto;
+    top: 0;
+    bottom: 0;
+  }
+
+  .destaques-categorias-slider-wrapper .next-slide svg,
+  .destaques-categorias-slider-wrapper .previous-slide svg {
+    width: 35px;
+    height: 35px;
+    padding: 7px;
+  }
+
+  .destaques-categorias-slider-wrapper .previous-slide svg path,
+  .destaques-categorias-slider-wrapper .next-slide svg path {
+    stroke-width: 1;
+  }
+
+  .destaques-categorias-slider-wrapper .next-slide {
+    right: -30px;
+  }
+
+  .destaques-categorias-slider-wrapper .previous-slide {
+    left: -30px;
+  }
+
+  .destaques-categorias-slider img {
+    border: 1px solid #C7D3D9;
+    overflow: hidden;
+  }
+</style>
+
+<script>
+  const marcasDestaquesSliderContainer = document.querySelector('.destaques-categorias-slider');
+
+  new Glider(marcasDestaquesSliderContainer, {
+    type: 'carousel',
+    focusAt: 'center',
+    rewind: true,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    draggable: true,
+    arrows: {
+      prev: '.destaques-categorias-slider-wrapper .previous-slide',
+      next: '.destaques-categorias-slider-wrapper .next-slide'
+    },
+    responsive: [
+    {
+      breakpoint: 1024,
+      settings: {
+        slidesToShow: 2,
+        slidesToScroll: 2
+      }
+    },
+    {
+      breakpoint: 1440,
+      settings: {
+        slidesToShow: 3,
+        slidesToScroll: 3
+      }
+    }
+    ]
+  });
+
+</script>
+
+{% schema %}
+{
+  "name": "home-destaques-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Título"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Custom Sections",
+      "name": "home-destaques-section",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

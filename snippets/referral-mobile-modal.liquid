@@ -1,0 +1,72 @@
+<link rel="stylesheet" href="{{ 'modal-mobile-referral.css' | asset_url }}" />
+<div class=" position-fixed end-0 start-0 top-0 justify-content-center h-100 modal-referral  d-none" open-popup="false" >
+    <div class="modal-inner-referral d-flex position-relative box-modal position-absolute">
+        <div class="desktop-closebtn position-absolute" >
+            <svg class="modal-closer" width="23" height="21" viewBox="0 0 23 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M9.75806 10.2688L0 1.48659L1.33793 0L11.2529 8.92348L21.1679 0L22.5058 1.48659L12.7478 10.2688L22.5058 19.0511L21.1679 20.5377L11.2529 11.6142L1.33793 20.5377L2.08616e-06 19.0511L9.75806 10.2688Z" fill="white"/>
+            </svg>
+        </div>
+        <div class="modal_banner gradient-background text-white position-relative modal-background-mobile" >
+            <div class="position-absolute modal_close-btn mb-3" onclick="closePopUp('.modal-referral')">
+                <svg class="modal-closer" width="23" height="21" viewBox="0 0 23 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M9.75806 10.2688L0 1.48659L1.33793 0L11.2529 8.92348L21.1679 0L22.5058 1.48659L12.7478 10.2688L22.5058 19.0511L21.1679 20.5377L11.2529 11.6142L1.33793 20.5377L2.08616e-06 19.0511L9.75806 10.2688Z" fill="white"/>
+                </svg>
+            </div>
+            <div class="box-content">
+                <div class=" pt-5 container-modal-referral-mobile  text-center" >
+                    <p class="pt-5 lh-sm"> 
+                        <span class="d-inline-block">Você foi indicado pela <strong class="vendor-name"></strong>!</span>
+                        <span class="content-yellow-mobile d-inline-block">Ganhou R$ 250 de desconto</span>
+                        <span class="d-inline-block">na sua primeira compra na Inventa</span>
+                    </p>
+                 </div>
+                 <div class="position-relative pb-3 d-flex flex-row mx-2 my-3 justify-content-center">
+                    <div class="position-relative ticket-cupom ticket-left px-2 flex align-items-center ">
+                       {%- comment -%}
+                        <div class="position-absolute circle-dashed circle-right start-0 top-50 translate-middle"></div>
+                       {%- endcomment -%}
+                        <stronger> Utilize o cupom</stronger>
+                    </div>
+                    <div class="position-relative ticket-cupom ticket-right px-4">
+                          {%- comment -%}
+                        <div class="position-absolute circle-dashed circle-left start-100 top-50 translate-middle"></div>
+                           {%- endcomment -%}
+                        <stronger class="content-yellow-mobile">PRIMEIRA250</stronger>
+                    </div>
+                </div>
+            </div>
+            
+            
+
+        </div>
+        <div class="footer-modal " >
+            <div class="text-center mt-4">
+                <p class=""><i class="fa fa-info-circle fs-5 align-middle" aria-hidden="true"></i> Válido para compras acima de <b>R$ 600</b></p>
+             </div>
+             <div class="px-5  pt-4 mb-4">
+                <button class="btn w-100 yellow-btn-referral fw-bold" onclick="openSignUp()" type="button">Cadastre-se</button>
+             </div>
+             
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function closePopUp(modal){
+        const modalElement = document.querySelector(modal)
+        if(modalElement){
+            modalElement.classList.add("d-none");
+        }
+    }
+
+    document.addEventListener(
+        "click",
+        (event) => {
+            if (!event.target.closest(".modal-inner-referral")) {
+            closePopUp('.modal-referral');
+            }
+        },
+        false
+    )
+</script>

@@ -1,0 +1,839 @@
+{
+  "form": {
+    "id": "pvtGyl",
+    "name": "Registration",
+    "handle": "registration-2657",
+    "theme_id": "120417648847",
+    "settings": {
+      "locales": {
+        "back": "Back",
+        "next": "Next",
+        "cancel": "Cancel",
+        "edit_link": "Edit account",
+        "fix_errors": "Please fix errors before continuing",
+        "is_invalid": "{{label}} is invalid",
+        "email_taken": "Email has already been taken",
+        "phone_taken": "Phone number has already been taken",
+        "server_error": "Could not save form, please try again later",
+        "step_counter": "Step {{current}} of {{total}}",
+        "verify_email": "Check your email for a verification link to activate your account.",
+        "not_available": "An error occurred while saving your account, please try again in a few minutes.",
+        "create_account": "Create account",
+        "update_account": "Update account",
+        "recaptcha_error": "Challenge verification failed, please try again",
+        "creating_account": "Creating account...",
+        "updating_account": "Updating account...",
+        "invalid_email_domain": "Email contains an invalid domain name"
+      },
+      "enableRecaptcha": false,
+      "whitelistedTags": "",
+      "recaptchaSiteKey": "",
+      "markRequiredFields": true,
+      "displayCancelButton": true,
+      "redirectAfterSubmit": true,
+      "goBackAfterSubmission": false,
+      "accountApprovalRequired": true,
+      "cancelButtonRedirectUrl": "\/account\/login",
+      "emailVerificationRequired": false,
+      "postSubmissionRedirectUrl": "\/account",
+      "showSuccessStepAfterSubmit": false,
+      "goBackAfterCancelButtonClick": false
+    },
+    "install_locations": [
+      "register"
+    ],
+    "created_at": "2021-03-01T21:31:13Z",
+    "updated_at": "2021-03-10T03:23:23Z",
+    "revision_ids": [
+      "58TazN",
+      "2ETblp",
+      "Z6TPYw",
+      "K0TMBm",
+      "yzTl00",
+      "akTAbV",
+      "vbTK2D",
+      "7kT9Nm",
+      "p4TmKR",
+      "orTyR0",
+      "8oTAPg",
+      "orTVLm",
+      "vbTKgL",
+      "7kT9z9",
+      "7kTKPq",
+      "p4TARB",
+      "ErTXql"
+    ]
+  },
+  "revision": {
+    "id": "58TazN",
+    "created_at": "2021-03-10T04:41:24Z",
+    "updated_at": "2021-03-10T04:41:24Z",
+    "embed_version": "4.4.4",
+    "published_at": null,
+    "fields": [
+      {
+        "id": 319497,
+        "dataColumn": {
+          "key": "default_address.company",
+          "label": "Company",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 0,
+        "type": "text",
+        "stepId": 112587,
+        "default": "",
+        "label": "Nome da sua loja",
+        "placeholder": null,
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {},
+        "validations": [
+          {
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Não deve estar vazio",
+            "metadata": {
+              "hiddenInApp": true
+            }
+          }
+        ],
+        "sensitive": null,
+        "preset": "company",
+        "autotag": null
+      },
+      {
+        "id": 166483,
+        "dataColumn": {
+          "key": "cnpj",
+          "label": "CNPJ",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 1,
+        "type": "text",
+        "stepId": 112587,
+        "default": "",
+        "label": "CNPJ",
+        "placeholder": "",
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {},
+        "validations": [
+          {
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Este é um campo obrigatório",
+            "metadata": {
+              "hiddenInApp": true
+            }
+          },
+          {
+            "operator": "longer_than",
+            "comparand": 13,
+            "errorMessage": "CNPJ não é válido",
+            "metadata": {
+              "0": "P",
+              "1": "o",
+              "2": "l",
+              "3": "a",
+              "4": "r",
+              "5": "i",
+              "6": "s",
+              "7": "T",
+              "8": "e",
+              "9": "x",
+              "10": "t",
+              "11": "F",
+              "12": "i",
+              "13": "e",
+              "14": "l",
+              "15": "d",
+              "16": "7",
+              "17": "4"
+            }
+          }
+        ],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 742754,
+        "dataColumn": {
+          "key": "default_address.province",
+          "label": "State\/Province",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 10,
+        "type": "dropdown",
+        "stepId": 112587,
+        "default": "",
+        "label": "Estado",
+        "placeholder": "",
+        "description": "",
+        "enum": [
+          {
+            "value": "",
+            "label": ""
+          }
+        ],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "defaultCountry": "Brazil",
+          "isProvinceField": true
+        },
+        "validations": [],
+        "sensitive": null,
+        "preset": "province",
+        "autotag": null
+      },
+      {
+        "id": 302686,
+        "dataColumn": {
+          "key": "data_de_abertura_da_sua_lo",
+          "label": "Data de abertura da sua loja",
+          "dataType": "date"
+        },
+        "parentId": null,
+        "position": 11,
+        "type": "date",
+        "stepId": 112587,
+        "default": "",
+        "label": "Data de abertura da sua loja",
+        "placeholder": "DD-MM-AAAA",
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "dateInput": "picker",
+          "yearsBack": 100,
+          "dateFormat": "DD-MM-YYYY",
+          "yearsForward": 20
+        },
+        "validations": [
+          {
+            "operator": "is_valid",
+            "comparand": null,
+            "errorMessage": "Please specify a valid date",
+            "metadata": {
+              "mandatory": true,
+              "staticOperator": true
+            }
+          }
+        ],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 148303,
+        "dataColumn": null,
+        "parentId": null,
+        "position": 12,
+        "type": "divider",
+        "stepId": 112587,
+        "default": "",
+        "label": "New divider field",
+        "placeholder": null,
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "hideLabel": true,
+          "verticalMargin": 20
+        },
+        "validations": [],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 245310,
+        "dataColumn": {
+          "key": "registrandose_depois_de_fa",
+          "label": "Registrando-se depois de falar com um funcionário da Inventa",
+          "dataType": "boolean"
+        },
+        "parentId": null,
+        "position": 13,
+        "type": "checkbox",
+        "stepId": 112587,
+        "default": "",
+        "label": "Registrando-se depois de falar com um funcionário da Inventa",
+        "placeholder": null,
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {},
+        "validations": [],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 163154,
+        "dataColumn": {
+          "key": "que_tipo_de_categorias_de_",
+          "label": "Que tipo de categorias de produtos você vende em sua loja de varejo?",
+          "dataType": "list"
+        },
+        "parentId": null,
+        "position": 14,
+        "type": "checkbox_list",
+        "stepId": 112587,
+        "default": null,
+        "label": "Que tipo de categorias de produtos você vende em sua loja de varejo?",
+        "placeholder": null,
+        "description": "",
+        "enum": [
+          {
+            "value": "Artigos de decoração",
+            "label": "Artigos de decoração"
+          },
+          {
+            "value": "Utensílios de cozinha",
+            "label": "Utensílios de cozinha"
+          },
+          {
+            "value": "Cosméticos e produtos de higiene pessoal",
+            "label": "Cosméticos e produtos de higiene pessoal"
+          },
+          {
+            "value": "Comida e bebida",
+            "label": "Comida e bebida"
+          },
+          {
+            "value": "Joias e bijuterias",
+            "label": "Joias e bijuterias"
+          },
+          {
+            "value": "Moda feminina",
+            "label": "Moda feminina"
+          },
+          {
+            "value": "Moda masculina",
+            "label": "Moda masculina"
+          },
+          {
+            "value": "Artigos para crianças e bebês",
+            "label": "Artigos para crianças e bebês"
+          },
+          {
+            "value": "Artigos para animais de estimação",
+            "label": "Artigos para animais de estimação"
+          },
+          {
+            "value": "Outras categorias",
+            "label": "Outras categorias"
+          }
+        ],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "end": 10,
+          "start": 1,
+          "enumType": "list",
+          "direction": "column",
+          "separateValues": false
+        },
+        "validations": [],
+        "sensitive": null,
+        "preset": null,
+        "autotag": true
+      },
+      {
+        "id": 523735,
+        "dataColumn": {
+          "key": "outras_categ",
+          "label": "Se você marcou \"Outras categorias\", diga-nos quais",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 15,
+        "type": "textarea",
+        "stepId": 112587,
+        "default": "",
+        "label": "Se você marcou \"Outras categorias\", diga-nos quais",
+        "placeholder": null,
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "rows": 5
+        },
+        "validations": [],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 975108,
+        "dataColumn": {
+          "key": "password",
+          "label": "Password",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 16,
+        "type": "text",
+        "stepId": 112587,
+        "default": "",
+        "label": "Password",
+        "placeholder": "",
+        "description": null,
+        "enum": null,
+        "appearance": {
+          "width": 12
+        },
+        "settings": {},
+        "validations": [
+          {
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Must not be blank",
+            "metadata": {
+              "hiddenInApp": true
+            }
+          },
+          {
+            "operator": "longer_than",
+            "comparand": 5,
+            "errorMessage": "Password is too short",
+            "metadata": {
+              "mandatory": true,
+              "staticOperator": true,
+              "comparandFieldProps": {
+                "min": 5
+              }
+            }
+          }
+        ],
+        "sensitive": true,
+        "preset": "password",
+        "autotag": null
+      },
+      {
+        "id": 205116,
+        "dataColumn": {
+          "key": "password_confirmation",
+          "label": "Password confirmation",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 17,
+        "type": "password_confirmation",
+        "stepId": 112587,
+        "default": "",
+        "label": "Password confirmation",
+        "placeholder": null,
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "passwordMatchErrorMessage": "Must match password"
+        },
+        "validations": [],
+        "sensitive": true,
+        "preset": "password_confirmation",
+        "autotag": null
+      },
+      {
+        "id": 135934,
+        "dataColumn": {
+          "key": "default_address.first_name",
+          "label": "Address first name",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 2,
+        "type": "text",
+        "stepId": 112587,
+        "default": "",
+        "label": "Nome do administrador da loja",
+        "placeholder": null,
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "hideLabel": false
+        },
+        "validations": [
+          {
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Não deve estar vazio",
+            "metadata": {
+              "hiddenInApp": true
+            }
+          }
+        ],
+        "sensitive": null,
+        "preset": "first_name",
+        "autotag": null
+      },
+      {
+        "id": 811589,
+        "dataColumn": {
+          "key": "default_address.last_name",
+          "label": "Address last name",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 3,
+        "type": "text",
+        "stepId": 112587,
+        "default": "",
+        "label": "Sobrenome do administrador da loja",
+        "placeholder": null,
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {},
+        "validations": [
+          {
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Não deve estar vazio",
+            "metadata": {
+              "hiddenInApp": true
+            }
+          }
+        ],
+        "sensitive": null,
+        "preset": "last_name",
+        "autotag": null
+      },
+      {
+        "id": 188573,
+        "dataColumn": {
+          "key": "email",
+          "label": "Email address",
+          "dataType": "email"
+        },
+        "parentId": null,
+        "position": 4,
+        "type": "email",
+        "stepId": 112587,
+        "default": "",
+        "label": "Direção de e-mail",
+        "placeholder": "",
+        "description": null,
+        "enum": null,
+        "appearance": {
+          "width": 12
+        },
+        "settings": {},
+        "validations": [
+          {
+            "operator": "is_valid_email",
+            "comparand": null,
+            "errorMessage": "Please provide a valid email address"
+          },
+          {
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Must not be blank",
+            "metadata": {
+              "hiddenInApp": true
+            }
+          }
+        ],
+        "sensitive": null,
+        "preset": "email_address",
+        "autotag": null
+      },
+      {
+        "id": 125995,
+        "dataColumn": {
+          "key": "default_address.phone",
+          "label": "Address phone number",
+          "dataType": "phone"
+        },
+        "parentId": null,
+        "position": 5,
+        "type": "phone",
+        "stepId": 112587,
+        "default": "",
+        "label": "Número de celular",
+        "placeholder": null,
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "defaultCountryCode": "BR"
+        },
+        "validations": [
+          {
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Não poder estar vazio",
+            "metadata": {
+              "hiddenInApp": true
+            }
+          }
+        ],
+        "sensitive": null,
+        "preset": "phone_number",
+        "autotag": null
+      },
+      {
+        "id": 100223,
+        "dataColumn": {
+          "key": "default_address.address1",
+          "label": "Address line 1",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 6,
+        "type": "text",
+        "stepId": 112587,
+        "default": "",
+        "label": "Endereço para envio (rua e número)",
+        "placeholder": "",
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {},
+        "validations": [
+          {
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Não pode estar vazio",
+            "metadata": {
+              "hiddenInApp": true
+            }
+          }
+        ],
+        "sensitive": null,
+        "preset": "address1",
+        "autotag": null
+      },
+      {
+        "id": 284223,
+        "dataColumn": {
+          "key": "default_address.city",
+          "label": "City",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 7,
+        "type": "text",
+        "stepId": 112587,
+        "default": "",
+        "label": "Município",
+        "placeholder": null,
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {},
+        "validations": [
+          {
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Não pode estar vazio",
+            "metadata": {
+              "hiddenInApp": true
+            }
+          }
+        ],
+        "sensitive": null,
+        "preset": "city",
+        "autotag": null
+      },
+      {
+        "id": 264217,
+        "dataColumn": {
+          "key": "default_address.zip",
+          "label": "Zip\/Postal code",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 8,
+        "type": "text",
+        "stepId": 112587,
+        "default": "",
+        "label": "CEP",
+        "placeholder": null,
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {},
+        "validations": [
+          {
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Não pode estar vazio",
+            "metadata": {
+              "hiddenInApp": true
+            }
+          }
+        ],
+        "sensitive": null,
+        "preset": "zip",
+        "autotag": null
+      },
+      {
+        "id": 844471,
+        "dataColumn": {
+          "key": "default_address.country",
+          "label": "Country",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 9,
+        "type": "dropdown",
+        "stepId": 112587,
+        "default": "",
+        "label": "País",
+        "placeholder": "",
+        "description": "",
+        "enum": [
+          {
+            "value": "",
+            "label": ""
+          }
+        ],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "isCountryField": true
+        },
+        "validations": [],
+        "sensitive": null,
+        "preset": "country",
+        "autotag": null
+      },
+      {
+        "id": 151471,
+        "dataColumn": null,
+        "parentId": null,
+        "position": 0,
+        "type": "heading",
+        "stepId": 212427,
+        "default": "",
+        "label": "Account request sent heading",
+        "placeholder": null,
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12,
+          "alignment": "center"
+        },
+        "settings": {
+          "size": 1,
+          "content": "Success!",
+          "hideLabel": true,
+          "fontWeight": "bold"
+        },
+        "validations": [],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 102344,
+        "dataColumn": null,
+        "parentId": null,
+        "position": 1,
+        "type": "paragraph",
+        "stepId": 212427,
+        "default": "",
+        "label": "Reviewing submission explanation",
+        "placeholder": null,
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "content": "<p style=\"text-align: center;\">The form has been successfully submitted.<\/p>",
+          "fontSize": 14,
+          "hideLabel": true
+        },
+        "validations": [],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 120804,
+        "dataColumn": null,
+        "parentId": null,
+        "position": 2,
+        "type": "link",
+        "stepId": 212427,
+        "default": "",
+        "label": "Back to home link",
+        "placeholder": null,
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12,
+          "alignment": "center"
+        },
+        "settings": {
+          "url": "\/",
+          "content": "Back to home",
+          "fontSize": 14,
+          "hideLabel": true,
+          "fontWeight": "normal",
+          "openInNewTab": false
+        },
+        "validations": [],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      }
+    ],
+    "steps": [
+      {
+        "id": 112587,
+        "title": "Step 1",
+        "description": ""
+      },
+      {
+        "id": 212427,
+        "title": "Submission success",
+        "description": "",
+        "metadata": {
+          "isSuccessStep": true
+        }
+      }
+    ],
+    "rules": []
+  }
+}

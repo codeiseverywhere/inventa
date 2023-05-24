@@ -1,0 +1,40 @@
+{%- comment -%}
+If the product contains the special __gift tag, we prevent it to be completely accessible by redirecting to the home page
+{%- endcomment -%}
+{%- comment -%}
+<script>
+  const userNavigator = navigator.userAgent.toLowerCase();
+  const productUrl = window.location.pathname.split("/");
+  const path = `/products/${productUrl[productUrl.length - 1]}`;
+
+
+  if (!(userNavigator.includes("iphone") || userNavigator.includes("ipad"))) {
+    headlessRedirect(path);
+  } else {
+    if (!(userNavigator.includes("chrome") || userNavigator.includes("safari"))) {
+      headlessRedirect(path);
+    }
+  }
+</script>
+{%- endcomment -%}
+
+{%- if product.tags contains '__gift' -%}
+  <script>
+    window.location.href = '/';
+  </script>
+{%- else -%}
+  {% section 'product-template' %}
+  {% section 'product-recommendations' %}
+  {% section 'static-promotion-list' %}
+  {% section 'static-recently-viewed-products' %}
+  {% comment %}
+  {%- unless customer -%}
+	  {%- section 'register-form2' -%}
+  {%- endunless -%}
+  {% endcomment %}
+
+  <script>
+    window.ShopifyXR=window.ShopifyXR||function(){(ShopifyXR.q=ShopifyXR.q||[]).push(arguments)};
+    ShopifyXR('addModels', {{ product.media | where: 'media_type', 'model' | json }});
+  </script>
+{%- endif -%}

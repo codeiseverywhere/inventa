@@ -1,0 +1,752 @@
+{%- assign items_per_page = cart.attributes.collection_products_per_page | default: section.settings.default_products_per_page -%}
+
+{%- assign quick_links_menu = linklists[section.settings.quick_links] -%}
+{%- assign has_filters = true -%}
+{%- capture grid_classes -%}1/3--tablet-and-up 1/{{ section.settings.products_per_row }}--desk{%- endcapture -%}
+{%- assign view_mode = cart.attributes.collection_layout | default: section.settings.default_view_layout -%}
+
+{%- capture section_settings -%}
+{
+  "currentSortBy": {{ collection.sort_by | default: collection.default_sort_by | json }},
+  "currentTags": [{% for tag in current_tags %}{{ tag | handle | json }}{% unless forloop.last %},{% endunless %}{% endfor %}],
+  "filterType": {{ section.settings.filter_type | json }},
+  "defaultLayout": {{ section.settings.default_view_layout | json }},
+  "defaultProductsPerPage": {{ section.settings.default_products_per_page | json }},
+  "isAutomatic": {% if collection.current_vendor != blank %}true{% else %}false{% endif %},
+  "gridClasses": {{ grid_classes | json }}
+}
+{%- endcapture -%}
+
+{% assign vendorPrioritiesNames = '' %}
+{% for block in section.blocks %}
+  {% if forloop.index0 == 0 %}
+    {% assign vendorPrioritiesNames = block.settings.seller-name %}
+  {% else %}
+    {% assign vendorPrioritiesNames = vendorPrioritiesNames | append: ',' | append: block.settings.seller-name %}
+  {% endif %}
+{% endfor %}
+{% assign vendorPrioritiesNames = vendorPrioritiesNames | split: ',' %}
+
+{% include 'rebuy-popup' %}
+
+<section data-section-id="{{ section.id }}" data-section-type="collection" data-section-settings='{{ section_settings }}'>
+  <div class="container container--flush">
+    <div {% if has_filters %}class="layout mt-4"{% endif %}>
+      {%- if has_filters -%}
+        <div class="layout__section layout__section--secondary hidden-pocket">
+          <div id="products-grid" class="card border-0">
+          </div>
+        </div>
+      {%- endif -%}
+
+      {%- paginate collection.products by items_per_page -%}
+        <div {% if has_filters %}class="layout__section {% if collection.handle == 'marcas' %}pt-4 {% endif %}"{% endif %}>
+          {%- if customer -%}
+            {%- assign category_choosen = false -%}
+            {%- if customer.metafields.additional_data.info -%}
+              {%- assign category_choosen = true -%}
+            {%- endif -%}
+            {%- unless category_choosen or collection.handle == 'marcas' -%}
+              {% comment %}
+              {% include 'interest-category' %}
+              {% endcomment %}
+            {%- endunless -%}
+          {%- endif -%}
+          {% unless collection.handle == 'marcas' or collection.template_suffix contains 'promotion' %}
+            <div class="collection-title-container bg-color-light p-4 mt-md-4">
+              <div class="page__sub-header mt-0 mb-0 ps-1">
+                <nav aria-label="{{ 'general.breadcrumb.title' | t }}" class="breadcrumb m-0">
+                  <ol class="breadcrumb__list text-muted" role="list">
+                    <li class="breadcrumb__item">
+                      <a class="breadcrumb__link link" href="{% if customer %}/collections/marcas{% else %}{{ routes.root_url }}{% endif %}">{{ 'general.breadcrumb.home' | t }}</a> {%- render 'icon', icon: 'arrow-right' -%}
+                    </li>
+
+                    {% capture breadcrumbContent %}
+                      {%- if collection.handle == 'all' -%}
+                        {{- 'collection.general.all_products' | t -}}
+                      {%- else -%}
+                        {{- collection.title -}}
+                      {%- endif -%}
+                    {% endcapture %}
+          
+                    <li class="breadcrumb__item">
+                      {%- if current_tags -%}
+                        <a class="breadcrumb__link link" href="{{ collection.url }}" {% unless current_tags %}aria-current="page"{% endunless %}>
+                          {{ breadcrumbContent }}
+                        </a>
+                        {%- render 'icon', icon: 'arrow-right' -%}
+                      {%- else -%}
+                        <span class="breadcrumb__link" aria-current="page">
+                          {%- if collection.handle == 'marcas' -%}
+                            Todas as marcas
+                          {%- else -%}
+                            {{ breadcrumbContent }}
+                          {%- endif -%}
+                        </span>
+                      {%- endif -%}
+                    </li>
+                  </ol>
+                </nav>
+              </div>
+              <h1 class="collection__title fs-1 mt-2 mb-0">
+                {%- if collection.handle == 'all' -%}
+                  {{ 'collection.general.all_products' | t }} para o atacado
+                {%- elsif collection.handle == 'marcas' -%}
+                  Marcas direto da fábrica
+                {%- else -%}
+                  Comprar {{ collection.title }} no atacado
+                {%- endif -%}
+              </h1>
+              <div class="collection__description mt-1 h4 fw-normal text-secondary w-75">
+                <div class="col-12">
+                  <h2>{{ collection.description }}</h2>
+                </div>
+              </div>
+            </div>
+          {% endunless %}
+          {% capture wk_seller_content %}
+            {% include 'wk-seller-listing-variable' %}
+          {% endcapture %}
+          {% if wk_store_ids %}
+            {% assign indexPrioritys = '' %}
+            {% for vendorName in vendorPrioritiesNames %}
+              {% for seller_name in wk_store_names %}
+                {% if seller_name == vendorName %}
+                  {% if indexPrioritys == '' %}
+                  {% assign indexPrioritys = forloop.index0 %}
+                  {% else %}
+                  {% assign indexPrioritys = indexPrioritys | append: ',' | append: forloop.index0 %}
+                  {% endif %}
+                  {% break %}
+                {% endif %}
+              {% endfor %}
+            {% endfor %}
+            {% assign indexPrioritys = indexPrioritys | split: ',' %}
+
+            {% if collection.handle == 'marcas' %}
+              {% render 'brands-carousel', wrapperName: 'quick-promotions-wrapper', containerName: 'quick-promotions-slider', custom_title: collections.promocoes-velozes-e-furiosas.title, collectionArray: collections.promocoes-velozes-e-furiosas.products %}
+              {% render 'brands-carousel', wrapperName: 'more-for-less-wrapper', containerName: 'more-for-less-slider', custom_title: collections.mais-por-menos.title, collectionArray: collections.mais-por-menos.products %}
+              {% render 'brands-carousel', wrapperName: 'sale-brands-wrapper', containerName: 'sale-brands-slider', custom_title: collections.marcas-em-promocao.title, collectionArray: collections.marcas-em-promocao.products %}
+              {% render 'brands-carousel', wrapperName: 'new-brands-wrapper', containerName: 'new-brands-slider', custom_title: 'Novas marcas', collectionArray: collections.novas-marcas.products %}
+              {% comment %}
+              <h2 class="vendors-title collection__title fs-2 mt-2 mb-0 fw-light">Marcas em destaque</h2>
+              {% endcomment %}
+            {% endif %}
+            {% unless collection.handle == 'marcas' %}
+              {% comment %}
+              <div class="vendors-slider d-flex">
+                <div class="text-center fornecedor_open-popup">
+                  <a href="#" class="fornecedor-popup_opener">
+                    <div class="col-12 text-center img-container">
+                      <img src="{{ 'todos_os_fornecedores.png' | file_img_url : '120x120' }}" alt="Fornecedores" class="m-auto"/>
+                    </div>
+                    <p>Todos os Fornecedores</p>
+                  </a>
+                </div>
+                  <section class="fornecedores-slide section px-0 my-0 position-relative container" id="section-{{ section.id }}" data-section-id="{{ section.id }}" data-section-type="seller-slider" style="visibility: hidden;max-height: 1px!important;">
+                    <button class="previous-slide">{%- render 'icon', icon: 'arrow-left' -%}</button>
+                    <button class="next-slide">{%- render 'icon', icon: 'arrow-right' -%}</button>
+                    <div class="container mt-4 container-degrading-end">
+                      <div class="row">
+                        {%- assign seller_has_slides = false -%}
+                        <div class="seller-slider w-100 p-0">
+                          {% assign position = 0 %}
+                          {% for seller_priority in indexPrioritys %}
+                            {% for seller_id in wk_store_ids %}
+                              {% assign index = seller_priority | plus: 0 %}
+                              {% if index == forloop.index0 %}
+                              {% if collection.all_vendors contains wk_store_names[forloop.index0] and collection.products_count > 0 and collectionProducts != "" %}
+                              {% assign position = position | plus: 1 %}
+                              {%- assign seller_has_slides = true -%}
+                                <div class="slide-block{{ forloop.index }} text-center seller-slide_glider">
+                                  <a class="fornecedor-slide" onclick="filterFornecedor(event, '{{ wk_store_names[forloop.index0] }}', { position: {{ position }}, best_sellers: true }, '{{ wk_store_names[forloop.index0] | url_encode }}')" href="/collections/vendors?q={{ wk_store_names[forloop.index0] | url_encode }}">
+                                  <div class="col-12 text-center px-2 img-container">
+                                    <div class="border rounded-3 p-3 m-auto">
+                                      {% assign imageUrl = wk_store_handles[forloop.index0] | handleize | append: ".png" %}
+                                      <img
+                                        class="img-fluid m-auto"
+                                        src="{{ wk_store_logos[forloop.index0] }}"
+                                        srcset="{{ imageUrl | file_img_url: '100x' }} 100w"
+                                        sizes="(max-width: 120px) 100px"
+                                        alt="Imagem de loja {{ wk_store_names[forloop.index0] }}"
+                                        loading="lazy"
+                                        class="motion-reduce"
+                                        width="90px"
+                                        height="90px"
+                                        onerror="this.onerror=null; this.srcset='{{ wk_store_logos[forloop.index0] }}'"
+                                      >
+                                    </div>
+                                  </div>
+                                  <span class="fs-6">{{ wk_store_names[forloop.index0] }}</span>
+                                  <small class="text-secondary d-block">
+                                    {% assign minimum_order = 0 %}
+                                    {% if shop.metafields.sellers.minimum_order_value contains wk_store_handles[forloop.index0] %}
+                                    {% assign split_name = wk_store_handles[forloop.index0] | append: '":' %}
+                                    {% assign minimum_order = shop.metafields.sellers.minimum_order_value | json | split: split_name | last | split: ',' | first %}
+                                    {% endif %}
+                                    {% if minimum_order != 0 and minimum_order != "0" %}Min. {{ minimum_order | times: 100 | money }}{% else %}Sem mínimo{% endif %}
+                                  </small>
+                                  </a>
+                                </div>
+                              {% break %}
+                              {% endif %}
+                              {% endif %}
+                            {% endfor %}
+                          {% endfor %}
+              
+                          {% for seller_id in wk_store_ids %}
+                            {% assign index = forloop.index0 %}
+                            {% assign prioritized = false %}
+                            {% for seller_priority in indexPrioritys %}
+                            {% assign indexPrior = seller_priority | plus: 0 %}
+                            {% if indexPrior == index %}
+                            {% assign prioritized = true %}
+                            {% break %}
+                            {% endif %}
+                            {% endfor %}
+              
+                            {% if prioritized %}
+                            {% continue %}
+                            {% endif %}
+                            {%- assign collectionProducts = "" -%}
+                            {%- assign collectionProducts = collection.products | where: "vendor", "Vida Natural" | limit: 1 -%}
+                            {% if collection.all_vendors contains wk_store_names[forloop.index0] and collection.products_count > 0 and collectionProducts != "" %}
+                            {% assign position = position | plus: 1 %}
+                              {% if wk_store_logos[forloop.index0] %}
+                                {% assign imageUrl = wk_store_handles[forloop.index0] | handleize | append: ".png" %}
+                                {%- assign seller_has_slides = true -%}
+                                <div class="slide-block{{ forloop.index }} text-center seller-slide_glider">
+                                  <a class="fornecedor-slide" onclick="filterFornecedor(event, '{{ wk_store_names[forloop.index0] | url_encode }}', { position: {{ position }} }, '{{ wk_store_names[forloop.index0] | url_encode }}')" href="/collections/vendors?q={{ wk_store_names[forloop.index0] | url_encode }}">
+                                    <div class="col-12 text-center px-2 img-container">
+                                      <div class="border rounded-3 p-3 m-auto">
+                                        <img
+                                          class="img-fluid m-auto"
+                                          src="{{ wk_store_logos[forloop.index0] }}"
+                                          srcset="{{ imageUrl | file_img_url: '100x' }} 100w"
+                                          sizes="(max-width: 120px) 100px"
+                                          alt="Imagem de loja {{ wk_store_names[forloop.index0] }}"
+                                          loading="lazy"
+                                          class="motion-reduce"
+                                          width="90px"
+                                          height="90px"
+                                          onerror="this.onerror=null; this.srcset='{{ wk_store_logos[forloop.index0] }}'"
+                                        >
+                                      </div>
+                                    </div>
+                                    <span class="fs-6">{{ wk_store_names[forloop.index0] }}</span>
+                                    <small class="text-secondary d-block">
+                                      {% assign minimum_order = 0 %}
+                                      {% if shop.metafields.sellers.minimum_order_value contains wk_store_handles[forloop.index0] %}
+                                      {% assign split_name = wk_store_handles[forloop.index0] | append: '":' %}
+                                      {% assign minimum_order = shop.metafields.sellers.minimum_order_value | json | split: split_name | last | split: ',' | first %}
+                                      {% endif %}
+                                      {% if minimum_order != 0 and minimum_order != "0" %}Min. {{ minimum_order | times: 100 | money }}{% else %}Sem mínimo{% endif %}
+                                    </small> 
+                                  </a>
+                                </div>
+                              {% endif%}
+                            {% endif%}
+                          {%- endfor -%}
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+              </div>
+              {% endcomment %}
+            {% endunless %}
+            {% comment %}
+            {% if collection.handle == 'marcas' %}
+              {% render 'brands-carousel', wrapperName: 'more-sale-brands-wrapper', containerName: 'more-sale-brands-slider', custom_title: collections.marcas-mais-vendidas.title, collectionArray: collections.marcas-mais-vendidas.products %}
+            {% endif %}
+            {% endcomment %}
+          {% endif %}
+          <div class="collection">
+          {% comment %}
+            {% unless collection.handle == 'marcas' or collection.template_suffix contains 'promotion' %}
+              {% include 'rebuy-order-slider' %}
+            {% endunless %}
+        {% endcomment %}
+            {%- if collection.handle == 'all' -%}
+                {% include 'buy-collection-bundle' %}
+            {%- endif -%}
+        {% comment %}
+            {% unless collection.handle == 'marcas' or collection.template_suffix contains 'promotion' %}
+              {% include 'comprar-novamente-slider' %}
+            {% endunless %}
+        {% endcomment %}
+            {%- if collection.all_products_count == 0 -%}
+              <div class="empty-state">
+                <p class="empty-state__heading heading h1">{{ collection.title }}</p>
+                <p class="empty-state__description">{{ 'collection.general.empty' | t }}</p>
+
+                <div class="empty-state__button-container">
+                  <a href="{{ routes.root_url }}" class="empty-state__button button button--primary">{{ 'collection.general.empty_button' | t }}</a>
+                </div>
+              </div>
+            {%- else -%}
+              
+              <div class="card border-0 {% if collection.products_count == 0 %}clearfix{% endif %}">
+                <div class="collection__dynamic-part">
+                  <div class="d-lg-none collection__toolbar px-md-0 pb-3">
+                    {%- if has_filters -%}
+                      <button class="collection__toolbar-item collection__toolbar-item--filter hidden-lap-and-up" data-action="open-drawer" aria-haspopup="true" aria-expanded="false" aria-controls="mobile-collection-filters">
+                        <span class="collection__filter-icon {% if current_tags.size > 0 %}collection__filter-icon--active{% endif %}">{%- render 'icon', icon: 'filter' -%}</span>
+                        {{ 'collection.filter.title' | t }}{% if current_tags.size > 0 %}&nbsp;({{ current_tags | size }}){% endif %}
+                      </button>
+                    {%- endif -%}
+
+                    <div class="collection__toolbar-item collection__toolbar-item--sort border p-3">
+                    </div>
+
+                    <div class="collection__toolbar-item collection__toolbar-item--layout border p-3">
+                    </div>
+                  </div>
+
+                  {%- if collection.products_count == 0 -%}
+                    <div class="empty-state empty-state--tight">
+                      <p class="empty-state__description">{{ 'collection.general.no_results' | t }}</p>
+
+                      <div class="empty-state__button-container">
+                        <button class="empty-state__button button button--primary" data-action="clear-tags">{{ 'collection.filter.clear_all' | t }}</button>
+                      </div>
+                    </div>
+                  {%- else -%}
+                    <div data-sectionId="{% if section.id %}{{section.id}}{% endif %}" data-settings='{% if section.settings %}{{section.settings | json}}{% endif %}' id="gf-products" class="product-list product-list--collection {% if has_filters %}product-list--with-sidebar{% endif %} border-0">
+
+                    </div>
+                  {%- endif -%}
+                </div>
+              </div>
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endpaginate -%}
+    </div>
+  </div>
+
+<link rel="stylesheet" href="{{ 'collection.css' | asset_url }}">
+{%- if collection.handle == 'marcas' -%}
+  <style type="text/css">
+    @media (min-width: 1000px) {
+      .banner-tutorial-slider.glider.draggable p {
+        font-size: 1.2rem!important;
+        width: 140px;
+      }
+
+      .banner-tutorial-slider.glider.draggable .col-7 {
+        margin: 0;
+        text-align: center;
+      }
+
+      .banner-tutorial-slider.glider.draggable .col-3 {
+        margin-left: 8.33333333%;
+      }
+    }
+  </style>
+{%- endif -%}
+{%- if collection.image -%}
+  <style>
+    .collection-title-container {
+      background-image: url({{ collection.image | image_url: width: 1200 }});
+      background-size: cover;
+    }
+
+    .collection-title-container .page__sub-header .breadcrumb__link,
+    .collection-title-container .collection__description {
+      color: #1A1A1A !important;
+    }
+  </style>
+{%- endif -%}
+<script defer>
+  function filterFornecedor(event, vendorName, properties, redirectBrandPage){
+    event.preventDefault();
+    
+    if(driver) driver.pushEvent('filterFornecedor', {
+      vendor: vendorName,
+      from_carousel: properties && properties.popup ? true : false,
+      position: properties ? properties.position : 0,
+      best_seller: properties && properties.best_sellers ? true : false,
+      url: window.location.href
+    })
+    if(redirectBrandPage) window.location.replace(`/collections/vendors?q=${redirectBrandPage}`)
+    else{
+      const vendorNameFormated = vendorName.replace("’", "'");
+      const clearBrandFilterAll = document.querySelector("#gf-tree .globo-selected-items-wrapper .gf-refine-toggle");
+      clearAllFilter();
+      setTimeout(() => {
+        filterBrand(vendorNameFormated);
+      }, 500);
+    }
+      
+  }
+
+  function filterBrand(vendorNameFormated) {
+    const filterLink = document.querySelector(`[data-filter-type="Vendor"] li a[title="${vendorNameFormated}"]`);
+    if(filterLink){
+      filterLink.click();
+      const grid = document.getElementById('gf-grid');
+      if(grid){
+        window.scroll({
+          top: (grid.getBoundingClientRect().top + window.scrollY - 110),
+          left: 0,
+          behavior: 'smooth'
+        })
+      }
+    }
+  }
+  
+  function validateDestaques(destaquesSlider) {
+    const currentUrl = window.location.href;
+    
+    setTimeout(() => {
+      const filtersApplied = document.querySelector(".globo-selected-items-wrapper .globo-selected-items");
+      if (filtersApplied != null) {
+        destaquesSlider.classList.add("invisible");
+        destaquesSlider.classList.add("position-absolute");
+        destaquesSlider.classList.add("start-0");
+      } else {
+        destaquesSlider.classList.remove("d-none");
+        destaquesSlider.classList.remove("invisible");
+        destaquesSlider.classList.remove("position-absolute");
+        destaquesSlider.classList.remove("start-0");
+      }
+      if (currentUrl.includes('gf_')) {
+        destaquesSlider.classList.add("invisible");
+        destaquesSlider.classList.add("position-absolute");
+        destaquesSlider.classList.add("start-0");
+      }
+
+    }, 1000);
+
+  }
+  
+  window.addEventListener('load', function() {
+    const destaquesSlider = document.querySelector(".destaques-container");
+    const destaquesSlider2 = document.querySelector(".destaques-container");
+    if(destaquesSlider){
+    document.addEventListener("click", checkElements );
+    validateDestaques(destaquesSlider);
+    if (destaquesSlider2) validateDestaques(destaquesSlider2);
+    }
+  
+    function checkElements(event) {
+      var element = event.target;
+
+      if (element.tagName == 'A' && (element.classList.contains("gf-clear") || element.classList.contains("clear-refinements") || element.classList.contains("gf-refine-toggle"))) {
+        destaquesSlider.classList.remove("d-none");
+        destaquesSlider.classList.remove("invisible");
+        destaquesSlider.classList.remove("position-absolute");
+        destaquesSlider.classList.remove("start-0");
+      }
+
+      if ((element.tagName == 'SPAN' && (element.classList.contains("gf-Checkbox") || element.classList.contains("gf-label") || element.classList.contains("gf-count"))) || (element.tagName == 'IMG' && element.offsetParent.classList.contains("slick-track")) || (element.tagName == 'A' && element.classList.contains("filterElement"))) {
+//         destaquesSlider.classList.add("d-none");
+      }
+      
+      validateDestaques(destaquesSlider);
+      if (destaquesSlider2) validateDestaques(destaquesSlider2);
+    }
+
+    {%- if destaques_has_slides -%}
+    const destaquesContainerWrapper = document.querySelector('.destaque-slider');
+
+    destaquesContainerWrapper.addEventListener('glider-loaded', function() {
+      document.querySelector('.destaques-slider_wrapper').removeAttribute("style");
+    });
+
+    new Glider(destaquesContainerWrapper, {
+      type: 'carousel',
+      focusAt: 'center',
+      rewind: true,
+      slidesToShow: 2,
+      slidesToScroll: 2,
+      draggable: true,
+      arrows: {
+        prev: '.destaques-slider_wrapper .previous-slide',
+        next: '.destaques-slider_wrapper .next-slide'
+      },
+      responsive: [
+      {
+        breakpoint: 650,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 3
+        }
+      },
+      {
+        breakpoint: 1150,
+        settings: {
+          slidesToShow: 4,
+          slidesToScroll: 4
+        }
+      },
+        {
+        breakpoint: 1500,
+        settings: {
+          slidesToShow: 5,
+          slidesToScroll: 5
+        }
+      }
+      ]
+    });
+    {%- endif -%}
+
+    {%- if seller_has_slides -%}
+    const sellersContainer = document.querySelector('.seller-slider');
+
+    sellersContainer.addEventListener('glider-loaded', function() {
+      document.querySelector('.fornecedores-slide').removeAttribute("style");
+    });
+
+    new Glider(sellersContainer, {
+      type: 'carousel',
+      focusAt: 'center',
+      rewind: true,
+      slidesToShow: 2,
+      slidesToScroll: 2,
+      draggable: true,
+      arrows: {
+        prev: '.fornecedores-slide .previous-slide',
+        next: '.fornecedores-slide .next-slide'
+      },
+      responsive: [
+      {
+        breakpoint: 550,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 3
+        }
+      },
+      {
+        breakpoint: 700,
+        settings: {
+          slidesToShow: 4,
+          slidesToScroll: 4
+        }
+      },
+      {
+        breakpoint: 1200,
+        settings: {
+          slidesToShow: 5,
+          slidesToScroll: 5
+        }
+      },
+      {
+        breakpoint: 1300,
+        settings: {
+          slidesToShow: 6,
+          slidesToScroll: 6
+        }
+      }
+      ]
+    });
+    {%- endif -%}
+  })
+</script>
+
+{% schema %}
+{
+  "name": "Collection page",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_collection_image",
+      "label": "Show collection image",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "collapse_collection_description",
+      "label": "Collapse long description",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "collection_image_size",
+      "label": "Collection image size",
+      "options": [
+        {
+          "value": "preserve_ratio",
+          "label": "Original image ratio"
+        },
+        {
+          "value": "small",
+          "label": "Small"
+        },
+        {
+          "value": "medium",
+          "label": "Medium"
+        },
+        {
+          "value": "large",
+          "label": "Large"
+        }
+      ],
+      "default": "small"
+    },
+    {
+      "type": "select",
+      "id": "products_per_row",
+      "label": "Products per row (desktop)",
+      "options": [
+        {
+          "value": "3",
+          "label": "3"
+        },
+        {
+          "value": "4",
+          "label": "4"
+        }
+      ],
+      "default": "4"
+    },
+    {
+      "type": "range",
+      "id": "default_products_per_page",
+      "label": "Default products per page",
+      "min": 24,
+      "max": 48,
+      "step": 12,
+      "default": 24
+    },
+    {
+      "type": "select",
+      "id": "default_view_layout",
+      "label": "Default view layout",
+      "options": [
+        {
+          "value": "grid",
+          "label": "Grid"
+        },
+        {
+          "value": "list",
+          "label": "List"
+        }
+      ],
+      "default": "grid"
+    },
+    {
+      "type": "select",
+      "id": "show_quick_buy",
+      "label": "Show quick buy on...",
+      "options": [
+        {
+          "value": "list",
+          "label": "List view"
+        },
+        {
+          "value": "list_grid",
+          "label": "List and grid views"
+        }
+      ],
+      "default": "list"
+    },
+    {
+      "type": "select",
+      "id": "show_quick_view",
+      "label": "Show quick view on...",
+      "options": [
+        {
+          "value": "list",
+          "label": "List view"
+        },
+        {
+          "value": "list_grid",
+          "label": "List and grid views"
+        }
+      ],
+      "default": "list"
+    },
+    {
+      "type": "header",
+      "content": "Sidebar"
+    },
+    {
+      "type": "link_list",
+      "id": "quick_links",
+      "label": "Quick links"
+    },
+    {
+      "type": "checkbox",
+      "id": "quick_links_show_products_count",
+      "label": "Show products count",
+      "info": "Only for collection links",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Filtering"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_filters",
+      "label": "Show filters",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_filter_color_swatch",
+      "label": "Show filter color swatch",
+      "info": "Requires filter type \"By group\" to be selected.",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "filter_type",
+      "label": "Filter type",
+      "info": "Filters by group requires specific tag formatting. [Learn more](https://help.shopify.com/manual/using-themes/themes-by-shopify/supply#product-tips-tips-specific)",
+      "options": [
+        {
+          "value": "tag",
+          "label": "By tag"
+        },
+        {
+          "value": "group",
+          "label": "By group"
+        }
+      ],
+      "default": "tag"
+    },
+    {
+      "type": "select",
+      "id": "open_group_filters_mode",
+      "label": "Filter opening mode (desktop)",
+      "options": [
+        {
+          "value": "all_closed",
+          "label": "All closed"
+        },
+        {
+          "value": "all_open",
+          "label": "All open"
+        },
+        {
+          "value": "first_open",
+          "label": "First open"
+        }
+      ],
+      "default": "all_closed"
+    },
+    {
+      "type": "text",
+      "id": "filter_group_order",
+      "label": "Group order",
+      "info": "List items must be identical to the group name. If left empty, all groups will be displayed in alphabetical order. Example: Color, Brand, Size."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "seller_priority",
+      "name": "Seller priority",
+      "settings": [
+        {
+          "type": "text",
+          "id": "seller-name",
+          "label": "Seller name",
+          "default": "seller"
+          }
+      ]
+    }
+  ]
+}
+{% endschema %}

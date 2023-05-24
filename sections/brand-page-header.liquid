@@ -1,0 +1,382 @@
+{% assign minimumMetafield = shop.metafields.sellers | json %}
+{% assign minimum_order = 0 %}
+{% assign icon_img = '' %}
+{% assign banner_img = '' %}
+{% assign description = '' %}
+{% assign productVendorName = collection.products[0].vendor %}
+
+{% if productVendorName == "Inventa Comércio" %}
+  {% assign productTags = collection.products[0].tags | join: "|||" %}
+  {% assign productVendorIdentifier = "Fornecedor_" %}
+  {% if productTags contains "Marca_" %}
+    {% assign productVendorIdentifier = "Marca_" %}
+  {% endif %}
+  {% assign productVendorName = productTags | split: productVendorIdentifier | last | strip | split: "|||" | first %}
+{% endif %}
+
+{% assign brand_name = productVendorName | truncate: 20, '' %}
+{% assign vendor_name = productVendorName | truncate: 20, '' | replace: "'", "" %}
+{% assign productVendor = productVendorName  | downcase | replace: "+", "" | replace: "/", "" | replace: " ", "-" | replace: "-&", "" | replace: "'", "" | replace: "--", "-" | replace: ".", "" | replace: "&", "-" | replace: "!", "" | replace: ",", "" | replace: "_", "-" | replace: "|", "" %}
+{% assign productVendor = productVendor | replace: "--", "-" %}
+{% if shop.metafields[brand_name].brandpage %}
+{% assign vendorInfo = shop.metafields[brand_name] | json %}
+{% assign icon_img = vendorInfo | split: '"logo":"' | last | split: '",' | first | remove: '}' | remove: '\' %}
+{% assign banner_img = vendorInfo | split: 'background":"' | last | split: '",' | first | remove: '}' | remove: '\' %}
+{% assign description = vendorInfo | split: 'description":"' | last | split: '",' | first | remove: '}' | replace: '\u0026', '&' | replace: '\n', ' ' %}
+{% assign zoho_id = vendorInfo | split: '"zoho_id":"' | last | split: '"' | first %}
+{% if vendorInfo contains "social-media" %}
+    {% if vendorInfo contains "facebook" %}
+        {% assign facebook = vendorInfo | split: 'facebook":"' | last | split: '",' | first | remove: '}' | remove: '\' %}
+    {% endif %}
+    {% if vendorInfo contains "instagram" %}
+        {% assign instagram = vendorInfo | split: 'instagram":"' | last | split: '",' | first | remove: '}' | remove: '\' %}
+    {% endif %}
+    {% if vendorInfo contains "website" %}
+        {% assign website = vendorInfo | split: 'website":"' | last | split: '",' | first | remove: '}' | remove: '\' | remove: 'https://' %}
+    {% endif %}
+{% endif %}
+{% endif %}
+{% assign split_name = '"' | append: productVendor | append: '":' %}
+{% if minimumMetafield contains split_name %}
+{% assign minimum_order = minimumMetafield | split: split_name | last | split: ',' | first | remove: "}" | plus: 0 %}
+{% endif %}
+<script>console.log({{ minimum_order | json }});</script>
+
+<section data-section-id="{{ section.id }}" data-section-type="brand-page-header" class="d-flex justify-content-center">
+    <div class="brand-page_inner">
+        <div class="brand-page_banner"></div>
+        <div class="row brand-page_inner">
+            {% if icon_img != blank %}
+            <div class="col-5 col-md-5 col-lg-3 brand-page_icon-container {% if description == blank %}minimal-container{% endif %}">
+                <div class="d-flex p-2 p-md-4 justify-content-center align-items-center m-auto brand-page_icon-wrapper">
+                    <img src="{% if icon_img != blank %}{{ icon_img }}{% else %}https://cdn.shopify.com/s/files/1/0507/3226/9775/files/icon_example.png?v=1633535704{% endif %}" alt="{{ productVendor }}-icon">
+                </div>
+            </div>
+            {% endif %}
+            <div class="brand-page_info-container {% if icon_img != blank %}col-7 col-md-7 col-lg-9{% else %}col-12 px-5{% endif %} pt-4">
+                <div class="d-md-flex">
+                    <div>
+                        {% if productVendorName %}
+                            <h1 class="fw-bold d-inline-block align-middle me-3">{{ productVendorName }}</h1>
+                        {% endif %}
+                        {% render "icon-top-brand", brand: productVendorName, text: "INVENTA INDICA" %}
+                        {% render "icon-free-shipping-brand", brand: collection.products[0].vendor, text: "FRETE GRÁTIS" %}
+                        <div class="d-flex align-items-center flex-wrap">
+                            <span class="me-2 w-100 fornecedor-minimum">{% if minimum_order != 0 and minimum_order != "0" %}Mínimo R${{ minimum_order | round }}{% else %}Sem mínimo{% endif %}</span>
+                            {% assign vendorDiscounts = shop.metafields.brands.discounts %}
+                            {% assign vendorDiscountsJson = shop.metafields.brands.discounts | json %}
+                            {% assign discountDetails = "" %}
+                            {% if vendorDiscountsJson contains vendor_name %}
+                              {% for vendorDiscount in vendorDiscounts %}
+                                {% if vendorDiscount.brand == vendor_name %}
+                                  {% assign maxDiscount = 0 %}
+                                  {% for brandDiscount in vendorDiscount.discounts %}
+                                    {% assign currentDiscountAmount = brandDiscount[1] | plus: 0 %}
+                                    {% if currentDiscountAmount > maxDiscount %}
+                                      {% assign maxDiscount = currentDiscountAmount %}
+                                    {% endif %}
+                                    {% assign minAmountDiscount = brandDiscount[0] | times: 100 | money_without_trailing_zeros %}
+                                    {% assign discountDetails = discountDetails | append: "Compre mais de <strong>" | append: minAmountDiscount | append: " ganhe " %}
+                                    {% if vendorDiscount.discount_type == "percentage" %}
+                                      {% assign discountDetails = discountDetails | append: brandDiscount[1] | append: "% </strong> <br />" %}
+                                    {% else %}
+                                      {% assign valueAmount = brandDiscount[1] | times: 100 | money_without_trailing_zeros %}
+                                      {% assign discountDetails = discountDetails | append: valueAmount | append: "</strong> <br />" %}
+                                    {% endif %}
+                                  {% endfor %}
+                                  {% if vendorDiscount.discount_type == "percentage" %}
+                                    {% assign maxDiscount = maxDiscount | append: "%" %}
+                                  {% else %}
+                                    {% assign maxDiscount = maxDiscount | times: 100 | money_without_trailing_zeros %}
+                                  {% endif %}
+                                {% endif %}
+                              {% endfor %}
+
+                              {% if discountDetails != "" %}
+                                <a href="#" class="fw-bold mb-2 brand-page-promotion" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="bottom" data-bs-content="{{ discountDetails }}"><span>COMPRE DESTA MARCA E GANHE ATÉ {{ maxDiscount }}</span> detalhes</a>
+                              {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% include "rrss-icons", facebook: facebook, instagram: instagram %}
+                </div>
+                <div class="brand-page_info-desc lato semi-black">
+                    {% if description != blank %}
+                    <p class="fs-5 my-2 description-p d-none">{{ description | truncate: 500}}</p>
+                    {% endif %}
+                    {%- comment -%}
+                    {% if website != blank %}
+                    <a class="fw-bold fs-6" target="_blank" href="//{{ website }}">Conheça mais da marca</a>
+                    {% endif %}
+                    {%- endcomment -%}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .brand-page-promotion span{
+        color: #1A1A1A;
+    }
+    .brand-page-promotion{
+        color: #373D43;
+        font-size: 12px;
+        line-height: 21px;
+    }
+
+    [data-section-type="brand-page-header"] h1{
+        font-size: 40px;
+        line-height: 45px;
+        color: #1A1A1A;
+    }
+
+    @media (min-width: 992px){
+        [data-section-type="brand-page-header"] h1{
+            font-size: 54px;
+            line-height: 60px;
+        }
+        .brand-page-promotion{
+            font-size: 16px;
+            line-height: 28px;
+        }
+    }
+
+    .noto-sans{
+        font-family: 'Noto sans';
+    }
+    .lato{
+        font-family: 'Lato';
+    }
+    .semi-black{
+        color: #666;
+    }
+    .semi-grey{
+        color: #999;
+    }
+
+    .brand-page_info-desc{
+        max-width: 90%;
+    }
+    .brand-page_info-desc p{
+        line-height: 1.3em;
+    }
+    .brand-page_banner{
+        height: 250px;
+        background-image: url("{% if banner_img != blank %}{{ banner_img }} {% else %} https://cdn.shopify.com/s/files/1/0507/3226/9775/files/banner-brand-background.png?v=1633535674{% endif %}");
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        border-bottom: 6px solid var(--accent-color);
+    }
+    .brand-page_inner{
+        max-width: 1440px;
+        width: 100vw;
+    }
+
+    .brand-page_icon-wrapper{
+        width: 300px;
+        height: 300px;
+        background: #fff;
+        box-shadow: 0px 5px 25px rgba(0, 0, 0, 0.15);
+        position: relative;
+        top: -58px;
+    }
+
+    .brand-page_icon-container {
+        height: 220px;
+        z-index: 1;
+    }
+
+    @media (min-width: 760px) {
+        .brand-page_icon-container.minimal-container {
+            height: 120px !important;
+        }
+
+        .brand-page_icon-container.minimal-container .brand-page_icon-wrapper {
+            top: -200px;
+        }
+    }
+
+    @media (max-width: 640px){
+
+        .brand-page_icon-container{
+            height: 180px;
+        }
+
+        .brand-page_banner{
+          {% if banner_vendor_image_mobile != blank %}          
+            height: 100%;
+            background-image: url("{{ banner_vendor_image_mobile }}");
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            border-bottom: 6px solid var(--accent-color);
+          {% else %}
+            display: none;
+          {% endif %}
+        }
+        .brand-page_info-desc{
+            padding-bottom: 2rem;
+        }
+        .brand-page_info-desc p{
+            max-height: 4.85rem;
+            overflow-y: hidden;
+            text-overflow: ellipsis;
+            position: relative;
+            pointer-events: none;
+        }
+        .brand-page_info-desc p:after{
+            content: '...';
+            position: absolute;
+            right: 0;
+            top: 2.6em;
+            padding-right: 1rem;
+            padding-left: 4rem;
+            background: linear-gradient(to right, transparent, #fff);
+            pointer-events: all;
+        }
+        p.description-p.show-mobile{
+            animation-name: maxHeightOut;
+            animation-duration: 1s;
+            animation-timing-function: ease-in;
+            max-height: none;
+            overflow-y: visible;
+        }
+        p.description-p.show-mobile:after{
+            content: '...menos';
+            bottom: -1.3rem;
+            top: initial;
+        }
+    }
+    
+    @keyframes maxHeightOut{
+        0%{
+            max-height: 4.85rem !important;
+        }
+        100%{
+            max-height: 40rem !important;
+        }
+    }
+
+    @media (min-width: 1100px) and (max-width: 1200px){
+        .brand-page_icon-container{
+            height: 330px !important;
+        }
+    }
+
+    @media (max-width: 1400px){
+        .brand-page_info-desc{
+            max-width: none;
+        }
+        .brand-page_icon-wrapper{
+            width: calc(100% - 1.5rem);
+            height: fit-content;
+        }
+        .brand-page_icon-wrapper:after{
+            content: "";
+            display: block;
+            padding-bottom: 100%;
+        }
+    }
+
+    @media (max-width: 640px){
+        .brand-page_icon-wrapper{
+            top: 12px;
+        }
+    }
+
+    @media (max-width: 640px){
+        .brand-page_icon-container {
+            height: 270px;
+        }
+    }
+   
+    .popover {
+        max-width: initial;
+    }
+</style>
+
+<script>
+    checkRedirect();
+    initBrandPage();
+
+    function validateUTMIntoURL() {
+        const params = new URLSearchParams(window.location.search.substring(1));
+        const urlInfo = {
+            source: params.has('utm_source') ? params.get('utm_source') : '',
+            medium: params.has('utm_medium') ? params.get('utm_medium') : '',
+            zoho_id: '{{ zoho_id }}'
+        }
+
+        return urlInfo;
+    }
+
+    function checkRedirect() {
+        const currentVendor = "{{ productVendorName | url_encode }}";
+        if(window.localStorage.getItem('vendor-url')){
+            const vendor = window.localStorage.getItem('vendor-url');
+          	window.localStorage.removeItem('vendor-url');
+            if(vendor.includes(currentVendor) && vendor.includes('%26')) {
+                window.location.replace(`/collections/vendors?q=${vendor}`);
+                return;
+            }
+        }
+
+        const urlInfo = validateUTMIntoURL();
+
+        if (currentVendor != "") {
+            window.localStorage.setItem('vendor-url', currentVendor);
+        }
+        if(urlInfo.source && (urlInfo.medium == 'widget' || urlInfo.medium == 'ig_referral' || urlInfo.medium == "ref_link"))
+        {% if customer %}
+          if(typeof sendReferral == 'function') 
+            sendReferral(urlInfo.zoho_id, urlInfo.source, urlInfo.medium);
+        {% else %}
+          window.localStorage.setItem('widget-info', JSON.stringify(urlInfo))
+        {% endif %};
+    }
+
+    function initBrandPage(){
+        parseInfo();
+        const desc = document.querySelector('.description-p');
+        if(desc) desc.addEventListener('click', () => {
+            desc.classList.toggle('show-mobile');
+        })
+    }
+
+    function parseInfo(){
+        const desc = document.querySelector('.description-p');
+        if(desc){
+            const obj = {
+                desc: desc.innerText
+            }
+            const string = JSON.stringify(obj);
+            const parse = JSON.parse(string);
+            desc.innerText = unescape(parse.desc);
+            desc.classList.remove('d-none');
+        }
+    }
+</script>
+
+<script defer="defer">
+    validateModal();
+
+    function validateModal() {
+        const urlInfo = validateUTMIntoURL();
+
+        if (urlInfo.source && (urlInfo.medium == 'widget' || urlInfo.medium == 'ig_referral' || urlInfo.medium == "ref_link")) {
+            if (localStorage.getItem('widget-info')) {
+              	setTimeout(() => {
+                  	if (window.screen.width > 900) {
+                      	openSignUp();
+                    } else {
+                      	const modalMobileReferral = document.querySelector(".modal-referral");
+                        
+                        if (modalMobileReferral) modalMobileReferral.classList.remove("d-none");
+                    }
+                }, 5000);
+            }
+        }
+    }
+</script>

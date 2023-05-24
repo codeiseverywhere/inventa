@@ -1,0 +1,1108 @@
+<section id="register-section" class="testab-background section m-0 pb-5" data-section-id="{{ section.id }}" data-section-type="retailer-register-form">
+  <div id="form_testab" class="d-none"></div>
+  
+  <div class="container register-short px-0 pb-0 pb-md-5">
+    <div class="row w-100 mx-0 pb-4">
+      <div class="{% if section.settings.promo_mobile or section.settings.promo_desktop %} justify-content-center {% endif %}col-12 px-0 col-md-5 offset-md-2 pb-md-4">
+        <h1 class="banner-text mt-md-5 mb-0 px-5 px-md-0 display-2 text-white fw-bold lh-1 mb-4">O atacado online exclusivo para lojistas</h1>
+
+        {%comment%}
+        <div class="row">
+          <div class="col-12">
+            <h2 class="banner-text mt-md-5 mb-0 px-5 px-md-0 display-3 text-white fw-bold lh-1 fst-italic">Dia das Mães</h2>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-2">
+            <h2 class="banner-text mb-0 mt-1 px-5 px-md-0 display-6 text-white fw-bold lh-1 text-end">com até</h2>
+          </div>
+          <div class="col-10 p-0">
+            <h2 class="banner-text banner-discount mb-0 px-5 px-md-0 text-white fw-bold lh-1">40% off</h2>
+          </div>
+        </div>
+        {%endcomment%}
+        <div class="d-flex justify-content-center">
+          <img class="test-ab_mobile-view lazyload image--fade-in image--shadow" data-src="" alt="discount-banner">
+        </div>
+        <img class="test-ab_desktop-view lazyload image--fade-in image--shadow d-block ms-auto" data-src="" alt="discount-banner">
+      </div>
+      <div id="form-container" class="col-12 col-md-4 offset-md-1 col-lg-4 col-xl-3 form-container position-relative pb-3 pt-md-4 mt-md-2 px-4">
+        <h3 class="my-3 fw-bold fs-4">Criar conta de Lojista</h3>
+        <form class="mt-3 show" data-step="0">
+          <div class="mb-3" data-container="first_name">
+            <label for="name" class="form-label d-none">Nome do responsável</label>
+            <input type="text" class="form-input p-3" name="first_name" placeholder="Nome do responsável">
+          </div>
+          <div class="mb-3" data-container="phone">
+            <label for="whatsapp" class="form-label d-none">WhatsApp com DDD</label>
+            <div class="d-flex">
+              <span class="form-input border-end-0 no-round-end p-3" style="width: 55px;">+55</span>
+              <input type="text" class="form-input border-start-0 no-round-start p-3" name="phone" placeholder="WhatsApp com DDD">
+            </div>
+          </div>
+          <div class="">
+            <button type="submit" class="btn btn-dark w-100 p-3 fw-bold">
+              <span>Próximo</span>
+              <div class="spinner-border spinner-border-sm d-none text-light form-loading">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </button>
+          </div>
+        </form>
+
+        <form class="mt-3 d-none" data-step="1">
+          <div class="mb-3 px-2" data-container="cpf">
+            <label for="cpf" class="form-label d-none">CPF</label>
+            <input type="text" class="form-input p-3" name="cpf" placeholder="CPF">
+          </div>
+          <div class="mb-3 px-2" data-container="cnpj">
+            <label for="cnpj" class="form-label d-none">CNPJ</label>
+            <input type="text" class="form-input p-3" name="cnpj" placeholder="CNPJ">
+          </div>
+          <div class="mb-3 px-2" data-container="email">
+            <label for="email" class="form-label d-none">Email comercial</label>
+            <input type="email" class="form-input p-3" name="email" placeholder="Email comercial">
+          </div>
+          <div class="mb-3 px-2" data-container="password">
+            <label for="password" class="form-label d-none">Senha</label>
+            <input type="password" class="form-input p-3" name="password" placeholder="Senha">
+          </div>
+          <div class="mb-3 px-2" data-container="termos_e_condicoes">
+            <input type="checkbox" class="form-check-input" name="termos_e_condicoes">
+            <label class="" for="termos_e_condicoes">
+              <span class="fw-bold">Aceito os <a href="/pages/termos-e-condicoes-lojistas" target="_blank" class="text-decoration-underline">Termos e condições</a></span>
+            </label>
+          </div>
+          <div class="px-2">
+            <button type="submit" class="btn w-100 button">
+              <span>Cadastre-se como lojista</span>
+              <div class="spinner-border spinner-border-sm d-none form-loading">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </button>
+            <div class="no-connection_container d-none">
+              <div class="invalid mb-3 px-2">
+                <p class="error_element">Sua internet esta instável, necessário estar ligado a alguma rede para prosseguir, tentando de novo em: <span class="fw-bold text-nowrap"><span class="timer">10</span> segs</span></p>
+              </div>
+              <div>
+                <button id="connection-tryagain" class="btn w-100 button">
+                  <span>Tente agora</span>
+                  <div class="spinner-border spinner-border-sm d-none form-loading">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% capture cf_form0 %}
+{% render 'customer-fields', form_id: "X1t1AW" %}
+{% endcapture %}
+{% capture cf_formA %}
+{% if shop.name contains "DEV" %}{% render "customer-fields", form_id: "mMt8G5" %}{% else %}{% render "customer-fields", form_id: "lXtrX0" %}{% endif %}
+{% endcapture %}
+{% capture cf_formB %}
+{% if shop.name contains "DEV" %}{% render "customer-fields", form_id: "pvtlAL" %}{% else %}{% render "customer-fields", form_id: "dGtVak" %}{% endif %}
+{% endcapture %}
+
+<script>
+  function getForm() {
+    const searchParams = new URLSearchParams(window.location.search);
+    let test = 0;
+    if(searchParams.has('register-ab')){
+      test = !Number.isNaN(searchParams.get('register-ab')) ? parseInt(searchParams.get('register-ab')) : 0;
+    }
+    const form_test = [ {{ cf_form0 | json }} ];
+    const element = document.getElementById('form_testab');
+    if(element) {
+      element.innerHTML += form_test[test] ? form_test[test] : form_test[0];
+    }
+    document.getElementById('register-section').setAttribute('data-test', test);
+    const new_timestamp = new Date().getTime();
+    const style_url = '//cdn.shopify.com/s/files/1/0556/2440/1049/t/128/assets/customer-fields.css?v=' + new_timestamp;
+    const style = document.createElement('link');
+    style.setAttribute('rel', 'stylesheet');
+    style.setAttribute('type', 'text/css');
+    style.href = style_url;
+    document.head.append(style);
+    const script_url = '//cdn.shopify.com/s/files/1/0556/2440/1049/t/128/assets/customer-fields.js?v=' + new_timestamp;
+    const script = document.createElement('script');
+    script.src = script_url;
+    document.body.append(script);
+  }
+  getForm();
+
+  const form_container = document.getElementById("form-container");
+  if(form_container){
+    const steps = [];
+    const forms_steps = form_container.querySelectorAll('form[data-step]');
+    for(let i = 0; i < forms_steps.length; i++) steps.push({form_element: forms_steps[i]});
+    steps[0] = {
+      ...steps[0],
+      fields: [
+        {
+          name: "first_name",
+          required: true,
+          error: "Adicione o nome da pessoa de contato"
+        },
+        {
+          name: "phone",
+          required: true,
+          error: "Forneça um número de telefone com DDD válido",
+          resolver: (value) => "+55" + value.replace(/\D/g, ""),
+          validator: (value) => ({ok: value && value.replace(/\D/g, "").match(/^\d{10,11}\b/g)})
+        }
+      ]
+    };
+    steps[1] = {
+      ...steps[1],
+      fields: [
+        {
+          name: "cpf",
+          required: true,
+          error: "Adicione o seu CPF",
+          validator: (cpfValue) => {
+            const error = "CPF é inválido, favor validar os números informados";
+            if (!cpfValue.match(/^[0-9]{3}[\.]?[0-9]{3}[\.]?[0-9]{3}[-\.\/]?[0-9]{2}$/g)) return {ok: false, error};
+            let cpf = cpfValue.replace(/[^\d]+/g,'').replace( /(.)\1{5,}/g, '' );
+            if (cpf == '' || cpf.length != 11) return {ok: false, error};
+            
+            // Valida 1o digito 
+            let add = 0;  
+            for (let i=0; i < 9; i ++)    
+              add += parseInt(cpf.charAt(i)) * (10 - i);  
+              rev = 11 - (add % 11);  
+              if (rev == 10 || rev == 11)   
+                rev = 0;  
+              if (rev != parseInt(cpf.charAt(9)))   
+                return {ok: false, error};    
+            // Valida 2o digito 
+            add = 0;  
+            for (let i = 0; i < 10; i ++)   
+              add += parseInt(cpf.charAt(i)) * (11 - i);  
+            rev = 11 - (add % 11);  
+            if (rev == 10 || rev == 11) 
+              rev = 0;  
+            if (rev != parseInt(cpf.charAt(10)))
+              return {ok: false, error};    
+            return {ok: true};
+          }
+        },
+        {
+          name: "cnpj",
+          required: true,
+          error: "Adicione o seu CNPJ",
+          validator: async (value) => {
+            if(!validCNPJ(value)) return {ok: false, error: "CNPJ é inválido, favor validar os números informados"};
+            const pageHost = {{ request.host | json }};
+            const corsUrl = "https://cors.inventashop.com.br/";
+            let shopifyShopUrl = "https://inventa.shop";
+            let shopifyApiUrl = "https://api.inventa.tec.br";
+            let shopifyApiKey = "LmRkuO9OI9";
+            let shopifyApiSecretKey = "42Ipvjz39M";
+
+            if (pageHost.includes("dev")) {
+              shopifyShopUrl = "https://inventa-dev.myshopify.com";
+              shopifyApiUrl = "https://api.inventa.dev.br";
+              shopifyApiKey = "LMYzUdD0Wq";
+              shopifyApiSecretKey = "GHrI6Xg0Qc";
+            }
+
+            const cnpj = value.replace(/\D/g, '');
+            const cnpj_url = `${corsUrl}${shopifyApiUrl}/data/shopify/retailer_data/${cnpj}`;
+
+            const res = await fetch(cnpj_url, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                'origin': 'shopify',
+                'api-key': shopifyApiKey,
+                'secret-key': shopifyApiSecretKey
+              }
+            })
+              if(res.status == 403) {
+                return {
+                  ok: false,
+                  error: "CNPJ já cadastrado."
+                };
+              } else {
+                const json = await res.json();
+                if(json && json.message == "CNPJ já cadastrado.") return { ok: false, error: "CNPJ já cadastrado." }
+                else return {ok: true};
+              }
+          }
+        },
+        {
+          name: "email",
+          required: true,
+          error: "Insira um e-mail",
+          validator: (value) => ({ok: value && value.match(/^[\w-\.\+\u00C0-\u017F]+@([\w-]+\.)+[\w-]{2,6}$/g), error: "Forneça um endereço de e-mail válido"})
+        },
+        {
+          name: "password",
+          required: true,
+          error: "Insira uma senha",
+          validator: (value) => ({ok: value && value.length > 6, error: "Insira uma senha com mais de 6 caracteres"})
+        },
+        {
+          name: "termos_e_condicoes",
+          required: true,
+          error: "Necessário que aceite os termos e condições"
+        }
+      ]
+    }
+    startAsyncForm(steps);
+  }
+
+  function validCNPJ(cnpj) {
+    cnpj = cnpj.replace(/[^\d]+/g, '');
+    if(cnpj.length !== 14) return false;
+    {% comment %}
+    verificando se tem a quantidade certa de caracter e se não tem todos caracteres iguais
+    {% endcomment %}
+    if(/^(\d)\1+$/.test(cnpj))
+        return false;
+    let t = cnpj.length - 2,
+        d = cnpj.substring(t),
+        d1 = parseInt(d.charAt(0)),
+        d2 = parseInt(d.charAt(1)),
+        calc = x => {
+            let n = cnpj.substring(0, x),
+                y = x - 7,
+                s = 0,
+                r = 0;
+            for (let i = x; i >= 1; i--) {
+                s += n.charAt(x - i) * y--;
+                if (y < 2)
+                    y = 9;
+            }
+            r = 11 - s % 11;
+            return r > 9 ? 0 : r;
+        }
+    return calc(t) === d1 && calc(t + 1) === d2;
+  }
+
+  function startAsyncForm(steps) {
+    const cf_ready = { ok: false };
+    const form_data = {};
+    let current_step = 0;
+    window.addEventListener('cf:ready', () => {
+      cf_ready.ok = true;
+      if(typeof cf_ready.submit === "function") cf_ready.submit();
+      const register_form = document.getElementById('create_customer');
+      if(register_form){
+        register_form.addEventListener('cf:form_submission_failed', (e) => {
+          const buttons = document.querySelectorAll('#form-container form button[type="submit"]');
+          for(let i = 0; i < buttons.length; i++){
+            const span = buttons[i].querySelector('span');
+            if(span) span.classList.remove('d-none');
+            const spinner = buttons[i].querySelector('.form-loading');
+            if(spinner) spinner.classList.add('d-none');
+          }
+          
+          let step = current_step;
+          for(const error in e.detail.errors){
+            form_data[error].invalid = true;
+            if(form_data[error].step < step) step = form_data[error].step;
+            let message;
+            switch(error){
+              case "phone":
+                if(e.detail.errors[error][0] === "has already been taken") message = "Número de telefone já cadastrado";
+                if(e.detail.errors[error][0] === "is invalid") message = "Erro, entre em contato pelo nosso Whatsapp para prosseguir com o cadastro";
+               break;
+              case "email":
+                if(e.detail.errors[error][0] === "has already been taken") message = "E-mail já cadastrado";
+                if(e.detail.errors[error][0] === "contains an invalid domain name") message = "Erro, entre em contato pelo nosso Whatsapp para prosseguir com o cadastro";
+                break;
+            }
+            showErrorInField(error, message);
+            
+            try {
+                const { first_name, ...rest } = form_data;
+                const info = {};
+                for(const field in rest) info[field] = rest[field].value;
+                driver.pushEvent('sendForm_error-secondStep', {
+                  userName: form_data.first_name.value, telephone: form_data.phone.value, ...info
+                });
+                saveEvent('/data/shopify/create/failure/register', 'POST', {
+                    userName: first_name.value, companyName: "", ...info,
+                    date: new Date().toLocaleString('pt-BR').split(' ')[0], url: window.location.href,
+                    pageTitle: document.title, errorMsg: message
+                })
+            } catch (error) {
+                console.log(error)
+            }
+          }
+          if(step !== current_step) controlStep(step, current_step);
+          current_step = step;
+        });
+      }
+    });
+
+    function showErrorInField(field, message){
+      const field_wrapper = document.querySelector(`#form-container div[data-container="${field}"]`)
+      if(field_wrapper){
+        field_wrapper.classList.add('invalid');
+        const error_element = document.createElement('p');
+        error_element.classList.add('error_element');
+        error_element.innerText = message;
+        field_wrapper.appendChild(error_element);
+      }
+    }
+
+    if(Array.isArray(steps) && steps.length){
+      steps.map((step, i) => {
+        if(step.fields && Array.isArray(step.fields)){
+          const { form_element, fields } = step;
+          form_element.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const connectionAvailable = await checkConnection();
+            if(current_step === 1 && !connectionAvailable) noConnectionAvailable();
+            else{
+              const submit_button = e.target.querySelector('button[type="submit"]');
+              if(submit_button){
+                const span = submit_button.querySelector('span');
+                if(span) span.classList.add('d-none');
+                const spinner = submit_button.querySelector('.form-loading');
+                if(spinner) spinner.classList.remove('d-none');
+              }
+              
+              let field_wrong = false;
+              const fields_error = {};
+              const step = e.target.getAttribute('data-step');
+              for(const field in form_data){
+                if(form_data[field].step == step && form_data[field].invalid) {
+                  field_wrong = true;
+                  fields_error[field] = form_data[field].value;
+                }
+              }
+  
+              if(!field_wrong){
+                for(let k = 0; k < steps[step].fields.length; k++) {
+                  const { name, required = false, error, validator, resolver = (value) => value } = steps[step].fields[k];
+                  const value = form_data[name]?.raw_value ? form_data[name].raw_value : "";
+                  const field_wrapper = form_element.querySelector(`div[data-container="${name}"]`);
+                  if(required && !value) {
+                    field_wrong = true;
+                    if(field_wrapper){
+                      const errors = field_wrapper.querySelectorAll('p.error_element');
+                      for(let j = 0; j < errors.length; j++) errors[j].parentElement.removeChild(errors[j]);
+                      field_wrapper.classList.add('invalid')
+                      const error_element = document.createElement('p');
+                      error_element.classList.add('error_element');
+                      error_element.innerText = error;
+                      field_wrapper.appendChild(error_element);
+                    }
+                  } else {
+                    if(typeof validator === "function"){
+                      const res = await validator(value);
+                      if(field_wrapper){
+                          const errors = field_wrapper.querySelectorAll('p.error_element');
+                          for(let j = 0; j < errors.length; j++) errors[j].parentElement.removeChild(errors[j]);
+                          if(res.ok){
+                            field_wrapper.classList.remove('invalid')
+                          }else{
+                            field_wrong = true;
+                            field_wrapper.classList.add('invalid')
+                            const error_element = document.createElement('p');
+                            error_element.classList.add('error_element');
+                            error_element.innerText = res.error && res.error.length ? res.error : error;
+                            field_wrapper.appendChild(error_element);
+                          }
+                      }
+                    }
+                  }
+                }
+              }
+              if(!field_wrong){
+                if(current_step === 0){
+                  driver.pushEvent('sendForm_firstStep', {
+                    name: form_data.first_name.value,
+                    telephone: form_data.phone.value
+                  });
+                } else {
+                  const { first_name, ...rest } = form_data;
+                  const info = {};
+                  for(const field in rest) info[field] = rest[field].value;
+                  window.sessionStorage.setItem('attempToRegister', JSON.stringify({
+                    name: first_name.value, companyName: "", ...info
+                  }));
+                }
+  
+                if(current_step !== (steps.length - 1)){
+                  current_step++;
+                  if(submit_button){
+                    const spinner = submit_button.querySelector('.form-loading');
+                    if(spinner) spinner.classList.add('d-none');
+                    const span = submit_button.querySelector('span');
+                    if(span) span.classList.remove('d-none');
+                  }
+                  controlStep(current_step, current_step - 1);
+                } else {
+                  startSubmitting();}
+
+              }else{
+                const { first_name = "", phone = "", ...rest } = form_data;
+                const info = {};
+                for(const field in rest) info[field] = rest[field].value;
+                if(driver) driver.pushEvent(current_step === 0 ? 'sendForm_error-firstStep' : 'sendForm_error-secondStep',
+                  current_step === 0 ? fields_error : { ...info, telephone: phone, userName: first_name }
+                );
+                try {
+                  saveEvent('/data/shopify/create/failure/register', 'POST', {
+                      userName: first_name, companyName: "", phone, ...info,
+                      date: new Date().toLocaleString('pt-BR').split(' ')[0], url: window.location.href,
+                      pageTitle: document.title
+                  })
+                } catch (error) {
+                  console.log(error);
+                }
+  
+                if(submit_button){
+                  const span = submit_button.querySelector('span');
+                  if(span) span.classList.remove('d-none');
+                  const spinner = submit_button.querySelector('.form-loading');
+                  if(spinner) spinner.classList.add('d-none');
+                }
+              }
+            }
+
+          })
+          fields.map((field) => {
+            const { name, required = false, error, validator = () => ({ok: true}), resolver = (value) => value } = field;
+            const field_input = form_element.querySelector(`input[name="${name}"]`);
+            if(field_input) {
+              field_input.addEventListener("change", async (e) => {
+                const {value, checked, type} = e.target;
+                form_data[name] = { raw_value: type !== "checkbox" ? value : checked, value: resolver(type !== "checkbox" ? value : checked), step: i };
+                const field_wrapper = form_element.querySelector(`div[data-container="${name}"]`);
+                const valid_required = type !== "checkbox" ? value : checked;
+                if(field_wrapper){
+                  const errors = field_wrapper.querySelectorAll('p.error_element');
+                  for(let j = 0; j < errors.length; j++) errors[j].parentElement.removeChild(errors[j]);
+                }
+                if(required && !valid_required) {
+                  if(field_wrapper){
+                    field_wrapper.classList.add('invalid')
+                    const error_element = document.createElement('p');
+                    error_element.classList.add('error_element');
+                    error_element.innerText = error;
+                    field_wrapper.appendChild(error_element);
+                    return;
+                  }
+                }
+                  if(typeof validator === "function"){
+                    const res = await validator(value);
+                    if(field_wrapper){
+                        if(!res.ok){
+                          field_wrapper.classList.add('invalid')
+                          const error_element = document.createElement('p');
+                          error_element.classList.add('error_element');
+                          error_element.innerText = res.error && res.error.length ? res.error : error;
+                          field_wrapper.appendChild(error_element);
+                          return;
+                        }
+                    }
+                  }
+                  if(field_wrapper) field_wrapper.classList.remove('invalid');              
+              });
+
+              field_input.addEventListener('input', (e) => {
+                const field_wrapper = form_element.querySelector(`div[data-container="${name}"]`);
+                if(field_wrapper){
+                  const errors = field_wrapper.querySelectorAll('p.error_element');
+                  for(let j = 0; j < errors.length; j++) errors[j].parentElement.removeChild(errors[j]);
+                  field_wrapper.classList.remove('invalid');
+                }
+                if(form_data[name]){
+                  const {invalid, ...fieldInfo} = form_data[name];
+                  form_data[name] = fieldInfo;
+                }
+              })
+            }
+          })
+        }else{
+          throw `No fields in step ${i + 1}`
+        }
+      })
+    }else{
+      throw "No 'steps' array given"
+    }
+
+    function controlStep(step, prev){
+      const current_step = document.querySelector(`#form-container form[data-step="${prev}"]`);
+      const next_step = document.querySelector(`#form-container form[data-step="${step}"]`);
+      current_step.classList.remove('show');
+      setTimeout(() => {
+        current_step.classList.add('d-none');
+        next_step.classList.remove('d-none');
+        setTimeout(() => {
+          next_step.classList.add('show');
+        }, 100)
+      }, 800);
+    }
+
+    let intervalTimer;
+    function noConnectionAvailable(){
+      const tryAgain_button = document.getElementById('connection-tryagain');
+      tryAgain_button.onclick = (e) => {
+        e.preventDefault();
+        tryAgainConnection();
+      }
+      const span = tryAgain_button.querySelector('span');
+      const spinner = tryAgain_button.querySelector('.form-loading');
+      spinner.classList.add('d-none');
+      span.classList.remove('d-none');
+
+      const noConnection_container = document.querySelector(".no-connection_container");
+      const normalSubmit = noConnection_container.parentElement.querySelector('button[type="submit"]');
+      normalSubmit.classList.add('d-none');
+      noConnection_container.classList.remove('d-none');
+      const timer = noConnection_container.querySelector('.timer');
+      let time = 15;
+      timer.innerText = time;
+      try {
+        clearInterval(intervalTimer);
+      } catch (error) {}
+      intervalTimer = setInterval(() =>{
+        time--;
+        if(!time) {
+          tryAgainConnection()
+          try {
+            clearInterval(intervalTimer);
+          } catch (error) {}
+        }
+        if(time >= 0) timer.innerText = time;
+      }, 1000);
+    }
+    async function tryAgainConnection(){
+      const tryAgain_button = document.getElementById('connection-tryagain');
+      const span = tryAgain_button.querySelector('span');
+      const spinner = tryAgain_button.querySelector('.form-loading');
+      span.classList.add('d-none');
+      spinner.classList.remove('d-none');
+
+      const connectionAvailable = await checkConnection();
+      if(!connectionAvailable) {
+        setTimeout(() => {
+          noConnectionAvailable();
+        }, 1000);
+      }
+      else {
+        try {
+          clearInterval(intervalTimer);
+          const noConnection_container = document.querySelector(".no-connection_container");
+          const normalSubmit = noConnection_container.parentElement.querySelector('button[type="submit"]');
+          noConnection_container.classList.add('d-none');
+          normalSubmit.classList.remove('d-none');
+          normalSubmit.click();
+        } catch (error) {}
+      }
+    }
+
+    function startSubmitting(){
+      if(typeof checkConnection === "function"){
+        checkConnection().then(ok => {
+          if(ok){
+            if(cf_ready.ok){
+              const register_form = document.getElementById('create_customer');
+              if(register_form){
+                for(const field in form_data) register_form.cfForm.setFieldValue(field, form_data[field].value);
+                const submit = register_form.querySelector("[type=submit].cf-submit-form.cf-button");
+                let discountType = "Teste2_primeira_0";
+                let agentType = "Teste2_agente_0";
+                const url = new URLSearchParams(window.location.search);
+                const banner = url.get('bannerab');
+                const bannerUser = url.get('userab');
+
+                if (banner) {
+                  if (parseInt(banner) == 1) discountType = "Teste2_primeira_5";
+                  register_form.cfForm.setFieldValue("tipo_de_desconto", discountType);
+                }
+
+                if (bannerUser) {
+                  switch(parseInt(bannerUser)) {
+                    case 87591:
+                      agentType = "Teste2_agente_5";
+                      break;
+                    case 79582:
+                      agentType = "Teste2_agente_10";
+                      break;
+                    case 58973:
+                      agentType = "Teste2_agente_15";
+                      break;
+                    case 95874:
+                      agentType = "Teste2_agente_20";
+                      break;
+                  }
+                  register_form.cfForm.setFieldValue("desconto_por_agente", agentType);
+                }
+
+                if (submit) {
+                  console.log("start submmitting");
+                  submit.click();
+                }
+              }
+            }else cf_ready.submit = startSubmitting;
+          }else noConnectionAvailable();
+        })
+      }
+
+    }
+  }
+</script>
+
+<style type="text/css">
+  #form-container{
+    background-color: #fff;
+    height: fit-content;
+  }
+  .form-input{
+    width: 100%;
+    border-radius: 8px;
+    background-color: #fff;
+    color: #1A1A1A;
+    border: 1px solid var(--form-border-color);
+  }
+  .form-input.no-round-start{
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  .form-input.no-round-end{
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  #form-container .btn{
+    border-radius: 8px;
+    font-weight: 700;
+  }
+  #form-container .btn.btn-dark{
+    background-color: #1A1A1A;
+    color: #FFF;
+  }
+
+  .otherInterest-span{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+  }
+  .longRegister-range{
+    -webkit-appearance: none;
+    overflow: hidden;
+    border-radius: 12px;
+    height: 25px;
+    background-color: #F2F2F2;
+  }
+  
+  .longRegister-range::-webkit-slider-runnable-track{
+    height: 25px;
+    -webkit-appearance: none;
+  }
+  .longRegister-range::-webkit-slider-thumb{
+    left: 5px;
+    margin-top: 0;
+    height: 25px;
+    width: 25px;
+    border-radius: 50%;
+    border: 1px solid #fff;
+    background: #DDAA2E;
+    box-shadow: -100vw 0 0 99vw #646464;
+    -webkit-appearance: none;
+  }
+  @media (max-width: 900px){
+    .longRegister-range::-webkit-slider-thumb{
+    box-shadow: -100vw 0 0 98vw #646464 !important;
+  }
+  }
+  .longRegister-range::-moz-range-progress {
+    background-color: #646464; 
+  }
+  .longRegister-range::-moz-range-track {  
+    background-color: #F2F2F2;
+  }
+  /* IE*/
+  .longRegister-range::-ms-fill-lower {
+    background-color: #646464; 
+  }
+  .longRegister-range::-ms-fill-upper {  
+    background-color: #F2F2F2;
+  }
+
+  #longRegister_otherInterest-wrapper.show-input .image-wrapper{
+    max-height: 0 !important;
+  }
+  #longRegister_otherInterest-wrapper.show-input input,
+  #longRegister_otherInterest-wrapper.show-input button{
+    opacity: 1 !important;
+  }
+  #longRegister_otherInterest-wrapper input,
+  #longRegister_otherInterest-wrapper button{
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    -moz-transition: opacity 0.8s ease;
+    -o-transition: opacity 0.8s ease;
+    -webkit-transition: opacity 0.8s ease;
+  }
+  #longRegister_otherInterest-wrapper.show-input p{
+    margin-top: 0 !important;
+  }
+  #longRegister_otherInterest-wrapper p{
+    margin-top: 0.5rem;
+    transition: margin-top 0.8s ease;
+    -o-transition: margin-top 0.8s ease;
+    -moz-transition: margin-top 0.8s ease;
+    -webkit-transition: margin-top 0.8s ease;
+  }
+  .register-long_categories-container{
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+  .register-long_categories-row{
+    width: fit-content;
+  }
+  .register-long_categories-container .image-wrapper{
+    width: 70%;
+    height: 40px;
+    max-height: 45px;
+    transition: max-height 0.8s ease;
+    -moz-transition: max-height 0.8s ease;
+    -o-transition: max-height 0.8s ease;
+    -webkit-transition: max-height 0.8s ease;
+  }
+  .register-long_categories-container .image-wrapper img{
+    max-height: 100%;
+  }
+  .desktop.long-register_navbar{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .desktop.long-register_navbar {
+    background-color: #fff;
+    display: none;
+  }
+  .desktop.long-register_navbar .long-register_back-button,
+  .desktop.long-register_navbar .long-register_continue-button {
+    width: 200px;
+    height: auto;
+  }
+  .desktop.long-register_navbar .long-register_back-button{
+    color: #999;
+  }
+  .desktop.long-register_navbar.show{
+    display: flex;
+  }
+  @media (max-width: 999px){
+    .desktop.long-register_navbar{
+      display: none !important;
+    }
+  }
+  .register-long_start button,
+  #create_customer .cf-next-step.cf-button.btn.button{
+    background-color: #222;
+    color: #FFF;
+  }
+  #register-section {
+    background-color: {{ section.settings.background-color }};
+    max-height: 810px;
+    min-height: 550px;
+    overflow-y: scroll;
+  }
+
+  @media (min-width: 1600px){
+    #register-section {
+      min-height: 700px;
+    }
+  }
+  #register-section[data-test="1"] .register-long_start.loaded .loader{
+    display: none !important;
+  }
+  #register-section[data-test="1"]{
+    min-height: 0;
+    max-height: none !important;
+    background-color: #F7FAFA !important;
+    overflow-y: visible;
+    background-image: none !important;
+    padding-top: 0 !important;
+  }
+  #register-section .register-long_start[test="0"]{
+  background-color: #E89161 !important;
+  }
+  #register-section .register-long_start[test="1"]{
+    background-image: url("{{ 'background-banner-ab.png' | file_img_url: 'master' }}") !important;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+  #register-section .register-long_start[test="2"]{
+    background-image: url("{{ 'ab-background-carnaval.png' | file_img_url: 'master' }}") !important;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat; 
+  }
+  #register-section .register-long_start,
+  #register-section [data-step]{
+    opacity: 0;
+    transition: opacity 0.75s ease;
+    -o-transition: opacity 0.75s ease;
+    -moz-transition: opacity 0.75s ease;
+    -webkit-transition: opacity 0.75s ease;
+  }
+  #register-section .register-long_start.show,
+  #register-section [data-step].show{
+    opacity: 1;
+  }
+  #register-section[data-test="1"] .register-short{
+    display: none !important;
+  }
+  #register-section[data-test="0"] .register-long_start{
+    display: none !important;
+  }
+  @media (max-width: 768px){
+    .testab-background{
+      padding-top: 20px;
+      background-size: 100% !important;
+      background-repeat: no-repeat;
+    }
+  }
+
+  .invalid p{
+    color: #ce2525;
+    margin-top: 0.2rem;
+    font-size: 1rem!important;
+  }
+  .invalid{
+    background: #fdf5f5;
+    border: 1px solid #ce2525;
+    border-radius: 3px;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  #register-section .button {
+    background-color: #FFD93D;
+    color: #1A1A1A;
+    border-radius: 8px;
+    font-weight: 700;
+    width: 100%;
+  }
+  #register-section .button[disabled] {
+    background-color: #777;
+    color: #FFF;
+  }
+  div.cf-field h1{
+    font-size: 3rem;
+  }
+  div.cf-field div p{
+    font-size: 1rem;
+  }
+
+  .form-container [data-container] label{
+    color: #1A1A1A;
+  }
+  .form-container .invalid[data-container] label{
+    color: #000 !important;
+  }
+
+  #register-section .spinner-container {
+    display: none;
+    position: absolute;
+    top: 20%;
+    left: 30%;
+  }
+
+  #register-section .form-container.loading {
+    opacity: 0.4;
+  }
+
+  #register-section .form-container.loading .spinner-container {
+    display: block !important;
+  }
+
+  #register-section .terms-container .cf-field-description {
+    display: inline;
+    width: auto;
+  }
+
+  #register-section .terms-container[data-cf-invalid="true"] {
+    color: #000 !important;
+  }
+
+  #register-section .cf-step-counter,
+  #register-section .cf-prev-step{
+    display: none !important;
+  }
+  #register-section .cf-step-tabs{
+    border-bottom: none !important;
+    margin-bottom: 0 !important;
+    color: #fff;
+  }
+  #register-section .cf-field[data-cf-invalid="true"] .cf-enum-field__choice,
+  #register-section .cf-field[data-cf-invalid="true"] legend,
+  #register-section .cf-field[data-cf-invalid="true"] label{
+    color: #222 !important;
+  }
+  #register-section .cf-field label,
+  #register-section .cf-enum-field__choices legend{
+    color: #fff;
+    font-size: 1.2rem;
+  }
+  #register-section .cf-enum-field__choice{
+    color: #fff;
+  }
+
+  #register-section .test-ab_no-view{
+    display: var(--test-ab-text, none);
+  }
+  #register-section img.test-ab_mobile-view{
+    display: none;
+  }
+  #register-section .test-ab_desktop-view{
+      display: var(--test-ab-images, initial);
+  }
+  @media (max-width: 767px){
+    #register-section .test-ab_mobile-view{
+      display: var(--test-ab-images, initial) !important;
+      margin-top: -60px;
+    }
+    #register-section .test-ab_desktop-view{
+      display: none !important;
+    }
+  }
+
+  #register-section .test-ab_image{
+    display: var(--test-ab-images, initial);
+  }
+  
+  #shopify-section-{{ section.id }} {
+    background-color: {{ section.settings.background-color }};
+  }
+
+  .loja-box i,
+    .loja-prod-box i,
+    .loja-benefits-box i{
+        display: none;
+    }
+    .loja-box.selected i,
+    .loja-prod-box.selected i,
+    .loja-benefits-box.selected i{
+        display: inline-block;
+    }
+    .loja-benefits-box{
+      width: 140px;
+      max-width: 140px;
+      min-width: 140px;
+      margin-right: 0.5rem;
+    }
+
+    .image-position {
+        position: absolute;
+        right: 0;
+        bottom: -50px;
+    }
+
+    .loja-box {
+        width: 215px;
+        cursor: pointer;
+    }
+
+    #register-section i {
+        /* color: #fff; */
+        background-color: #DDAA2E;
+        border-radius: 50px;
+        padding: 5px;
+        font-size: 10px;
+        margin-right: 10px;
+    }
+    .common-style{
+        background: linear-gradient(203.81deg, rgba(255, 255, 255, 0) 24.37%, rgba(221, 221, 221, 0.2) 59.51%);
+        cursor: pointer;
+        color: #666666;
+    }
+    .selected{
+        color: #000;
+        font-weight: bold;
+        border: 2px solid black !important;
+    }
+    .loja-prod-box{
+      width: 130px;
+      height: 140px;
+      min-width: 130px;
+      max-width: 130px;
+      margin-top: 0.5rem;
+      margin-right: 0.5rem;
+    }
+
+    .banner-text {
+      font-family: 'Exo 2', sans-serif;
+    }
+
+    .banner-discount {
+      font-size: 6rem !important;
+    }
+</style>
+
+
+{% schema %}
+{
+  "name": "Retailer register form",
+  "max_blocks": 8,
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "promo_desktop",
+      "label": "Imagem do desconto em desktop"
+    },
+    {
+      "type": "image_picker",
+      "id": "promo_mobile",
+      "label": "Imagem do desconto em mobile"
+    },
+    {
+      "type": "color",
+      "id": "background-color",
+      "label": "Background color",
+      "default": "#383838"
+    },
+    {
+      "type": "image_picker",
+      "id": "background-image",
+      "label": "Image",
+      "info": "Background image"
+    },
+    {
+      "type": "textarea",
+      "id": "title",
+      "label": "Title",
+      "default": "Título"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "List Item",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "list-item",
+          "label": "List Item",
+          "info": "List Item"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "category": "Custom Sections",
+      "name": "Retailer register form",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,50 @@
+<section id="home-action-section" class="section my-0" data-section-id="home-action-section">
+  <div class="container-fluid custom-background">
+    <div class="row py-5">
+      <div class="col-12 text-center p-5">
+        <h2 class="display-4 text-white fw-bold">Você está pronto para começar?</h2>
+        <p class="text-white fs-5 fw-bold mt-3 mb-4">Compre produtos por atacado que seus clientes vão adorar.</p>
+        <a href="/collections/marcas" class="btn yellow-btn fw-bold py-3 px-3 px-lg-5 w-auto mt-2">
+          <span class="d-block px-lg-4 fs-5 ">Comece aqui</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  #home-action-section {
+    background-image: url("{{ 'home-backgound-action.jpg' | file_img_url: 'master' }}");
+    background-position-y: center;
+    background-size: cover;
+  }
+
+  #home-action-section .custom-background {
+    background-color: #1A1A1A66;
+  }
+
+  #home-action-section a {
+    border-radius: 22px;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "home-action-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Título"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Custom Sections",
+      "name": "home-action-section",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

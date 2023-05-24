@@ -1,0 +1,259 @@
+{%- assign filtered_terms = search.terms -%}
+
+<section data-section-id="{{ section.id }}" data-section-type="collection" data-section-settings='{{ section_settings }}'>
+  <div class="container {% if search.performed and search.results_count > 0 %}container--flush{% endif %}">
+    {%- if search.performed and search.results_count > 0 -%}
+      <div class="page__sub-header">
+        <nav aria-label="{{ 'general.breadcrumb.title' | t }}" class="breadcrumb">
+          <ol class="breadcrumb__list" role="list">
+            <li class="breadcrumb__item">
+              <a class="breadcrumb__link link" href="{% if customer %}/collections/marcas{% else %}{{ routes.root_url }}{% endif %}">{{ 'general.breadcrumb.home' | t }}</a> {%- render 'icon', icon: 'arrow-right' -%}
+            </li>
+
+            <li class="breadcrumb__item">
+              <span class="breadcrumb__link" aria-current="page">{{ 'search.general.title_with_terms' | t: terms: filtered_terms }}</span>
+            </li>
+          </ol>
+        </nav>
+      </div>
+      <div>
+      	<ul data-sectionId="{% if section.id %}{{section.id}}{% endif %}" id="gf-products" class="page-width list-view-items">
+				</ul>
+      </div>
+    {%- else -%}
+    {%- comment -%}
+    <div class="empty-state">
+      <p class="empty-state__heading heading h1">Resultados de busca</p>
+      <p class="empty-state__description">Nenhum resultado com <span class="fw-bold">{{ filtered_terms }}</span> encontrado. Pode voltar a pesquisar</p>
+
+      <a href="/collections/marcas" class="empty-state__link link link--accented">{{ 'search.general.go_back_home' | t }}</a>
+    </div>
+    {%- endcomment -%}
+    {% include 'noresults-search' %}
+    {% include 'destaques-slider', custom_title: 'Destaques' %}
+    {% include 'novas-marcas-slider' %}
+    {%- endif -%}
+  </div>
+</section>
+<style>
+.collection__description{
+  display: none !important;
+}
+
+.fornecedores-slide{
+  width: calc(80vw - 240px);
+}
+
+@media (max-width: 999px){
+  .fornecedores-slide{
+    width: calc(95vw - 120px);
+  }
+}
+
+  .seller-slider .img-container > div {
+    display: flex;
+    height: 100px;
+    max-height: 200px;
+  }
+
+  .seller-slider .img-container > div > img {
+    max-height: 100%;
+    max-width: 60%;
+  }
+
+  .layout__section--secondary #sort_by-custom{
+    display: block;
+    box-shadow: none !important;
+  }
+  .layout__section--secondary #sort_by-custom .collection__toolbar-item{
+    margin: 5px 0 !important;
+  }
+  .layout__section--secondary #sort_by-custom .collection__toolbar-item.collection__toolbar-item--layout{
+    width: fit-content;
+  }
+  .previous-slide,
+	.next-slide{
+		position: absolute;
+		padding: 0 12px;
+    height: 55%;
+		z-index: 1;
+		font-size: 1.7rem;
+    width: auto;
+    top: 1rem;
+	}
+  .previous-slide svg,
+	.next-slide svg{
+    background: #C4C4C4;
+		border-radius: 50%;
+		color: #FFF;
+		width: 43px;
+		height: 43px;
+		padding: 7px;
+  }
+  .previous-slide svg path,
+	.next-slide svg path{
+    stroke-width: 1;
+  }
+	.next-slide{
+		right: 0;
+	}
+  .previous-slide{
+    left: 0;
+  }
+
+  @media(min-width: 900px){
+    .seller-slider .img-container > div {
+        max-height: 200px;
+    }
+  }
+
+  .fornecedor_open-popup{
+    width: 130px;
+    min-width: 130px;
+  }
+  .fornecedor_open-popup a{
+    display: flex;
+    align-items: center;
+    height: 100%;
+    flex-direction: column;
+    padding-top: 24px;
+  }
+  /* .fornecedor_open-popup a .img-container{
+    height: 172px;
+  } */
+  .fornecedor_open-popup a .border{
+    height: 100px;
+    display: flex;
+    align-items: center;
+  }
+  @media(max-width: 640px){
+    .collection__title{
+      padding-left: 1em;
+    }
+    
+    .fornecedor_open-popup a{
+      padding-top: 21px;
+    }
+
+    .previous-slide svg,
+    .next-slide svg{
+      width: 30px;
+      height: 30px;
+      padding: 5px;
+    }
+  }
+  @media(max-width: 800px){
+    .fornecedor_open-popup{
+      width: 110px;
+      min-width: 110px;
+    }
+    .fornecedor_open-popup a .border,
+    .seller-slider .img-container > div{
+      height: 110px;
+    }
+    
+  }
+  @media(max-width: 425px){
+    .fornecedor_open-popup{
+      width: 90px;
+      max-width: 90px;
+      min-width: 90px;
+    }
+    .fornecedores-slide{
+      width: calc(95vw - 90px);
+    }
+  }
+
+  @media(min-width: 1480px){
+    .fornecedores-slide{
+      width: 945px;
+    }
+  }
+
+  .spf-product-card__images-navigation{
+    transform: none !important;
+    width: 100%;
+    bottom: 50% !important;
+    right: 0 !important;
+  }
+  .image-navigation.next{
+    position: absolute;
+    right: 0;
+  }
+  .h4.spf-product-card__title{
+    max-height: 2.8rem;
+    min-height: 2.8rem !important;
+  }
+  .h4.spf-product-card__title a{
+    position: relative;
+    max-height: 2.8rem;
+    overflow: hidden;
+  }
+  .spf-product-card__vendor{
+    min-height: 1.5rem !important;
+    max-height: 1.5rem !important;
+  }
+  .cart-controls{
+    height: 3.5rem;
+  }
+  .quantity-controls button{
+    height: 100%;
+    padding: 0 10px;
+  }
+  .less-product{
+    left: 0;
+  }
+  .add-product{
+    right: 0;
+  }
+  .quantity-controls input{
+    width: 90%;
+  }
+  .quantity-controls input::-webkit-inner-spin-button,
+  .quantity-controls input::-webkit-outer-spin-button{
+    -webkit-appearance: none; 
+    margin: 0; 
+  }
+  @media (min-width: 520px){
+    .h4.spf-product-card__title a{
+      font-size: 17px !important;
+    }
+  }
+  .spf-product-card__vendor span{
+    color: #969595;
+    font-size: 13px;
+    font-family: Poppins,sans-serif;
+    font-weight: 600;
+    font-style: normal;
+    display: block;
+  }
+  .spf-product-card__vendor span,
+  .spf-product-card__vendor a{
+    white-space: nowrap;
+  }
+
+  .spf-product-card__oldprice,
+  .product-card__oldprice{
+    line-height: 1.1 !important;
+  }
+
+  .border-custom{
+    border: 1px solid #969696!important;
+  }
+  .spf-product-card__price-wrapper.product-item__price-list small{
+  	font-size: 11px;
+  }
+  .spf-product-card__price-wrapper.product-item__price-list{
+  	line-height: 1!important;
+  }
+  .spf-product__info{
+  	color: #999;
+  }
+  .spf-product__info .spf-product-card__title{
+  	color: #666;
+  }
+  span.fornecedor-min{
+ 	font-weight: 550!important;
+	letter-spacing: -0.5px;
+  }
+</style>

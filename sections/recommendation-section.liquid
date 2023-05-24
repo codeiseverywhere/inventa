@@ -1,0 +1,82 @@
+<section class="container-fluid recommendation-section py-5" data-section-id="{{ section.id }}" data-section-type="recommendation-section">
+  <div class="col-lg-8 col-10 offset-1 offset-lg-2">
+    <div class="row my-5">
+      <div class="col-md-6">
+        <h2 class="display-5">{{ section.settings.title }}</h2>
+        <span class="d-block fs-4 mt-3">{{ section.settings.subtitle }}</span>
+      </div>
+      <div class="col-md-5 offset-md-1">
+        {% if shop.name contains "DEV" %}
+          {% render "customer-fields", form_id: "Jmt8QW" %}
+        {% else %}
+			{% render "customer-fields", form_id: "bbt0eY" %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  window.addEventListener('load', () => {
+    setTimeout(function() {
+      let emailAddress = "{{ customer.email }}";
+      const inputEmail = document.querySelector(".emailInput input");
+      inputEmail.value = "{{ customer.email }}";
+      const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
+      nativeInputValueSetter.call(inputEmail, emailAddress.concat("|||"));
+      const event = new Event('input', { bubbles: true});
+      inputEmail.dispatchEvent(event);
+      nativeInputValueSetter.call(inputEmail, emailAddress.replace("|||", " "));
+    }, 1500);
+
+  });
+</script>
+
+<style>
+  .recommendation-section {
+    color: {{ section.settings.font-color }};
+    background-color: {{ section.settings.background }};
+    {%- if section.settings.image -%}
+    background-image: url({{ section.settings.image | img_url: 'master' }});
+    background-size: cover;
+    {%- endif -%}
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Recommendation section",
+  "settings": [
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background color",
+      "default": "#6A766F"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Background Image",
+      "info": "Imagem"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Título"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Subtítulo"
+    },
+    {
+      "type": "color",
+      "id": "font-color",
+      "label": "Font color",
+      "default": "#FFFFFF"
+    }
+  ]
+}
+{% endschema %}

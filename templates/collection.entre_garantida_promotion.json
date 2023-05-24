@@ -1,0 +1,76 @@
+{
+  "sections": {
+    "header": {
+      "type": "promotion-page-header",
+      "blocks": {
+        "a60f51f5-38b5-492b-aa60-4853c73723e3": {
+          "type": "banner",
+          "settings": {
+            "promotion-banner-image": "shopify:\/\/shop_images\/Prancheta_1_2_34453f91-5ffb-4fb6-bbbf-f82bc70579df.png",
+            "banner_link": "https:\/\/inventa.shop\/collections\/entrega-garantida-banner-v2"
+          }
+        }
+      },
+      "block_order": [
+        "a60f51f5-38b5-492b-aa60-4853c73723e3"
+      ],
+      "settings": {
+        "show-promo-banner": true,
+        "autoplay-promo-banner": true,
+        "autoplay-time": 3
+      }
+    },
+    "description": {
+      "type": "promotion-page-description",
+      "settings": {
+        "title": "Entrega Garantida",
+        "content": "Nessa página você encontra produtos com entrega garantida antes do Natal🎄. É isso mesmo! Se você é um lojista do Estado de São Paulo, você receberá seu pedido antes do Natal ou reembolsaremos todo o valor da compra! (válido para compras até 04\/12)📦Mas atenção: para que seu pedido seja elegível ao reembolso, ele deverá ser aprovado pelo fornecedor e time de crédito. Caso seja cancelado antes do envio, não estará passível de entrega garantida e você receberá o reembolso do valor integral, porém não receberá os produtos⚠️. Aproveite!"
+      }
+    },
+    "carousal": {
+      "type": "promotion-product-carousal",
+      "settings": {
+        "show-priority-collection": false,
+        "title": "Principais Marcas",
+        "collection": "carrossel_entrega-garantida"
+      }
+    },
+    "main": {
+      "type": "collection-template",
+      "blocks": {
+        "bc29b24f-f099-44a7-aef9-ea648232e009": {
+          "type": "seller_priority",
+          "settings": {
+            "seller-name": "seller"
+          }
+        }
+      },
+      "block_order": [
+        "bc29b24f-f099-44a7-aef9-ea648232e009"
+      ],
+      "settings": {
+        "show_collection_image": true,
+        "collapse_collection_description": false,
+        "collection_image_size": "small",
+        "products_per_row": "4",
+        "default_products_per_page": 24,
+        "default_view_layout": "grid",
+        "show_quick_buy": "list",
+        "show_quick_view": "list",
+        "quick_links": "",
+        "quick_links_show_products_count": true,
+        "show_filters": true,
+        "show_filter_color_swatch": true,
+        "filter_type": "tag",
+        "open_group_filters_mode": "all_closed",
+        "filter_group_order": ""
+      }
+    }
+  },
+  "order": [
+    "header",
+    "description",
+    "carousal",
+    "main"
+  ]
+}

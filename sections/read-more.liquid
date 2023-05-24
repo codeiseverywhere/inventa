@@ -1,0 +1,80 @@
+<section class="section my-0 py-5" id="section-{{ section.id }}" data-section-id="{{ section.id }}" data-section-type="read-more">
+  <div class="container py-5">
+    <div class="row text-center">
+      <div class="col-12 col-lg-6 offset-lg-3">
+        <h2 class="display-3 title">
+          <span>{{ section.settings.title }}</span>
+        </h2>
+      </div>
+      <div class="mt-5">
+        <a href="{{ section.settings.button-url }}" class="btn btn-outline-light fw-bold px-4">
+          <span class="body-1-density-3">Leia mais</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  #section-{{ section.id }} {
+    background-color: {{ section.settings.background-color }};
+    {%- if section.settings.background-image -%}
+      background-image: url({{ section.settings.background-image | img_url: '1600x' }});
+      background-size: cover;
+    {%- endif -%}
+  }
+
+  #section-{{ section.id }} .title {
+    color: {{ section.settings.title-color }};
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Read more",
+  "settings": [
+    {
+      "type": "color",
+      "id": "background-color",
+      "label": "Background color",
+      "default": "#f2f2f2"
+    },
+    {
+      "type": "image_picker",
+      "id": "background-image",
+      "label": "Background image",
+      "info": "Background image"
+    },
+    {
+      "type": "color",
+      "id": "title-color",
+      "label": "Title color",
+      "default": "#000"
+    },
+    {
+      "type": "textarea",
+      "id": "title",
+      "label": "Title",
+      "default": "Título"
+    },
+    {
+      "type": "text",
+      "id": "button-name",
+      "label": "Button name",
+      "default": "Button"
+    },
+    {
+      "type": "url",
+      "id": "button-url",
+      "label": "URL"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Custom Sections",
+      "name": "Read more",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

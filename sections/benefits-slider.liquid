@@ -1,0 +1,177 @@
+<section class="section" id="section-{{ section.id }}" data-section-id="{{ section.id }}" data-section-type="benefits-slider">
+  <div class="container py-5" id="beneficios-inventa">
+    <div class="row">
+      <div class="col-12">
+        <h1 class="text-center display-3 fw-light color-main-100">
+          <span>{{ section.settings.title }}</span>
+        </h1>
+      </div>
+      <div class="col-12 col-md-6 offset-md-3">
+        <p class="text-center text-muted fs-4 fw-normal">
+          <span>{{ section.settings.subtitle }}</span>
+        </p>
+      </div>
+    </div>
+    <div class="row mt-5">
+      <div class="benefits-slider">
+        {%- if section.blocks.size > 0 -%}
+        {%- for block in section.blocks -%}
+          <div class="slide-block{{ forloop.index }} col-10 col-md-2 text-center seller-slide_glider">
+            {% if block.settings.show-icon and block.settings.icon-image.size > 0 %}
+            <div class="rounded-circle circle m-auto d-flex align-items-center justify-content-center">
+              <img src="{{ block.settings.icon-image | img_url: '124px' }}" class="img-icon" >
+            </div>
+            {% else %}
+            <span class="rounded-circle circle m-auto d-flex align-items-center justify-content-center fw-lighter text-secondary display-2">{{ forloop.index }}</span>
+            {% endif %}
+            <h2 class="fw-bold px-2 mt-4 fs-2 m-auto mb-3 color-main-090">{{ block.settings.title }}</h2>
+            <p class="fw-normal fs-6 mx-5 color-main-090">{{ block.settings.content }}</p>
+          </div>
+        {%- endfor -%}
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+   .circle {
+    padding: 35px;
+    width: 180px;
+    height: 180px;
+  }
+
+  /*@media (min-width: 1200px) {
+    section[data-section-type="benefits-slider"] .next-slide,
+    section[data-section-type="benefits-slider"] .previous-slide {
+      display: none;
+    }
+  }*/
+  
+  {%- for block in section.blocks -%}
+    .slide-block{{ forloop.index }} .circle {
+      background-color: #E1E9EF;
+      color: #373D43;
+    }
+  {%- endfor -%}
+</style>
+
+{%- if section.blocks.size > 0 -%}
+<script defer>
+  // window.addEventListener('load', function() {
+    const benefitsContainer = document.querySelector('.benefits-slider');
+
+    // benefitsContainer.addEventListener('glider-loaded', function() {
+    //   document.querySelector('section[data-section-type="benefits-slider"]').removeAttribute("style");
+    // });
+
+    new Glider(benefitsContainer, {
+      type: 'carousel',
+      focusAt: 'center',
+      rewind: true,
+      slidesToShow: 1,
+      slidesToScroll: 1,
+      draggable: true,
+      arrows: {
+        prev: 'section[data-section-type="benefits-slider"] .previous-slide',
+        next: 'section[data-section-type="benefits-slider"] .next-slide'
+      },
+      responsive: [
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 2
+        }
+      },
+      {
+        breakpoint: 1000,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 3
+        }
+      },
+      {
+        breakpoint: 1200,
+        settings: {
+          slidesToShow: 4,
+          slidesToScroll: 4
+        }
+      }
+      ]
+    })
+  // })
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Benefits slider",
+  "max_blocks": 10,
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Título"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Subtítulo"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Item",
+      "settings": [
+        {
+          "type": "color",
+          "id": "background-color",
+          "label": "Background color",
+          "default": "#ecf0f1"
+        },
+        {
+          "type": "color",
+          "id": "font-color",
+          "label": "Font color",
+          "default": "#fff"
+        },
+        {
+          "type": "checkbox",
+          "id": "show-icon",
+          "label": "Show icon",
+          "default": false
+        },
+        {
+          "type": "image_picker",
+          "id": "icon-image",
+          "label": "Icon image",
+          "info": "Recommended 124px x 124px max."
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Título"
+        },
+        {
+          "type": "textarea",
+          "id": "content",
+          "label": "Content",
+          "default": "<p>Conteúdo</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "category": "Custom Sections",
+      "name": "Benefits slider",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

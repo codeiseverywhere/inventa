@@ -1,0 +1,48 @@
+<section class="section" data-section-id="{{ section.id }}" data-section-type="rich-text-blocks">
+  <div class="container">
+    <div class="row">
+      {%- for block in section.blocks -%}
+        <div class="col-12 {% if forloop.first %}col-lg-4 offset-lg-1 d-flex mb-3 align-items-center{% else %}col-lg-3 my-2 my-lg-0{% endif %}">
+          {{ block.settings.content }}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<style>
+  .size-icon{
+    width: 15px !important;
+    height: auto;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Rich text blocks",
+  "max_blocks": 3,
+  "settings": [
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Item",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "content",
+          "label": "Content",
+          "default": "<p>Conteúdo</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "category": "Custom Sections",
+      "name": "Rich text blocks",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

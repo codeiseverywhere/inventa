@@ -1,0 +1,271 @@
+{% comment %}
+{% unless request.path == '/' or request.path == '/pages/fornecedor' or request.path == '/pages/sobre-inventa' or request.path == '/pages/contato' %}
+<div class="discount-banner py-1">
+    <p class="text-center text-white fs-4 fw-bold">Feliz dia do cliente 20% off em todo o site <a onclick="applyBannerDiscount(event);" class="ms-sm-4 text-nowrap border fs-5 border-white border-2 rounded px-3 py-2 text-decoration-none">Resgatar cupom</a></p>
+</div>
+{% endunless %}
+{% endcomment %}
+{%- assign creditToShow = false -%}
+{%- if credit and credit > 0 and credit_tp and credit_tp > 0 -%}
+    {%- assign creditToShow = 'C&TR' -%}
+{%- elsif credit and credit > 0 -%}
+    {%- assign creditToShow = 'C' -%}
+{%- elsif credit_tp and credit_tp > 0 -%}
+    {%- assign creditToShow = 'TR' -%}
+{%- elsif credit_tp == true -%}
+    {%- assign creditToShow = 'RM' -%}
+{%- endif -%}
+    {% if customer %}
+        {% unless customer.tags contains "cpf-user" %}
+            {% if credit or credit_tp %}
+                <div data-open="true" class="credit-banner credit-banner_closed text-center justify-content-center p-2 d-lg-flex align-items-start" onclick="openPagamentoPopup();" style="cursor: pointer;">
+                    <div class="credit-text_begin position-relative h-100 d-flex text-center me-2 align-items-center justify-content-center">
+                        {%- case creditToShow -%}
+                            {%- when 'C&TR' -%}
+                                <div class="credit-text_begin_inner d-sm-flex justify-content-center align-items-center position-relative">
+                                    <p class="text-center m-0 fs-6">COMPRE ATÉ <strong>{{ credit | times: 100 | floor | money_without_trailing_zeros }}</strong> EM ATÉ <strong>{{ creditDue }} DIAS</strong></p> 
+                                </div>
+                                {% comment %}
+                                &nbsp;
+                                <span class="text-center fs-5 d-none d-xl-inline"> Precisa de mais?</span>
+                                {% endcomment %}
+                            {%- when 'C' -%}
+                                <div class="credit-text_begin_inner d-sm-flex justify-content-center align-items-center position-relative">
+                                    {% comment %}
+                                    <p class="text-center m-0 fs-6" onclick="openPagamentoPopup();" style="cursor: pointer;">Você pode pagar até <strong>{{ credit | times: 100 | floor | money_without_trailing_zeros }} no boleto</strong></p> 
+                                    <span class="ms-sm-2 text-center fs-6">parcelado <strong>em até {{ creditDue }} dias.</strong></span>
+                                    {% endcomment %}
+                                    <p class="text-center m-0 fs-6">COMPRE ATÉ <strong>{{ credit | times: 100 | floor | money_without_trailing_zeros }} NO BOLETO PARCELADO</strong></p> 
+                                </div>
+                                {% comment %}
+                                &nbsp;
+                                <span class="text-center fs-5 d-none d-xl-inline"> Precisa de mais?</span>
+                                {% endcomment %}
+                            {%- when 'TR' -%}
+                                <div class="credit-text_begin_inner d-sm-flex justify-content-center align-items-center position-relative">
+                                    {% comment %}
+                                    <p class="text-center m-0 fs-6">COMPRE ATÉ <strong>{{ credit_tp | times: 100 | floor | money_without_trailing_zeros }} COM TRUEPAY</strong></p>
+                                    {% endcomment %}
+                                    <p class="text-center m-0 fs-6">COMPRE EM ATÉ 3x NO CARTÃO <strong>SEM JUROS!</strong></p> 
+                                </div>
+                                {% comment %}
+                                &nbsp;
+                                <span class="text-center fs-5 d-none d-xl-inline"> Precisa de mais?</span>
+                                {% endcomment %}
+                            {%- when 'RM' -%}
+                                {%- assign credit_tp = 2000 -%}
+                                <div class="credit-text_begin_inner d-sm-flex justify-content-center align-items-center position-relative">
+                                    {% comment %}
+                                    <p class="text-center m-0 fs-6">COMPRE ATÉ <strong>{{ credit_tp | times: 100 | floor | money_without_trailing_zeros }}</strong> UTILIZANDO OS RECEBÍVEIS DA MAQUININHA</p>
+                                    {% endcomment %}
+                                    <p class="text-center m-0 fs-6">COMPRE EM ATÉ 3x NO CARTÃO <strong>SEM JUROS!</strong></p> 
+                                </div>
+                                {% comment %}
+                                &nbsp;
+                                <span class="text-center fs-5 d-none d-xl-inline"> Precisa de mais?</span>
+                                {% endcomment %}
+                            {%- else -%}
+                            {% comment %}
+                            <span class="text-center fs-5 text-nowrap">Precisa de prazo para pagar suas compras?</span>
+                            {% endcomment %}
+                        {%- endcase -%}
+                    </div>
+                    {% comment %}
+                    <div class="h-100 d-sm-flex justify-content-center align-items-center">
+                        <!--  <a class="text-nowrap text-decoration-none border fs-5 border-white border-2 rounded px-3 py-2" onclick="event.stopImmediatePropagation();" href="https://wa.me/5511974787600"><strong>Fale com a gente no whats</strong></a>  -->
+                        <p class="ms-2 mt-1 mt-sm-0">
+                            <strong class="text-center text-nowrap fs-6" onclick="openPagamentoPopup();" style="cursor: pointer;"><u>Entenda o pagamento</u></strong>
+                        </p>
+                    </div>
+                    {% endcomment %}
+                </div>
+            {% endif %}
+        {% endunless %}
+    {% else %}
+    <div data-open="true" class="credit-banner credit-banner_closed text-center justify-content-center p-2 d-lg-flex align-items-center{% if landing %} w-100 position-absolute top-0 start-0{% endif %}" onclick="openPagamentoPopup();" style="cursor: pointer;">
+        <p class="d-none d-md-block m-0"><strong class="text-nowrap">COMPRE EM ATÉ 3x NO CARTÃO <strong>SEM JUROS!</strong></strong></p>
+        <p class="d-md-none m-0"><strong class="text-nowrap">COMPRE EM ATÉ 3x NO CARTÃO <strong>SEM JUROS!</strong></strong></p>
+    </div>
+    {% endif %}
+
+<style>
+    .discount-banner{
+        background-color: #DD582E;
+        display: none;
+    }
+    .discount-banner.discount-banner_open{
+        display: block !important;
+    }
+    .discount-banner a{
+        cursor: pointer;
+        text-decoration: underline;
+    }
+    .discount-banner p{
+        line-height: 2;
+    }
+    @media (min-width: 992px){
+        .credit-text_begin::after{
+            display: none;
+        }
+    }
+    @media (max-width: 576px){
+        .credit-banner {
+            font-size:13px;
+        }
+
+        /* .credit-banner_closed .credit-text_begin_inner{
+            height: 1.9em;
+            overflow: hidden;
+        }
+        .credit-banner_closed .credit-text_begin_inner p::after{
+            content: '...';
+            position: absolute;
+            right: 0;
+            background: -prefix-linear-gradient(right, #49db95, transparent);
+            background: linear-gradient(to left, #49db95, transparent);
+            padding-left: 30px;
+            letter-spacing: 3px;
+        } */
+    }
+    @media (max-width: 350px){
+        .credit-banner {
+            font-size:11px;
+        }
+    }
+    /* .credit-text_begin::after{
+        display: none;
+        content: url('https://cdn.shopify.com/s/files/1/0507/3226/9775/files/arrow.svg');
+        position: relative;
+        right: 0;
+        font-size: 15px;
+        margin-left: 10px;
+        font-weight: bold;
+    } */
+    /* .credit-banner.credit-banner_closed .credit-text_begin::after{
+        animation: rotateNormal 1s forwards;
+    } */
+    /* .credit-banner:not(.credit-banner_closed) .credit-text_begin::after{
+        animation: rotate180 1s forwards;
+    } */
+    .credit-banner{
+        background-color: #4ADB95;
+        height: fit-content;
+        color: #1A1A1A;
+        z-index: 1000;
+    }
+    .credit-banner:not(.credit-banner_closed){
+        animation: openBanner 1s forwards;
+    }
+    /* .credit-banner_closed{
+        {% unless customer %}
+        height: 40px;
+        {% else %}
+        height: 40px;
+        {% endunless %}
+    } */
+    .credit-banner.credit-banner_closing{
+        animation: closeBanner 1s forwards !important;
+    }
+    /* @keyframes openBanner{
+        0%{
+            max-height: 55px;
+        }
+        100%{
+            max-height: 200px;
+        }
+    } */
+    /* @keyframes closeBanner{
+        0%{
+            max-height: 200px;
+        }
+        100%{
+            max-height: 55px;
+        }
+    } */
+
+    @keyframes rotate180{
+        0%{
+            transform: rotate(0);
+        }
+        100%{
+            transform: rotate(-180deg);
+        }
+    }
+    @keyframes rotateNormal{
+        0%{
+            transform: rotate(-180deg);
+        }
+        100%{
+            transform: rotate(0);
+        }
+    }
+</style>
+
+<script defer>
+    const credit_banner = document.querySelector('.credit-banner');
+    const url = new URLSearchParams(window.location.search);
+    const banner = url.get('bannerab');
+    const discountContainer = document.querySelectorAll(".credit-banner .discount-amount");
+    const discountWrapperContainer = document.querySelectorAll(".discount-container");
+    let discountValue = "0";
+
+    if (banner) {
+      switch(parseInt(banner)) {
+        case 1:
+          discountValue = "5%";
+          break;
+      }
+    }
+
+    if (discountContainer && discountValue != "0") {
+        discountContainer.forEach(element => element.innerText = discountValue);
+    } else {
+        if (discountWrapperContainer){
+            discountWrapperContainer.forEach(element => element.remove());
+        }
+    }
+
+
+    if(credit_banner) credit_banner.addEventListener('click', () => {
+        const width = window.innerWidth;
+        if(width < 992) {
+            const open = credit_banner.getAttribute('data-open');
+            if(open == 'false') {
+                credit_banner.classList.add('credit-banner_closing');
+                credit_banner.setAttribute('data-open', true);
+                setTimeout(() => {
+                    credit_banner.classList.add('credit-banner_closed');
+                }, 1000);
+            }else{
+                credit_banner.classList.remove('credit-banner_closing');
+                credit_banner.setAttribute('data-open', false);
+                credit_banner.classList.remove('credit-banner_closed');
+            }
+        }
+    })
+</script>
+
+<script defer>
+    function showDiscountBanner(){
+        const discount_banner = document.querySelector('.discount-banner');
+        if(discount_banner) discount_banner.classList.add('discount-banner_open');
+    }
+    function closeDiscountBanner(){
+        const discount_banner = document.querySelector('.discount-banner');
+        if(discount_banner) discount_banner.classList.remove('discount-banner_open');
+    }
+    function applyBannerDiscount(e){
+        e.preventDefault();
+        window.sessionStorage.setItem('discountToApply', JSON.stringify({code: 'CLIENTES20'}));
+        closeDiscountBanner();
+    }
+    const discountApplied = window.sessionStorage.getItem('discountToApply');
+    if(discountApplied){
+        const { code } = JSON.parse(discountApplied);
+        if(code != 'CLIENTES20'){
+            showDiscountBanner();
+        }
+    }else{
+        showDiscountBanner();
+    }
+</script>

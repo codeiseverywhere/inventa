@@ -1,0 +1,129 @@
+{%- assign count = 0 -%}
+{%- assign maxItems = section.settings.max_items | at_least: 0 -%}
+{% if section.settings.slider_collection.products.size %}
+<div class="row justify-content-center ps-2 my-4">
+    <h2 class="ps-4 collection__title fs-2 fw-light">{{ section.settings.slider_title }}</h2>
+    <div class="ps-2 col-12 slider-linked-collection position-relative" style="visibility: hidden; min-height: 1px !important;">
+        <button class="previous-slide">{%- render 'icon', icon: 'arrow-left' -%}</button>
+        <button class="next-slide">{%- render 'icon', icon: 'arrow-right' -%}</button>
+        <div class="slider-linked-collection_track m-auto">
+            {%- for item in section.settings.slider_collection.products -%}
+            {%- if maxItems > 0 and count >= maxItems -%}{% break %}{%- endif -%}    
+            <div class="slider-linked-collection_item">
+                {%- render 'product-item', product: item, grid_classes: '', show_add_to_cart: true, showUnlogged: true -%}
+            </div>
+            {%- assign count = count | plus: 1 -%}
+            {%- endfor -%}
+        </div>
+    </div>
+</div>
+
+<style>
+    .slider-linked-collection .product-item__title,
+    .slider-linked-collection .spf-product-card__title{
+        min-height: 50px !important;
+    }
+
+    .slider-linked-collection .previous-slide,
+    .slider-linked-collection .next-slide{
+        position: absolute;
+        z-index: 1;
+        height: 100%;
+        padding: 0 12px;
+    }
+    .slider-linked-collection .previous-slide svg,
+    .slider-linked-collection .next-slide svg{
+        background: #c4c4c4;
+        border-radius: 50%;
+        color: #fff;
+        width: 2rem;
+        height: 2rem;
+        padding: 0.5rem;
+    }
+    .slider-linked-collection .next-slide{
+        right: 0;
+    }
+    .slider-linked-collection .previous-slide{
+        left: 0;
+    }
+</style>
+
+<script defer>
+    window.addEventListener('load', () => {
+        const slider_container = document.querySelector('.slider-linked-collection_track');
+        if(slider_container){
+            slider_container.addEventListener('glider-loaded', () => {
+                const wrapper = document.querySelector('.slider-linked-collection');
+                if(wrapper) wrapper.removeAttribute('style');
+            })
+            new Glider(slider_container, {
+                type: 'carousel',
+                rewind: true,
+                slidesToShow: 2,
+                slidesToScroll: 2,
+                draggable: true,
+                arrows: {
+                    prev: '.slider-linked-collection .previous-slide',
+                    next: '.slider-linked-collection .next-slide'
+                },
+                responsive: [
+                {
+                    breakpoint: 767,
+                    settings: {
+                        slidesToShow: 3,
+                        slidesToScroll: 3
+                    }
+                },
+                {
+                    breakpoint: 1023,
+                    settings: {
+                        slidesToShow: 4,
+                        slidesToScroll: 4
+                    }
+                },
+                {
+                    breakpoint: 1280,
+                    settings: {
+                        slidesToShow: 5,
+                        slidesToScroll: 5
+                    }
+                }
+                ]
+            });
+            
+        }
+    })
+</script>
+{% endif %}
+
+{% schema %}
+{
+    "name": "Collection linked slider",
+    "settings": [
+        {
+            "type": "text",
+            "id": "slider_title",
+            "label": "Slider title",
+            "default": "Produtos bombando"
+        },
+        {
+            "type": "collection",
+            "id": "slider_collection",
+            "label": "Collection to show items"
+        },
+        {
+            "type": "number",
+            "id": "max_items",
+            "label": "Max items to show from collection",
+            "info": "If 0 will show every item"
+        }
+    ],
+    "presets": [
+        {
+            "category": "Custom Sections",
+            "name": "Collection linked slider",
+            "settings": {}
+        }
+    ]
+}
+{% endschema %}

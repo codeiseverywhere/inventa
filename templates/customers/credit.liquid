@@ -1,0 +1,504 @@
+{%- assign is_entirely_fulfilled = false -%}
+{%- assign has_one_fulfillment = false -%}
+
+{%- if order.fulfillment_status == 'fulfilled' -%}
+  {%- assign has_one_fulfillment = true -%}
+  {%- assign is_entirely_fulfilled = true -%}
+  {%- assign tracking_numbers = '' -%}
+
+  {%- assign number_of_fulfillable_items = 0 -%}
+
+  {%- for line_item in order.line_items -%}
+    {%- assign number_of_fulfillable_items = number_of_fulfillable_items | plus: line_item.quantity -%}
+  {%- endfor -%}
+
+  {%- for line_item in order.line_items -%}
+    {%- assign tracking_numbers = tracking_numbers | append: line_item.fulfillment.tracking_number | append: ',' -%}
+
+    {%- if line_item.fulfillment.item_count != number_of_fulfillable_items -%}
+      {%- assign has_one_fulfillment = false -%}
+    {%- endif -%}
+  {%- endfor -%}
+
+  {%- assign tracking_numbers = tracking_numbers | split: ',' | compact | uniq -%}
+{%- endif -%}
+
+<section data-section-id="account" data-section-type="account">
+  <div class="container p-0">
+    <div class="page__sub-header border-bottom py-4 px-5 m-0">
+      <div class="card__navigation m-0">
+        <a href="{{ routes.account_url }}" class="card__navigation-breadcrumb link fw-bold text-grey">
+          <span>{% render 'icon', icon: 'arrow-left' %} Continuar navegando</span>
+        </a>
+      </div>
+      <nav aria-label="{{ 'general.breadcrumb.title' | t }}" class="breadcrumb my-0 mx-auto">
+        <ol class="breadcrumb__list" role="list">
+          <li class="breadcrumb__item">
+            <a class="breadcrumb__link link" href="{% if customer %}/collections/marcas{% else %}{{ routes.root_url }}{% endif %}">Pagina inicial</a> {%- render 'icon', icon: 'arrow-right' -%}
+          </li>
+
+          <li class="breadcrumb__item">
+            <a class="breadcrumb__link link" href="{{ routes.account_url }}">Meu perfil</a> {%- render 'icon', icon: 'arrow-right' -%}
+          </li>
+
+          <li class="breadcrumb__item">
+            <strong class="breadcrumb__link text-secondary" aria-current="page">Pedido {{ order.name }}</strong>
+          </li>
+        </ol>
+      </nav>
+    </div>
+
+    <div class="layout ps-md-4 border-bottom">
+      <div class="layout__section layout__section--secondary me-0">
+        {%- render "my-account-aside-nav" -%}
+
+        {%- if customer -%}
+          {% assign credit = 0 %}
+          {% assign spent = 0 %}
+          {% for tag in customer.tags %}
+            {% if tag contains 'credit:' %}
+              {% assign credit = tag | split: ':' | last %}
+              {% assign creditDue = 90 %}
+            {% endif %}
+            {% if tag contains 'spent:' %}
+              {% assign found-spent = tag | split: ':' %}
+              {% assign spent = spent | plus: found-spent[1] %}
+            {% endif %}
+          {% endfor %}
+          {% if customer.tags contains 'credit30' %}
+            {% assign creditDue = 30 %}
+          {% endif %}
+          {% assign credit = credit | minus: spent %}
+          {% assign cents = credit | modulo: 1 %}
+          {% assign credit = credit | minus: cents %}
+          {% comment %}
+          <div class="mx-4 mx-md-0"> 
+            <a href="/" class="btn btn-dark w-100 py-3 px-2 fw-bold">Indique Fornecedores</a>
+          </div>
+          {% endcomment %}
+          {% if credit > 0 %}
+            <div class="px-sm-0 px-4 mt-5">
+              <div class="p-3 mt-3 text-secondary bg-cream fw-bold h4 rounded text-center">
+                <p>{{ credit | times: 100 | floor | money }} para pagar no boleto em {{ creditDue }} dias</p>
+                <a href="/collections/marcas" class="btn btn-dark w-100 py-3 px-2 fw-bold">Comprar</a>
+              </div>
+            </div>
+          {% endif %}
+        {%- endif -%}
+      </div>
+
+      <div class="layout__section border-start">
+        <div class="order-summary card border-0">
+          <div class="row border-bottom px-1 px-md-5 py-4 ms-0">
+            <div class="col-12">
+              <h1 class="lato fs-2">Pedido {{ order.name }}</h1>
+            </div>
+          </div>
+
+          <div class="row px-1 px-md-5 py-4 ms-0 border-bottom">
+            <div class="col-6 col-md-3 mb-4">
+              <div>
+                <i class="fas fa-calendar-day me-2 text-center text-grey fs-5 align-middle" aria-hidden="true"></i>
+                <span class="text-muted small">DATA DO PEDIDO</span>
+              </div>
+              <span class="ms-md-4 ps-md-1">{{ order.created_at | date: "%d/%m/%Y" }}</span>
+            </div>
+            <div class="col-6 col-md-3 mb-4">
+              <div>
+                <i class="fas fa-dollar-sign me-2 text-center text-grey fs-5 align-middle" aria-hidden="true"></i>
+                <span class="text-muted small">RESUMO DO PEDIDO</span>
+              </div>
+              <strong class="d-block ms-md-4">{{ order.total_price | money }}</strong>
+              <span class="d-block ms-md-4">{% if order.transactions[0].gateway == "checkout_via_ebanx_pay" %}Pago com Ebanx{% else %}{{ order.transactions[0].gateway }}{% endif %}</span>
+            </div>
+            <div class="col-6 col-md-3 mb-4">
+              <div>
+                <i class="fas fa-calendar-day me-2 text-center text-grey fs-5 align-middle" aria-hidden="true"></i>
+                <span class="text-muted small">ENDEREÇO DE ENTREGA</span>
+              </div>
+              {%- if order.shipping_address -%}
+                <span class="d-block ms-md-4 ps-md-1">{{ order.shipping_address.address1 }}, {{ order.shipping_address.address2 }}</span>
+                <span class="d-block ms-md-4 ps-md-1">{{ order.shipping_address.city }}, {{ order.shipping_address.province }} - {{ order.shipping_address.province_code }}</span>
+                <span class="d-block ms-md-4 ps-md-1">CEP {{ order.shipping_address.zip }}</span>
+              {%- else -%}
+                <span class="ms-md-4 ps-md-1">{{ 'customer.order.no_shipping_address' | t }}</span>
+              {%- endif -%}
+            </div>
+            <div class="col-6 col-md-3 mb-4">
+              <div>
+                <i class="fas fa-calendar-day me-2 text-center text-grey fs-5 align-middle" aria-hidden="true"></i>
+                <span class="text-muted small">ENDEREÇO DE COBRANÇA</span>
+              </div>
+                {%- if order.billing_address -%}
+                  <span class="d-block ms-md-4 ps-md-1">{{ order.billing_address.address1 }}, {{ order.billing_address.address2 }}</span>
+                  <span class="d-block ms-md-4 ps-md-1">{{ order.billing_address.city }}, {{ order.billing_address.province }} - {{ order.billing_address.province_code }}</span>
+                  <span class="d-block ms-md-4 ps-md-1">CEP {{ order.billing_address.zip }}</span>
+                {%- else -%}
+                  <span class="ms-md-4 ps-md-1">{{ 'customer.order.no_billing_address' | t }}</span>
+                {%- endif -%}
+            </div>
+          </div>
+
+          {% comment %}
+          <div class="row px-3 px-md-5 py-4 ms-0 border-bottom">
+            <div class="col-12">
+              <h2 class="lato fs-2 mb-3">Detalhes de envio do seu pedido</h2>
+              <p class="lato fs-4 text-black-50">Enviamos os pedidos para todos os fornecedores, acompanhe o status de cada um deles abaixo.</p>
+
+              <div class="timeline-container mt-5">
+                <div class="row text-center position-relative m-0">
+                  <hr class="line" />
+                  <div class="col-3">
+                    <span class="point"></span>
+                    <p class="text-muted px-md-5">Pedido enviado para fornecedor</p>
+                  </div>
+                  <div class="col-3">
+                    <span class="point"></span>
+                    <p class="text-muted px-md-5">Confirmação do fornecedor</p>
+                  </div>
+                  <div class="col-3">
+                    <span class="point"></span>
+                    <p class="text-muted px-md-4">Criação de nota fiscal e código de rastreio</p>
+                  </div>
+                  <div class="col-3">
+                    <span class="point"></span>
+                    <p class="text-muted px-md-5">Envio para lojista</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endcomment %}
+
+          <div class="row px-3 px-md-5 pt-4 ms-0 border-bottom">
+            <div class="col-12">
+              <h2 class="lato fs-2 mb-3">Detalhes do pedido</h2>
+            </div>
+            {%- assign manufacturerList = "" -%}
+            {%- assign productList = "" -%}
+            {%- assign products = order.line_items | sort_natural: 'vendor' -%}
+            {%- for productElement in products -%}
+              {%- unless manufacturerList contains productElement.vendor -%}
+                {%- assign manufacturerList = manufacturerList | append: productElement.vendor | append: "||" -%}
+                {%- assign productList = productList | append: "||" -%}
+              {%- endunless -%}
+              {%- assign productList = productList | append: productElement.id | append: "," -%}
+            {%- endfor -%}
+            {%- assign manufacturerList = manufacturerList | split: "||" -%}
+            {%- assign productList = productList | split: "||" -%}
+
+            <div class="table-container table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th class="border-bottom w-15">&nbsp;</th>
+                    <th class="border-bottom fw-bold w-35">Fornecedor</th>
+                    <th class="border-bottom fw-bold w-25">Estimativa de entrega</th>
+                    <th class="border-bottom w-25">&nbsp;</th>
+                  </tr>
+                </thead>
+                <tbody class="accordion accordion-flush" id="accordionProducts">
+                  {%- assign loadedManufacturers = "" -%}
+                  {%- for productElement in products -%}
+                    {%- assign iterator = forloop.index0 -%}
+                    {%- unless loadedManufacturers contains productElement.vendor -%}
+                      {%- if iterator > 0 -%}
+                        </tbody>
+                        </table>
+                        </td>
+                        </tr>
+                      {%- endif -%}
+                      <tr>
+                        <td colspan="6" class="w-10 p-0">
+                          <table class="accordion-item w-100" data-manufacturer="{{ productElement.vendor }}">
+                            <thead>
+                              <th class="w-15">
+                                {% assign imageUrl = productElement.vendor | handleize | append: ".png" %}
+                                <img
+                                  class="img-fluid m-auto"
+                                  src="{{ imageUrl | file_img_url: '50x' }}"
+                                  srcset="{{ imageUrl | file_img_url: '50x' }} 50w"
+                                  sizes="(max-width: 120px) 100px"
+                                  alt="Logo do fornecedor {{  }}"
+                                  loading="lazy"
+                                  class="motion-reduce"
+                                  width="50px"
+                                  height="50px"
+                                >
+                              </th>
+                              <th class="w-35">{{ productElement.vendor }}</th>
+                              <th class="w-25 estimate-date">-</th>
+                              <th class="w-25">
+                                <h2 class="accordion-header" id="product-{{ forloop.index0 }}">
+                                  <button class="accordion-button collapsed py-4" type="button" data-bs-toggle="collapse" data-bs-target="#product-block{{ forloop.index0 }}" aria-expanded="false" aria-controls="product-block{{ forloop.index0 }}">
+                                    <span class="fw-bold text-muted">Ver produtos</span>
+                                  </button>
+                                </h2>
+                              </th>
+                            </thead>
+                            <tbody id="product-block{{ forloop.index0 }}" class="accordion-collapse collapse px-1 px-md-4" aria-labelledby="product-{{ forloop.index0 }}" data-bs-parent="#accordionProducts">
+                            {%- assign loadedManufacturers = loadedManufacturers | append: productElement.vendor -%}
+                    {%- endunless -%}
+                    <tr>
+                      <td class="ps-5 pe-0 text-center">
+                        <img src="{{ productElement.image | img_url: '50x50' }}" alt="{{ productElement.image.alt | escape }}">
+                      </td>
+                      <td colspan="2">
+                        <p>{{ productElement.title }}</p>
+                      </td>
+                      <td class="text-center">
+                        <a href="{{ productElement.url }}" class="line-item__title link text--strong ">
+                          <u>Comprar</u>
+                        </a>
+                      </td>
+                    </tr>
+                    {%- if forloop.last == true -%}
+                      </tbody>
+                      </table>
+                      </td>
+                      </tr>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="row p-5">
+            <div class="col-12 ps-4">
+              <p class="text-black-50 fs-5">Ficou com dúvida? Entre em contato com nosso suporte: <br />contato@inventa.shop ou 11 99680-2265</p>
+            </div>
+          </div>
+
+          {% comment %}
+          <div class="table-wrapper">
+            <table class="table table--loose">
+              <thead>
+                <tr>
+                  <th>{{ 'customer.order.product' | t }}</th>
+                  <th class="table__cell--center">{{ 'customer.order.quantity' | t }}</th>
+                  <th class="table__cell--right">{{ 'customer.order.total' | t }}</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {%- for line_item in order.line_items -%}
+                  <tr class="line-item">
+                    <td class="line-item__product-info">
+                      <div class="line-item__product-info-wrapper">
+                        <div class="line-item__image-wrapper">
+                          <div class="aspect-ratio aspect-ratio--square">
+                            <img src="{{ line_item.image | img_url: '90x90', scale: 2 }}" alt="{{ line_item.image.alt | escape }}">
+                          </div>
+                        </div>
+
+                        <div class="line-item__meta">
+                          <a href="{{ line_item.url }}" class="line-item__title link text--strong">{{ line_item.title }}</a>
+
+                          {%- if line_item.selling_plan_allocation -%}
+                            <p class="line-item__plan-allocation">{{ line_item.selling_plan_allocation.selling_plan.name }}</p>
+                          {%- endif -%}
+
+                          {%- unless line_item.properties == blank -%}
+                            <ul class="line-item__property-list" role="list">
+                              {%- for property in line_item.properties -%}
+                                {%- assign first_character_in_key = property.first | truncate: 1, '' -%}
+
+                                {%- if property.last == blank or first_character_in_key == '_' -%}
+                                  {%- continue -%}
+                                {%- endif -%}
+
+                                <li class="line-item__property">{{ property.first }}: {{ property.last }}</li>
+                              {%- endfor -%}
+                            </ul>
+                          {%- endunless -%}
+
+                          <div class="line-item__price-list">
+                            {%- if line_item.original_line_price != line_item.final_line_price -%}
+                              <span class="line-item__price line-item__price--highlight">{{ line_item.final_line_price | money }}</span>
+                              <span class="line-item__price line-item__price--compare">{{ line_item.original_line_price | money }}</span>
+                            {%- else -%}
+                              <span class="line-item__price">{{ line_item.final_line_price | money }}</span>
+                            {%- endif -%}
+                          </div>
+
+                          {%- if line_item.unit_price_measurement -%}
+                            <div class="line-item__price-info">
+                              <div class="unit-price-measurement">
+                                <span class="unit-price-measurement__price">{{ line_item.unit_price | money }}</span>
+                                <span class="unit-price-measurement__separator">/ </span>
+
+                                {%- if line_item.unit_price_measurement.reference_value != 1 -%}
+                                  <span class="unit-price-measurement__reference-value">{{ line_item.unit_price_measurement.reference_value }}</span>
+                                {%- endif -%}
+
+                                <span class="unit-price-measurement__reference-unit">{{ line_item.unit_price_measurement.reference_unit }}</span>
+                              </div>
+                            </div>
+                          {%- endif -%}
+
+                          {%- if line_item.line_level_discount_allocations != blank -%}
+                            <ul class="line-item__discount-list" role="list">
+                              {%- for discount_allocation in line_item.line_level_discount_allocations -%}
+                                <li class="line-item__discount">
+                                  {%- render 'icon', icon: 'sale' -%}{{ discount_allocation.discount_application.title }} (-{{ discount_allocation.amount | money }})
+                                </li>
+                              {%- endfor -%}
+                            </ul>
+                          {%- endif -%}
+                        </div>
+                      </div>
+                    </td>
+
+                    <td class="line-item__quantity table__cell--center">{{ line_item.quantity }}</td>
+
+                    <td class="line-item__line-price table__cell--right">{{ line_item.final_line_price | money }}</td>
+                  </tr>
+
+                  {%- unless is_entirely_fulfilled and has_one_fulfillment -%}
+                    {%- if line_item.fulfillment -%}
+                      <tr class="fulfillment-item">
+                        <td colspan="3">
+                          {%- if line_item.fulfillment.tracking_url != blank and line_item.fulfillment.tracking_number != blank -%}
+                            <p class="alert alert--large alert--success">{{ 'customer.order.line_fulfillment_with_url_and_number_html' | t: tracking_url: line_item.fulfillment.tracking_url, tracking_number: line_item.fulfillment.tracking_number }}</p>
+                          {%- elsif fullfillment.tracking_url != blank -%}
+                            <p class="alert alert--large alert--success">{{ 'customer.order.line_fulfillment_with_url_html' | t: tracking_url: line_item.fulfillment.tracking_url }}</p>
+                          {%- elsif fullfilment.tracking_number != blank -%}
+                            <p class="alert alert--large alert--success">{{ 'customer.order.line_fulfillment_with_number_html' | t: tracking_number: line_item.fulfillment.tracking_number }}</p>
+                          {%- else -%}
+                            <p class="alert alert--large alert--success">{{ 'customer.order.line_fulfillment_html' | t }}</p>
+                          {%- endif -%}
+                        </td>
+                      </tr>
+                    {%- endif -%}
+                  {%- endunless -%}
+                {%- endfor -%}
+              </tbody>
+            </table>
+          </div>
+          
+
+          <div class="order-foot">
+            <div class="order-foot__inner">
+              <div class="order-foot__item order-foot__item">
+                <span class="order-foot__item-category">{{ 'customer.order.subtotal' | t }}</span>
+                <span class="order-foot__item-value">{{ order.line_items_subtotal_price | money }}</span>
+              </div>
+
+              {%- for discount_application in order.cart_level_discount_applications -%}
+                <div class="order-foot__item order-foot__item--highlight">
+                  <span class="order-foot__item-category">{{ 'customer.order.discount' | t }} ({{ discount_application.title }})</span>
+                  <span class="order-foot__item-value">-{{ discount_application.total_allocated_amount | money }}</span>
+                </div>
+              {%- endfor -%}
+
+              {%- for shipping_method in order.shipping_methods -%}
+                <div class="order-foot__item order-foot__item">
+                  <span class="order-foot__item-category">{{ 'customer.order.shipping' | t }} ({{ shipping_method.title }})</span>
+                  <span class="order-foot__item-value">{{ shipping_method.price | money }}</span>
+                </div>
+              {%- endfor -%}
+
+              {%- for tax_line in order.tax_lines -%}
+                <div class="order-foot__item order-foot__item">
+                  {%- if shop.taxes_included -%}
+                    <span class="order-foot__item-category">{{ 'customer.order.tax_included' | t }} ({{ tax_line.title }} {{ tax_line.rate_percentage }}%)</span>
+                  {%- else -%}
+                    <span class="order-foot__item-category">{{ 'customer.order.tax_excluded' | t }} ({{ tax_line.title }} {{ tax_line.rate_percentage }}%)</span>
+                  {%- endif -%}
+
+                  <span class="order-foot__item-value">{{ tax_line.price | money }}</span>
+                </div>
+              {%- endfor -%}
+
+              <div class="order-foot__item order-foot__item--strong">
+                <span class="order-foot__item-category">{{ 'customer.order.total' | t }}</span>
+                <span class="order-foot__item-value">{{ order.total_price | money }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="grid__cell 1/2--tablet-and-up">
+            <div class="card">
+              <div class="card__section">
+                <p class="heading h6">{{ 'customer.order.billing_address' | t }}</p>
+
+                {%- if order.billing_address -%}
+                  {{- order.billing_address | format_address -}}
+                {%- else -%}
+                  <p>{{ 'customer.order.no_billing_address' | t }}</p>
+                {%- endif -%}
+              </div>
+            </div>
+          </div>
+
+          <div class="grid__cell 1/2--tablet-and-up">
+            <div class="card">
+              <div class="card__section">
+                <p class="heading h6">{{ 'customer.order.shipping_address' | t }}</p>
+
+                {%- if order.shipping_address -%}
+                  {{- order.shipping_address | format_address -}}
+                {%- else -%}
+                  <p>{{ 'customer.order.no_shipping_address' | t }}</p>
+                {%- endif -%}
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endcomment %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const corsUrl = "https://cors.inventashop.com.br/";
+  let shopifyApiUrl = "https://api.inventa.tec.br";
+  let shopifyApiKey = "LMYzUdD0Wq";
+  let shopifyApiSecretKey = "GHrI6Xg0Qc";
+  const orderId = "{{ order.name | replace: "#", "" }}";
+
+  const onReady = () => {
+    fetch(`${corsUrl}${shopifyApiUrl}/data/shopify/fretes/${orderId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'origin': 'shopify',
+        'api-key': shopifyApiKey,
+        'secret-key': shopifyApiSecretKey
+      }
+    })
+    .then( (res) => {
+      return res.json();
+    })
+    .then( (res) => {
+      const manufacturers = res.estimates;
+      let mafucturerElement = null;
+      let estimateDate = null;
+      if (manufacturers) {
+        for (let i = 0; i < manufacturers.length; i++) {
+          mafucturerElement = document.querySelector(`table[data-manufacturer="${manufacturers[i].vendor}"] .estimate-date`);
+          estimateDate = new Date(manufacturers[i].frete_estimate);
+          mafucturerElement.innerHTML = estimateDate.toLocaleString("pt-BR", {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+          });
+        }
+      }
+    });
+
+  }
+
+  if (document.readyState == 'loading') {
+    document.addEventListener('DOMContentLoaded', onReady);
+  } else {
+    onReady();
+  }
+</script>
+
+{% section 'static-promotion-list' %}
+{% section 'static-recently-viewed-products' %}

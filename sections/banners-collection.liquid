@@ -1,0 +1,181 @@
+{% if "marcas,all" contains collection.handle and section.blocks.size > 0 %}
+  <section class="maxw-1440 position-relative m-auto" data-section-id="{{ section.id }}" data-section-type="collection-banners" style="visibility: hidden;max-height: 1px!important;">
+    <button class="previous-slide">{%- render 'icon', icon: 'arrow-left' -%}</button>
+    <button class="next-slide">{%- render 'icon', icon: 'arrow-right' -%} </button>
+    
+    <div class="banners-slider">
+      {% for block in section.blocks %}
+        <div class="collection-banner-slide{{ forloop.index }} banner-container">
+          <div>
+            {% capture bannerImage %}
+              <img src="{{ block.settings.banner_image | img_url: 'master' }}" alt="banner-{{ block.settings.banner_title }}">
+            {% endcapture %}
+
+            {% capture imageWithLink %}
+              <a href="{{ block.settings.banner_link }}">
+                {{ bannerImage }}
+              </a>
+            {% endcapture %}
+
+            {% if block.settings.banner_link %}
+              {{ imageWithLink }}
+            {% else %}
+              {{ bannerImage }}
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    <div role="tablist" class="bannerdots"></div>
+  </section>
+
+  <style>
+    section[data-section-type="collection-banners"] .next-slide svg,
+    section[data-section-type="collection-banners"] .previous-slide svg {
+      background: #c4c4c4;
+      border-radius: 50%;
+      color: #fff;
+      width: 2rem;
+      height: 2rem;
+      padding: 0.5rem;
+    }
+
+    section[data-section-type="collection-banners"] .next-slide,
+    section[data-section-type="collection-banners"] .previous-slide {
+      position: absolute;
+      z-index: 2;
+      height: 100%;
+    }
+
+    section[data-section-type="collection-banners"] .next-slide {
+      right: 0;
+      padding-left: 0.75rem;
+    }
+
+    section[data-section-type="collection-banners"] .previous-slide {
+      left: 0;
+      padding-right: 0.75rem;
+    }
+
+    section[data-section-type="collection-banners"] .dots {
+      position: absolute;
+      bottom: -5px;
+      margin: auto;
+      left: 0;
+      right: 0;
+      z-index: 1;
+    }
+
+    section[data-section-type="collection-banners"] .dots .glider-dot.active {
+      background: #ffd93d;
+    }
+
+    section[data-section-type="collection-banners"] .banner-container {
+      overflow: hidden;
+    }
+
+    section[data-section-type="collection-banners"] .banner-container img {
+      max-width: 100%;
+    }
+
+    @media (min-width: 1024px) {
+      section[data-section-type="collection-banners"] .banners-slider {
+        max-height: 460px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      section[data-section-type="collection-banners"] {
+        display: none !important;
+      }
+    }
+
+    {% if section.blocks.size == 1 %}
+      section[data-section-type="collection-banners"] .previous-slide,
+      section[data-section-type="collection-banners"] .next-slide,
+      section[data-section-type="collection-banners"] .glider-dots {
+        display: none !important;
+      }
+    {% endif %}
+  </style>
+
+  <script defer>
+    window.addEventListener('DOMContentLoaded', function() {
+      const collectionBannersContainer = document.querySelector('section[data-section-type="collection-banners"] .banners-slider');
+
+      collectionBannersContainer.addEventListener('glider-loaded', function() {
+        document.querySelector('section[data-section-type="collection-banners"]').removeAttribute("style");
+      });
+
+      {% if section.settings.autoplay_collection_banner %}
+        gliderAutoplay( 
+      {% endif %}
+        new Glider(collectionBannersContainer, {
+          type: 'carousel',
+          focusAt: 'center',
+          rewind: true,
+          dots: '.bannerdots',
+          arrows: {
+            prev: 'section[data-section-type="collection-banners"] .previous-slide',
+            next: 'section[data-section-type="collection-banners"] .next-slide'
+          }
+        })
+      {% if section.settings.autoplay_collection_banner %},
+        { interval: {{ section.settings.autoplay_time }}000,}
+      );
+      {% endif %}  
+    })
+  </script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Collection banners",
+  "settings": [
+    {
+          "type":"header",
+          "content":"Banner Settings"
+        },
+        {
+          "type": "checkbox",
+          "id": "autoplay_collection_banner",
+          "label": "Autoplay",
+          "default": true
+        },
+        {
+          "type": "range",
+          "id": "autoplay_time",
+          "min": 3,
+          "max": 8,
+          "step": 1,
+          "unit": "ms",
+          "label": "Autoplay Time",
+          "default": 3
+        }
+  ],
+  "blocks": [
+    {
+      "type": "banner",
+      "name": "Banner info",
+      "settings": [
+        {
+          "type": "text",
+          "id": "banner_title",
+          "label": "Banner title"
+        },
+        {
+          "type": "image_picker",
+          "id": "banner_image",
+          "label": "Banner image"
+        },
+        {
+          "type": "url",
+          "id": "banner_link",
+          "label": "Banner link",
+          "info": "if it is empty, the banner will not be clickable"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

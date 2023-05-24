@@ -1,0 +1,154 @@
+{%- if section.blocks.size > 0 -%}
+<section class="section my-0" id="section-{{ section.id }}" data-section-id="{{ section.id }}" data-section-type="welcome-slider" style="visibility: hidden;max-height: 1px!important;">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="welcome-slider w-100 p-0">
+        {%- for block in section.blocks -%}
+        <div class="slide-block{{ forloop.index }} py-5">
+          <div class="col-12 col-md-5 offset-md-7 text-center py-5">
+            {% if block.settings.title %}
+            <h2 class="fs-2 fw-bold w-75 mt-4 m-auto mb-3 title">{{ block.settings.title }}</h2>
+            {% endif %}
+            {% if block.settings.button-title %}
+            <a href="{{ block.settings.button-url }}" class="btn btn-dark px-5 py-3 fw-bold mb-5">
+              <span>{{ block.settings.button-title }}</span>
+            </a>
+            {% endif %}
+          </div>
+        </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script defer>
+  window.addEventListener('load', function() {
+    const welcomeSliderContainer3 = document.querySelector('.welcome-slider');
+
+    welcomeSliderContainer3.addEventListener('glider-loaded', function() {
+      document.querySelector('section[data-section-type="welcome-slider"]').removeAttribute("style");
+    });
+
+    new Glider(welcomeSliderContainer3, {
+      type: 'carousel',
+      focusAt: 'center',
+      rewind: true,
+      slidesToShow: 1,
+      slidesToScroll: 1,
+      draggable: true,
+      dots: true
+    })
+  })
+</script>
+
+<style>
+  {%- for block in section.blocks -%}
+  .welcome-slider .slide-block{{ forloop.index }} {
+    background-image: url({{ block.settings.background-img | img_url: 'master' }});
+    background-size: cover; 
+  }
+
+  .welcome-slider .slide-block{{ forloop.index }} .title {
+    color: {{ block.settings.font-color }};
+  }
+  {%- endfor -%}
+
+  .welcome-slider .slick-dots {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    width: 300px;
+    text-align: center;
+  }
+
+  .welcome-slider .slick-dots li {
+    position: relative;
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  .welcome-slider .slick-dots li button {
+    font-size: 0;
+    line-height: 0;
+    display: block;
+    width: 30px;
+    height: 30px;
+    padding: 10px;
+    cursor: pointer;
+    color: transparent;
+    border: 0;
+    outline: none;
+    background: transparent;
+  }
+
+  .welcome-slider .slick-dots li button:before {
+    content: '•';
+    font-size: 80px;
+    line-height: 20px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    color: #878584
+  }
+
+  .welcome-slider .slick-dots .slick-active button:before {
+    color: #C4C4C4
+  }
+
+</style>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Welcome slider",
+  "max_blocks": 5,
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Item",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "background-img",
+          "label": "Image",
+          "info": "Background image"
+        },
+        {
+          "type": "color",
+          "id": "font-color",
+          "label": "Font color",
+          "default": "#303030" 
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Título"
+        },
+        {
+          "type": "text",
+          "id": "button-title",
+          "label": "Button",
+          "default": "Título do botao"
+        },
+        {
+          "type": "url",
+          "id": "button-url",
+          "label": "Link URL",
+          "info": "Link do botao"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

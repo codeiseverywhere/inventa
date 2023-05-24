@@ -1,0 +1,169 @@
+<script defer>
+    const testab_banners = [
+      {%- for block in section.blocks -%}
+      {
+        popup_banner: "{{ block.settings.popup-image | img_url: 'master' }}",
+        background_image: "{{ block.settings.desktop-background-image | img_url: 'master' }}",
+        desktop_image: "{{ block.settings.desktop-promo-image | img_url: 'master' }}",
+        mobile_image: "{{ block.settings.mobile-image | img_url: 'master' }}",
+        color_start: "{{ block.settings.background-color1 }}",
+        color_end: "{{ block.settings.background-color2 }}"
+      },
+      {%- endfor -%}
+    ]
+
+    function changeBannerTest(index = 0) {
+        const test_number = index < testab_banners.length && index >= 0 ? index : 0;
+        const mobile_imgs = document.querySelectorAll('img.test-ab_mobile-view');
+        const desktop_imgs = document.querySelectorAll('#register-section img.test-ab_desktop-view');
+        const popup_desktop = document.querySelectorAll('img.testab-desktop-popup');
+        const register_section = document.getElementById('register-section');
+        const gradient_background = document.querySelectorAll('.gradient-background');
+        for(let i = 0; i < gradient_background.length; i++){
+            gradient_background[i].setAttribute('background', test_number);
+        }
+        if(register_section){
+            register_section.setAttribute('background', test_number);
+        }
+        for(let i = 0; i < mobile_imgs.length; i++){
+            mobile_imgs[i].src = testab_banners[test_number].mobile_image;
+            mobile_imgs[i].setAttribute('data-src', testab_banners[test_number].mobile_image);
+        }
+        for(let i = 0; i < desktop_imgs.length; i++){
+            desktop_imgs[i].src = testab_banners[test_number].desktop_image;
+        }
+        for(let i = 0; i < popup_desktop.length; i++){
+            popup_desktop[i].src = testab_banners[test_number].popup_banner;
+            popup_desktop[i].setAttribute('data-src', testab_banners[test_number].popup_banner);
+            if(index == 0){
+                // popup_desktop[i].classList.add('px-3');
+                popup_desktop[i].classList.add('pb-0');
+            }else{
+                // popup_desktop[i].classList.remove('px-3');
+                popup_desktop[i].classList.remove('pb-0');
+            }
+        }
+        const test_image = document.getElementById('test-ab_cadastro_image');
+      if(test_image){
+        switch(index){
+          case 0:
+            test_image.classList.add('align-self-center');
+            test_image.setAttribute('src', "{{ 'ab-image-mulheres.png' | file_img_url: "master" }}");
+            break;
+          case 1:
+            test_image.setAttribute('src', "{{ 'banner-ab.png' | file_img_url: 'master' }}");
+            break;
+          case 2:
+            test_image.classList.add('align-self-end');
+            test_image.setAttribute('src', "{{ 'ab-image-carnaval.png' | file_img_url: 'master' }}");
+            break;
+          case 3:
+            test_image.classList.add('align-self-end');
+            test_image.setAttribute('src', "{{ 'ab-image-carnaval.png' | file_img_url: 'master' }}");
+            break;
+        }
+      }
+      const test_background = document.querySelector('#register-section .register-long_start');
+      if(test_background) test_background.setAttribute('test', index);
+    }
+
+    function detectBannerToShow(){
+        const url = new URLSearchParams(window.location.search);
+        const banner = url.get('bannerab');
+        if(banner && !isNaN(banner)){
+            const index = parseInt(banner);
+            changeBannerTest(index);
+        }else{
+            changeBannerTest(0);
+        }
+    }
+
+    setTimeout(detectBannerToShow, 500)
+</script>
+
+<style>
+    {% for block in section.blocks %}
+    .testab-background[background="{{ forloop.index0 }}"]{
+        background-color: {{ block.settings.background-color1 }} !important;
+  {% if block.settings.desktop-background-image %}background-image: url('{{ block.settings.desktop-background-image | img_url: 'master' }}');{% endif %}
+        background-size: cover;
+        background-position: bottom;
+        background-repeat: no-repeat;
+    }
+    .gradient-background[background="{{ forloop.index0 }}"]{
+        background: radial-gradient(372.06% 125.16% at -23.91% -14.83%, {{ block.settings.background-color1 }} 0%, {{ block.settings.background-color2 }} 100%);
+    }
+    .gradient-background2 {
+        background-color: #60BF99;
+    }
+    {% endfor %}
+
+    @media (max-width: 768px){
+        .testab-background {
+            background-image: url('{{ 'women_s-day-banner-desktop-bg.png' | file_url }}') !important;
+        }
+    }
+    
+    .testab-background[background="0"] .test-ab_desktop-view {
+        width: 70%;
+        margin-left: 0 !important;
+    }
+</style>
+
+{% schema %}
+{
+    "name": "Banner testab variables",
+    "max_blocks": 10,
+    "blocks": [
+        {
+            "type": "item",
+            "name": "tests",
+            "settings": [
+                {
+                    "type": "image_picker",
+                    "id": "desktop-promo-image",
+                    "label": "Imagen do desktop",
+                    "info": "Imagen en form do cadastro"
+                },
+                {
+                    "type": "image_picker",
+                    "id": "desktop-background-image",
+                    "label": "Background do desktop",
+                    "info": "Imagen en form do cadastro"
+                },
+                {
+                    "type": "image_picker",
+                    "id": "mobile-image",
+                    "label": "Mobile image",
+                    "info": "Imagen em mobile"
+                },
+                {
+                    "type": "image_picker",
+                    "id": "popup-image",
+                    "label": "Imagen do popup",
+                    "info": "Imagen em o popup"
+                },
+                {
+                    "type": "color",
+                    "id": "background-color1",
+                    "label": "Background color start",
+                    "default": "#6FD3E2"
+                },
+                {
+                    "type": "color",
+                    "id": "background-color2",
+                    "label": "Background color end",
+                    "default": "#6FD3E2"
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "category": "Custom Sections",
+            "name": "Retailer register form",
+            "settings": {}
+        }
+    ]
+}
+{% endschema %}

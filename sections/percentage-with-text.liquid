@@ -1,0 +1,129 @@
+<section class="section" data-section-id="{{ section.id }}" data-section-type="image-with-content">
+  <div class="container py-5 position-relative">
+    <div class="boder-container d-none d-lg-block"></div>
+    <div class="row py-lg-5 px-lg-0 p-5 border-row">  
+      <div class="col-12 col-lg-4 offset-lg-1 bg-white color-one">
+        <div class="bg-white">
+          <div class="d-flex align-items-center justify-content-center justify-content-lg-start">
+            <span class="number lh-1">{{ section.settings.percentage }}</span>
+            <span class="percentage">%</span>
+          </div>
+          <div class="color-two text-lg-start text-center mb-3 mb-lg-0">
+            {{ section.settings.sub-percentage }}
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-5">
+        <h4 class="fs-2 fw-light">
+          {{ section.settings.title }}
+        </h4>
+        <div class="mt-3">
+          {{ section.settings.content }}
+        </div>
+        <div class="mt-5">
+          <a href="{{ section.settings.button-url }}" class="btn btn-outline-dark px-5 py-3 fw-bold d-flex text-center justify-content-center d-md-inline-flex"> 
+            {{ section.settings.button-name }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Russo+One&display=swap');
+
+
+  .number,
+  .percentage {
+    text-shadow: 5px 5px 0px rgba(178,196,199,0.2);
+  }
+
+  .number {
+    font-family: 'Russo One', sans-serif;
+    font-size: 13em;
+  }
+
+  .percentage {
+    font-size: 4em;
+    font-weight: 900;
+  }
+
+  .color-one{
+    color: #b2c4c7
+  }
+
+  .color-two {
+    color: #999;
+  }
+
+  .boder-container {
+    border: 5px solid #ddaa2e;
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    height: 100%;
+    width: calc(100% - 350px);
+    left: 260px;
+  }
+
+  .border-row{
+      border: 5px solid #ddaa2e;
+  }
+  @media (min-width: 992px) { 
+    .border-row{
+      border: 0;
+    }
+  }
+
+</style>
+
+{% schema %}
+{
+  "name": "Percentage and text",
+  "settings": [
+    {
+      "type": "text",
+      "id": "percentage",
+      "label": "Percentage",
+      "default": "41"
+    },
+    {
+      "type": "text",
+      "id": "sub-percentage",
+      "label": "Text sub-percentage",
+      "default": "Text sub-percentage"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Title"
+    },
+    {
+      "type": "text",
+      "id": "content",
+      "label": "Content",
+      "default": "Content"
+    },
+    {
+      "type": "text",
+      "id": "button-name",
+      "label": "Button name",
+      "default": "Button"
+    },
+    {
+      "type": "url",
+      "id": "button-url",
+      "label": "URL"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Custom Sections",
+      "name": "Percentage and text",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

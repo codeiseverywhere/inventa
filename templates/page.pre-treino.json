@@ -1,0 +1,43 @@
+{
+  "sections": {
+    "header": {
+      "type": "promotion-page-header",
+      "settings": {
+        "show-promo-banner": true,
+        "autoplay-promo-banner": true,
+        "autoplay-time": 3
+      }
+    },
+    "description": {
+      "type": "promotion-page-description",
+      "settings": {
+        "title": "Alimentos pré-treino",
+        "content": "Garanta um pré-treino de qualidade para os seus clientes com essa seleção de produtos!",
+        "image": "shopify:\/\/shop_images\/icone.png"
+      }
+    },
+    "carousal": {
+      "type": "promotion-product-carousal",
+      "settings": {
+        "show-priority-collection": true,
+        "title": "Título da coleção",
+        "collection": ""
+      }
+    },
+    "collections": {
+      "type": "promotion-page-collections",
+      "settings": {
+        "show-promotion-collections": true,
+        "products_per_row": "4",
+        "default_products_per_page": 24,
+        "default_view_layout": "grid"
+      }
+    }
+  },
+  "order": [
+    "header",
+    "description",
+    "carousal",
+    "collections"
+  ]
+}

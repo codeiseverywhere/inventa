@@ -1,0 +1,190 @@
+.form__group {
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.form__div {
+  position: relative;
+  height: 40px;
+  font-size: 10px;
+  width: 100%;
+}
+@media (min-width: 992px) {
+  .form__div {
+    height: 48px;
+    font-size: 16px;
+  }
+}
+
+.cbox {
+  margin-bottom: 1rem;
+}
+.cbox .form__div {
+  height: auto;
+}
+
+.form__input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  font-size: 12px;
+  padding: 0 11px;
+  border-radius: 8px;
+  border: solid 1px #c7d3d9;
+  background: none;
+  z-index: 1;
+}
+@media (min-width: 992px) {
+  .form__input {
+    font-size: 16px;
+  }
+}
+
+.form__label {
+  position: absolute;
+  left: 8px;
+  top: 12px;
+  padding: 0 0.25rem;
+  background-color: #fff;
+  color: #373d43;
+  font-size: 12px;
+  transition: 0.3s;
+}
+@media (min-width: 992px) {
+  .form__label {
+    font-size: 16px;
+  }
+}
+
+.form__input:focus + .form__label {
+  top: -7px;
+  left: 12px;
+  color: #4793ef;
+  font-size: 10px;
+  font-weight: 500;
+  z-index: 10;
+}
+@media (min-width: 992px) {
+  .form__input:focus + .form__label {
+    top: -11px;
+    font-size: 16px;
+  }
+}
+
+.error.touched .form__input:focus + .form__label {
+  color: #ef233c;
+}
+
+.form__input:not(:placeholder-shown).form__input:not(:focus) + .form__label {
+  top: -7px;
+  left: 12px;
+  font-size: 10px;
+  font-weight: 500;
+  z-index: 10;
+}
+@media (min-width: 992px) {
+  .form__input:not(:placeholder-shown).form__input:not(:focus) + .form__label {
+    top: -11px;
+    font-size: 16px;
+  }
+}
+
+.error.touched
+  .form__input:not(:placeholder-shown).form__input:not(:focus)
+  + .form__label {
+  color: #ef233c;
+}
+
+.form__input:focus,
+.form__input:focus-visible {
+  border: 1px solid #4793ef;
+  outline: #4793ef;
+}
+
+.error.touched .form__input:focus,
+.error.touched .form__input:focus-visible {
+  border: 1px solid #ef233c;
+  outline: #ef233c;
+}
+
+.error-msg {
+  font-size: 10px;
+}
+@media (min-width: 992px) {
+  .error-msg {
+    font-size: 12px;
+  }
+}
+
+.error.touched input {
+  border: 1px solid #ef233c;
+  outline: #ef233c;
+  color: #ef233c;
+}
+
+.error.touched .form__label {
+  color: #ef233c;
+}
+
+.error.touched span {
+  color: #ef233c;
+  display: block;
+}
+
+.error-msg {
+  display: none;
+}
+
+.error.touched .error-msg {
+  display: inline-block;
+}
+
+#togglePassword {
+  position: absolute;
+  right: 15px;
+  top: 13px;
+  cursor: pointer;
+  z-index: 2;
+  font-size: 16px;
+}
+@media (min-width: 992px) {
+  #togglePassword {
+    top: 16px;
+  }
+}
+
+.error.touched #togglePassword {
+  color: #ef233c;
+}
+
+input[name="password"] {
+  padding-right: 35px;
+}
+@media (min-width: 992px) {
+  input[name="password"] {
+    padding-right: 45px;
+  }
+}
+
+.cnpj__container .spinner,
+.input__spinner {
+  position: absolute;
+  right: 15px;
+  top: 9px;
+}
+@media (min-width: 992px) {
+  .cnpj__container .spinner {
+    position: absolute;
+    top: 14px;
+  }
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px white inset !important;
+}

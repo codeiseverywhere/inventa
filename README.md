@@ -1,1 +1,1 @@
-# inventa
+# shopify-theme

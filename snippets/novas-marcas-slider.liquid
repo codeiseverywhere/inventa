@@ -1,0 +1,154 @@
+{% capture wk_seller_content %}
+    {% include 'wk-seller-listing-variable' %}
+{% endcapture %}
+<div class="row my-5">
+    <div class="col-12 col-md-5 col-lg-4 col-xl-3 row mb-3">
+        <div class="col-md-12 d-flex d-md-block align-items-center col-6 px-0">
+            <h3 class="noto-sanz mb-0 mb-md-2 fs-2">Novas marcas</h3>
+            <p class="color-666 d-none d-md-block">Diversas opções para revender que você compra direto da fábrica com condições especiais.</p>
+        </div>
+        <div class="ps-md-0 pe-0 d-flex col-md-12 col-6">
+            <button onclick="if(typeof openFornecedorPopup == 'function') openFornecedorPopup();" class="ms-auto ms-md-0 btn px-1 px-sm-3 py-2 py-md-0 fs-6 color-666 lato background-E3E7E8">Todos os fornecedores</button>
+        </div>
+    </div>
+    <div class="col-12 col-md-7 col-lg-8 col-xl-9 position-relative seller-slider_container" style="visibility: hidden;max-height: 1px!important;">
+        <button class="previous-slide">{%- render 'icon', icon: 'arrow-left' -%}</button>
+        <button class="next-slide">{%- render 'icon', icon: 'arrow-right' -%}</button>
+        <div class="seller-slider">
+            {% for seller_id in wk_store_ids %}
+            {% assign index = forloop.index0 %}
+            {% assign position = position | plus: 1 %}
+            {% if wk_store_logos[forloop.index0] %}
+                {% assign imageUrl = wk_store_handles[forloop.index0] | handleize | append: ".png" %}
+                <div class="slide-block{{ forloop.index }} text-center seller-slide_glider">
+                <a class="fornecedor-slide" href="/collections/vendors?q={{ wk_store_names[forloop.index0] | url_encode }}">
+                    <div class="col-12 text-center px-2">
+                    <div class="m-auto">
+                        <div class="p-3 m-auto d-flex align-items-center img-container border rounded-3">
+                            <img
+                            class="img-fluid m-auto"
+                            src="{{ wk_store_logos[forloop.index0] }}"
+                            srcset="{{ imageUrl | file_img_url: '100x' }} 100w"
+                            sizes="(max-width: 120px) 100px"
+                            alt="Imagem de loja {{ wk_store_names[forloop.index0] }}"
+                            loading="lazy"
+                            class="motion-reduce"
+                            width="90px"
+                            height="90px"
+                            onerror="this.onerror=null; this.srcset='{{ wk_store_logos[forloop.index0] }}'"
+                            >
+                        </div>
+                    </div>
+                    </div>
+                    <span class="fs-6">{{ wk_store_names[forloop.index0] }}</span>
+                    <small class="text-secondary d-block">
+                    {% assign minimum_order = 0 %}
+                    {% if shop.metafields.sellers.minimum_order_value contains wk_store_handles[forloop.index0] %}
+                    {% assign split_name = wk_store_handles[forloop.index0] | append: '":' %}
+                    {% assign minimum_order = shop.metafields.sellers.minimum_order_value | json | split: split_name | last | split: ',' | first %}
+                    {% endif %}
+                    {% if minimum_order != 0 and minimum_order != "0" %}Min. {{ minimum_order | times: 100 | money }}{% else %}Sem mínimo{% endif %}
+                    </small> 
+                </a>
+                </div>
+            {% endif%}
+        {%- endfor -%}
+        </div>
+    </div>
+</div>
+
+<style>
+    .color-666{
+        color: #666;
+    }
+    .background-E3E7E8{
+        background-color: #E3E7E8;
+    }
+    .seller-slider .img-container{
+        width: 8rem;
+        height: 8rem;
+    }
+    .seller-slider .img-container img{
+        max-width: 100%;
+        max-height: 100%;
+    }
+    .seller-slider .img-container:after{
+        content: '-';
+        visibility: hidden;
+        padding-bottom: 100%;
+    }
+</style>
+
+<script defer>
+    window.addEventListener('load', function() {
+    const novasMarcasContainer = document.querySelector('.seller-slider');
+
+    novasMarcasContainer.addEventListener('glider-loaded', function() {
+      document.querySelector('.seller-slider_container').removeAttribute("style");
+    });
+
+    new Glider(novasMarcasContainer, {
+      type: 'carousel',
+      focusAt: 'center',
+      rewind: true,
+      slidesToShow: 2,
+      slidesToScroll: 2,
+      draggable: true,
+      arrows: {
+        prev: '.seller-slider_container .previous-slide',
+        next: '.seller-slider_container .next-slide'
+      },
+      responsive: [
+      {
+        breakpoint: 450,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 3
+        }
+      },
+      {
+        breakpoint: 580,
+        settings: {
+          slidesToShow: 4,
+          slidesToScroll: 4
+        }
+      },
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 3
+        }
+      },
+      {
+        breakpoint: 992,
+        settings: {
+          slidesToShow: 4,
+          slidesToScroll: 4
+        }
+      },
+      {
+        breakpoint: 1150,
+        settings: {
+          slidesToShow: 5,
+          slidesToScroll: 5
+        }
+      },
+      {
+        breakpoint: 1250,
+        settings: {
+          slidesToShow: 6,
+          slidesToScroll: 6
+        }
+      },
+      {
+        breakpoint: 1440,
+        settings: {
+          slidesToShow: 7,
+          slidesToScroll: 7
+        }
+      }
+      ]
+    })
+  })
+</script>

@@ -1,0 +1,85 @@
+{
+  "sections": {
+    "header": {
+      "type": "promotion-page-header",
+      "blocks": {
+        "6bcba1a7-9fc4-433c-9ec3-b7f405178b2a": {
+          "type": "banner",
+          "settings": {
+            "promotion-banner-image": "shopify:\/\/shop_images\/Sem-Titulo-2Prancheta-3_34de2228-4be4-465e-a27c-0cd10abc59a2.png",
+            "banner_link": ""
+          }
+        }
+      },
+      "block_order": [
+        "6bcba1a7-9fc4-433c-9ec3-b7f405178b2a"
+      ],
+      "settings": {
+        "show-promo-banner": true
+      }
+    },
+    "description": {
+      "type": "promotion-page-description",
+      "settings": {
+        "title": "Revenda por R$10,00",
+        "content": "Produtos das melhores marcas de maquiagem e skincare por até R$5,50 para sua Loja de R$10,00. 🙂 O pedido mínimo é apenas R$200,00 e todos os produtos dessa página podem ser comprados em um único Pedido Multimarcas. 😍 Temos box e também kits de quantidades menores, aproveite!",
+        "image": "shopify:\/\/shop_images\/capa_perfil_cc81eaee-2b55-42bc-a342-cd61f2d2c804.png"
+      }
+    },
+    "carousal": {
+      "type": "promotion-product-carousal",
+      "settings": {
+        "show-priority-collection": true,
+        "title": "Título da coleção",
+        "collection": ""
+      }
+    },
+    "collections": {
+      "type": "promotion-page-collections",
+      "blocks": {
+        "63f0b0c8-2b87-42ac-a440-eb42aecd142c": {
+          "type": "collection",
+          "settings": {
+            "promotion-collections": "revenda-rosto"
+          }
+        },
+        "595a1e11-d9ac-4d42-8468-f81572e60434": {
+          "type": "collection",
+          "settings": {
+            "promotion-collections": "revenda-olhos"
+          }
+        },
+        "3b4b4f5e-4df1-4f5d-9d94-24cf91ab6f19": {
+          "type": "collection",
+          "settings": {
+            "promotion-collections": "revenda-labios"
+          }
+        },
+        "087b3de5-0da5-4bc1-a00d-4ccf7203c60e": {
+          "type": "collection",
+          "settings": {
+            "promotion-collections": "revenda-skin-care"
+          }
+        }
+      },
+      "block_order": [
+        "63f0b0c8-2b87-42ac-a440-eb42aecd142c",
+        "595a1e11-d9ac-4d42-8468-f81572e60434",
+        "3b4b4f5e-4df1-4f5d-9d94-24cf91ab6f19",
+        "087b3de5-0da5-4bc1-a00d-4ccf7203c60e"
+      ],
+      "settings": {
+        "show-promotion-collections": true,
+        "products_per_row": "4",
+        "default_products_per_page": 24,
+        "default_view_layout": "grid"
+      }
+    }
+  },
+  "order": [
+    "header",
+    "description",
+    "carousal",
+    "collections"
+  ]
+}

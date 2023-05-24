@@ -1,0 +1,65 @@
+<section id="contact-section" class="section mb-0" data-section-id="{{ section.id }}" data-section-type="register-form">
+  <div class="container py-5">
+    <div class="row py-5">
+      <div class="col-12 col-lg-5 offset-lg-2 d-flex align-items-center">
+        <h2 class="w-75 display-3">
+          <span class="fw-bold text-white">{{ section.settings.title }}</span>
+        </h2>
+      </div>
+      <div class="col-12 col-lg-4">
+        <p class="fs-4 fw-bold text-light">
+          <span>Cadastre-se grátis!</span>
+        </p>
+        {% if shop.name contains "DEV" %}
+          {% render "customer-fields", form_id: "0ktY9J" %}
+        {% else %}
+          {% render "customer-fields", form_id: "3JtWzr" %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style type="text/css">
+  #contact-section {
+    background-color: {{ section.settings.background-color }}
+  }
+
+  #contact-section .button {
+    background-color: #ffc107;
+    color: #000;
+  }
+  div.cf-field h1{
+    font-size: 3rem;
+  }
+  div.cf-field div p{
+    font-size: 1rem;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Register form",
+  "settings": [
+    {
+      "type": "color",
+      "id": "background-color",
+      "label": "Background color",
+      "default": "#383838"
+    },
+    {
+      "type": "textarea",
+      "id": "title",
+      "label": "Title",
+      "default": "Título"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Custom Sections",
+      "name": "Register form",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

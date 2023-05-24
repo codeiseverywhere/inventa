@@ -1,0 +1,214 @@
+<footer id="section-{{ section.id }}" data-section-id="{{ section.id }}" data-section-type="footer" role="contentinfo" class="pt-5 pb-4 pb-lg-0"> 
+  <div class="mx-auto container-footer row px-3">
+    <div class="col-12 col-lg-4 mb-5">
+      <h2>
+        <img src="{{ 'inventa-new-logo-white.png' | file_img_url: "110x" }}" class="" alt="Inventa, o portal do Lojista" />
+      </h2>
+      <div class="my-5">
+        <a href="/pages/politica-de-privacidade">Política de Privacidade</a>
+        <a href="/pages/politica-de-compliance" class="my-3">Política de Compliance</a>
+        <a href="/pages/termos-e-condicoes-fornecedores" class="my-3">Termos e condições do fornecedor</a>
+        <a href="/pages/termos-e-condicoes-lojistas" class="mb-3">Termos e condições do lojista</a>
+        <a href="https://docs.google.com/forms/d/1x_SsFzXrAcx1Xcl4Aq2TTrVl3EenRIKjrFihMuzvOoE" target="_blank" class="mb-3">Solicitação Titular de Dados - LGPD</a>
+        <a href="https://inventa.shop/pages/programa-de-comissao-zero" class="mb-3">Programa de Comissão Zero</a>
+        <a href="mailto:atendimento@inventa.shop" class="text-decoration-underline fw-bold">atendimento@inventa.shop</a>
+      </div>
+      <div>
+        <p>CNPJ: 41.356.168/0001-11</p>
+        {% comment %}
+          <p class="my-3">Inscrição Estadual: 131.409.133.112</p>
+        {% endcomment %}
+        <p>Av. Paulista, 302, 01310-000 - São Paulo - SP</p>
+      </div>
+    </div>
+    <div class="col-12 col-lg-8 row">
+      <div class="col-6 col-lg-3">
+        <h3 class="text-white fs-5">Soluções</h3>
+        <div class="my-4 my-lg-5">
+          {%- assign pageUrlInfo = content_for_header | split:'"pageurl":"' | last | split:'"' | first | split: request.host | last -%}
+          {% unless pageUrlInfo contains "source=webview" %}
+            <a href="/pages/fornecedor" class="mb-3">Fornecedor</a>
+          {% endunless %}
+          <a href="/#beneficios-inventa" class="mb-3">Lojista</a>
+          <a href="/collections/marcas" class="mb-3">Nosso portal</a>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <h3 class="text-white fs-5">Empresa</h3>
+        <div class="my-4 my-lg-5">
+          <a href="/pages/sobre-inventa" class="mb-3">Sobre a Inventa</a>
+          <a href="/pages/fornecedor" class="mb-3">Fornecedor</a>
+          <a href="https://jobs.lever.co/inventa" target="_blank" class="mb-3">Carreiras</a>
+          
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <h3 class="text-white fs-5">Suporte</h3>
+        <div class="my-4 my-lg-5">
+          <a href="/pages/fornecedor#faq" class="mb-3">FAQ Fornecedor</a>
+          <a href="https://inventa.shop/#faq" class="mb-3">FAQ Lojista</a>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <a href="https://www.linkedin.com/company/inventashop/"><h3 class="text-white fs-5">Acompanhe</h3></a>
+        <div class="my-4 my-lg-5">
+          <a href="https://blog.inventa.shop/" class="mb-3">Blog</a>
+          <a href="https://www.instagram.com/inventa.shop" class="mb-3">Instagram</a>
+          <a href="https://www.facebook.com/inventa.shop" class="mb-3">Facebook</a>
+          <a href="https://www.youtube.com/channel/UC9EoYBCTuACJJmWckmS79lw" class="mb-3">YouTube</a>
+          <a href="https://www.linkedin.com/company/inventashop/" class="mb-3">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="py-5 text-center end-footer my-5 my-lg-0">©2022 Inventa App Ltda. Todos os direitos reservados</p>
+
+  {%- if section.settings.show_cookie_bar -%}
+    <aside class="cookie-bar" aria-hidden="true">
+      <div class="container">
+        <div class="cookie-bar__inner">
+          <div class="cookie-bar__text rte">
+            {{- section.settings.text -}}
+          </div>
+
+          {%- if section.settings.accept_button != blank -%}
+            <button type="button" class="cookie-bar__button button button--secondary" data-action="accept-terms">{{ section.settings.accept_button | escape }}</button>
+          {%- endif -%}
+        </div>
+      </div>
+    </aside>
+  {%- endif -%}
+</footer>
+
+<style>
+  @media(min-width: 641px) and (max-width: 767px){
+    .plus-button{
+      display: none;
+    }
+  }
+  
+  #section-{{ section.id }} {
+    background-color: #373D43;
+  }
+  
+  #section-footer .d-none.d-md-block p:first-child {
+    margin-top: 5px;
+  }
+
+  .container-footer{
+    max-width: 1440px;
+  }
+  #section-{{ section.id }} p,
+  #section-{{ section.id }} a{
+    color: #C7D3D9 !important;
+    display: block !important;
+  }
+  .end-footer{
+    border-top: 1px solid rgba(26, 26, 26, .2);
+  }
+  
+  #section-{{ section.id }} .cookie-bar__text p,
+  #section-{{ section.id }} .cookie-bar__text a {
+    color: #1A1A1A !important;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    {
+      "type": "color",
+      "id": "background-color",
+      "label": "Background color",
+      "default": "#f2f2f2"
+    },
+    {
+      "type": "header",
+      "content": "Footer info"
+    },
+    {
+      "type": "textarea",
+      "id": "info",
+      "label": "info"
+    },
+  {
+      "type": "text",
+      "id": "bussiness_address",
+      "label": "Address"
+    },
+    {
+      "type": "text",
+      "id": "mail",
+      "label": "Email"
+    },
+    {
+      "type": "header",
+      "content": "Cookie bar"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cookie_bar",
+      "label": "Show cookie bar",
+      "default": false
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Use this bar to show information about your cookie policy.</p>"
+    },
+    {
+      "type": "text",
+      "id": "accept_button",
+      "label": "Accept button",
+      "default": "Accept"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "text",
+      "name": "Text",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Titulo"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content",
+          "default": "<p>Conteúdo</p>"
+        }
+      ]
+    },
+    {
+      "type": "links",
+      "name": "Links",
+      "settings": [
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "Menu"
+        }
+      ]
+    }
+  ],
+  "default": {
+    "blocks": [
+      {
+        "type": "text",
+        "settings": {}
+      },
+      {
+        "type": "links",
+        "settings": {
+          "menu": "footer"
+        }
+      }
+    ]
+  }
+}
+{% endschema %}

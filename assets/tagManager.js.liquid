@@ -1,0 +1,573 @@
+window.addEventListener('load', () => {
+    window.sessionStorage.removeItem('previousStep');
+    if(driver){
+        const returnStep = window.sessionStorage.getItem('returnedFrom');
+        if(returnStep){
+            window.sessionStorage.removeItem('returnedFrom');
+            /* window.dataLayer.push({
+                event: 'returnStep',
+                data: JSON.stringify({ returnStep })
+            }); */
+            driver.pushEvent('returnStep', { returnStep });
+        }
+
+        const whatsAppButton = document.querySelector('[data-section-type="whatsapp-button"] a') || document.querySelector('.whatsap-container a');
+        if(whatsAppButton){
+            whatsAppButton.addEventListener('click', () => {
+                /* window.dataLayer.push({
+                    'event': 'contactWhatsapp',
+                    'date': new Date().toUTCString()
+                }); */
+                driver.pushEvent('contactWhatsapp', {'date': new Date().toUTCString()});
+            })
+        }
+
+
+        {% unless request.path == '/' %}        
+        setTimeout(() => {
+            const registrarLojista = document.getElementById('create_customer');
+            if(registrarLojista){                
+                    const registerSteps = () => {    
+                        let name;
+                        let telefone;
+                        nextStepButton();
+                        
+                        function nextStepButton() {
+                            let invalids_fields = {};
+                            const next_step_button = document.querySelector('button.cf-next-step');
+                            if(next_step_button) next_step_button.addEventListener('click', () => {
+                                const nameField = registrarLojista.querySelector('input[name="nome_pessoa_contato"]');
+                                if(nameField && nameField.value) {
+                                    name = nameField.value;
+                                    const invalid = nameField.getAttribute('data-cf-invalid');
+                                    if(invalid == 'true') invalids_fields.name = nameField.value;
+                                }
+                                const telefoneField = registrarLojista.querySelector('input[name="phone"]');
+                                if(telefoneField && telefoneField.value) {
+                                    telefone = telefoneField.value
+                                    const invalid = telefoneField.getAttribute('data-cf-invalid');
+                                    if(invalid == 'true') invalids_fields.telephone = telefoneField.value;
+                                };
+                                if(invalids_fields.telephone || invalids_fields.name) {
+                                    driver.pushEvent('sendForm_error-firstStep', {
+                                        ...invalids_fields,
+                                        date: new Date().toUTCString()
+                                    });
+                                    invalids_fields = {};
+                                    if(typeof showWppText == 'function') showWppText('Olá precisa de ajuda para accessar?', 'Olá, preciso de ajuda para entrar no site, pode me ajudar?');
+                                }
+                                else{
+                                    if(typeof showWppText == 'function') showWppText('Olá precisa de ajuda para accessar?', 'Olá, preciso de ajuda para entrar no site, pode me ajudar?');
+                                    driver.pushEvent('sendForm_firstStep', {
+                                        name,
+                                        telephone: telefone
+                                    });
+                                    window.sessionStorage.setItem('register-first-step', JSON.stringify({ name, telephone: telefone }));
+                                    setTimeout(() => {
+                                        secondStep();
+                                    }, 500)
+                                }
+                            });
+                        }
+
+                        let cnpj, razao_social, email, password;
+                        function secondStep(){
+                            let invalids_fields = {};
+
+                            const previousStep_button = document.querySelector('button.cf-prev-step');
+                            if(previousStep_button) previousStep_button.addEventListener('click', () => {
+                                setTimeout(() => {
+                                    if(typeof showWppText == 'function') showWppText('Olá precisa de ajuda para accessar?', 'Olá, preciso de ajuda para entrar no site, pode me ajudar?');
+                                    /* try {
+                                        saveEvent('/data/shopify/create/failure/register', 'POST', {
+                                            email, cnpj, userName: name, companyName: razao_social, phone: telefone,
+                                            date: new Date().toLocaleString('pt-BR').split(' ')[0], url: window.location.href,
+                                            pageTitle: document.title, errorMsg: 'Telefone já cadastrado'
+                                        });
+                                    } catch (error) {
+                                        console.log(error);
+                                    }
+
+                                    const telephoneField = registrarLojista.querySelector('input[name="phone"]');
+                                    if(telephoneField && telephoneField.value) driver.pushEvent('sendForm_error-firstStep', {
+                                        telephone: telephoneField.value
+                                    });
+                                    registerSteps(); */
+                                }, 200);
+                            });
+
+                            const submit_button = registrarLojista.querySelector('button.cf-submit-form');
+                            if(submit_button){
+                                submit_button.addEventListener('click', () => {
+                                    const cnpjField = registrarLojista.querySelector('input[name="cnpj"]');
+                                    if(cnpjField && cnpjField.value) {
+                                        cnpj = cnpjField.value;
+                                        const invalid = cnpjField.getAttribute('data-cf-invalid');
+                                        if(invalid == 'true') invalids_fields.cnpj = cnpj;
+                                    }
+                                    const razao_socialField = registrarLojista.querySelector('input[name="razao_social"]');
+                                    if(razao_socialField && razao_socialField.value){
+                                        razao_social = razao_socialField.value;
+                                        const invalid = razao_socialField.getAttribute('data-cf-invalid');
+                                        if(invalid == 'true') invalids_fields.razao_social = razao_social;
+                                    }
+                                    const emailField = registrarLojista.querySelector('input[name="email"]');
+                                    if(emailField && emailField.value){
+                                        email = emailField.value;
+                                        const invalid = emailField.getAttribute('data-cf-invalid');
+                                        if(invalid == 'true') invalids_fields.email = email;
+                                    }
+                                    const passwordField = registrarLojista.querySelector('input[name="password"]');
+                                    if(passwordField && passwordField.value){
+                                        password = passwordField.value;
+                                        const invalid = passwordField.getAttribute('data-cf-invalid');
+                                        if(invalid == 'true') invalids_fields.password = password;
+                                    }
+
+                                    setTimeout(() => {
+                                        const errorMsgs = registrarLojista.querySelectorAll('.cf-step-invalid .cf-form-errors li');
+                                        if(errorMsgs.length){
+                                            const errors = [];
+                                            if(typeof showWppText == 'function') showWppText('Olá precisa de ajuda para accessar?', 'Olá, preciso de ajuda para entrar no site, pode me ajudar?');
+                                            
+                                            for(let i = 0; i < errorMsgs.length; i++){
+                                                errors.push(errorMsgs[i].innerText);
+                                                if((errorMsgs[i].innerText.toLowerCase().includes('e-mail') || errorMsgs[i].innerText.toLowerCase().includes('email')) && emailField && emailField.value){
+                                                    driver.pushEvent('sendForm_error-secondStep', {
+                                                        cnpj,
+                                                        userName: name,
+                                                        telephone: telefone,
+                                                        razao_social,
+                                                        email: emailField.value
+                                                    });
+                                                }
+                                            }
+
+                                            try {
+                                                saveEvent('/data/shopify/create/failure/register', 'POST', {
+                                                    email, cnpj, userName: name, companyName: razao_social, phone: telefone,
+                                                    date: new Date().toLocaleString('pt-BR').split(' ')[0], url: window.location.href,
+                                                    pageTitle: document.title, errorMsg: errors.join(', ')
+                                                })
+                                            } catch (error) {
+                                                console.log(error)
+                                            }
+
+                                        }
+    
+                                    }, 2000);
+                                    if(invalids_fields.cnpj || invalids_fields.razao_social || invalids_fields.email || invalids_fields.password){
+                                        if(typeof showWppText == 'function') showWppText('Olá precisa de ajuda para accessar?', 'Olá, preciso de ajuda para entrar no site, pode me ajudar?');
+                                        driver.pushEvent('sendForm_error-secondStep', {
+                                            ...invalids_fields
+                                        })
+                                    }else{
+                                        //For getting the event after the register is success
+                                        window.sessionStorage.setItem('attempToRegister', JSON.stringify({
+                                            cnpj,
+                                            companyName: razao_social,
+                                            email,
+                                            phone: telefone,
+                                            userName: name
+                                        }));
+                                    }
+                                    invalids_fields = {};
+                                });
+                            }
+                        }
+                    } 
+    
+                    registerSteps();
+            }
+        }, 500);
+        {% endunless %}
+
+        setTimeout(() => {
+            const fornecedor_form = document.querySelector('.create_fornecedor #create_customer');
+            if(fornecedor_form){
+                fornecedor_form.addEventListener('submit', () => {
+                    const nameInput = fornecedor_form.querySelector('input[name="first_name"]');
+                    const phoneInput = fornecedor_form.querySelector('input[name="phone"]');
+                    const clients_quantityInput = fornecedor_form.querySelector('select[name="clients_quantity"]');
+                    driver.pushEvent('fornecedor-sendForm', {
+                        userName: nameInput.value,
+                        telephone: phoneInput.value,
+                        clients_quantity: clients_quantityInput.value
+                    });
+                })
+            }
+        }, 1000);
+
+        const fornecedorButton = document.getElementById('header_fornecedor-panel');
+        if(fornecedorButton){
+            fornecedorButton.addEventListener('click', () => {
+                /* window.dataLayer.push({
+                    event: 'clickFornecedor',
+                    data: JSON.stringify({ 
+                        url: window.location.href,
+                        pageTitle: document.title
+                    })
+                }); */
+                driver.pushEvent('clickFornecedor', { 
+                    url: window.location.href,
+                    pageTitle: document.title
+                });
+            });
+        }
+
+        const previousOrders = document.querySelector('#account-popover a[href="/account"]');
+        if(previousOrders){
+            let once = false;
+            previousOrders.addEventListener('click', (e) => {
+                if(!once){
+                    e.preventDefault();
+                    once = true;
+                    /* window.dataLayer.push({
+                        event: 'previousOrders',
+                        userID: customer.id,
+                        data: JSON.stringify({
+                            url: window.location.href,
+                            pageTitle: document.title
+                        })
+                    }) */
+                    driver.pushEvent('previousOrders', {
+                        url: window.location.href,
+                        pageTitle: document.title
+                    }, () => {
+                        previousOrders.click();
+                    });
+                }
+            })
+        }
+
+        if(customer.logged){
+            const triedToRegister = window.sessionStorage.getItem('attempToRegister');
+            if(triedToRegister){
+                /* window.dataLayer.push({
+                    data: triedToRegister,
+                    date: new Date().toUTCString(),
+                    event: 'sendForm_success'
+                }); */
+              	const success_register = JSON.parse(triedToRegister);
+                if(typeof fbq == 'function') fbq('track', 'CompleteRegistration', {
+                    content_name: 'Two steps register',
+                    status: true
+                })
+              	
+                driver.pushEvent('sendForm_success', {
+                    data: triedToRegister,
+                    date: new Date().toUTCString(),
+                });
+                window.sessionStorage.removeItem('attempToRegister');
+            }
+
+            const loggedFlag = window.sessionStorage.getItem('notLogged') ? true : false;
+            if(loggedFlag){
+                /* window.dataLayer.push({
+                  event: 'loginUser',
+                  userID: customer.id,
+                  date: new Date().toUTCString(),
+                  email: customer.email,
+                  data: JSON.stringify({
+                    url: window.location.href,
+                    pageTitle: document.title,
+                    email: customer.email,
+                  })             
+                }) */
+                driver.pushEvent('loginUser', {
+                    date: new Date().toUTCString(),
+                    email: customer.email,
+                    data: {
+                        url: window.location.href,
+                        pageTitle: document.title,
+                        email: customer.email,
+                    }
+                })
+                window.sessionStorage.removeItem('notLogged');
+            }
+
+            const activationAttemp = window.sessionStorage.getItem('activationAttempt') ? true : false;
+            if(activationAttemp){
+                /* window.dataLayer.push({
+                    event: 'activateAccount',
+                    userID: customer.id,
+                    date: new Date().toUTCString()
+                }); */
+                driver.pushEvent('activateAccount', { date: new Date().toUTCString() });
+                window.sessionStorage.removeItem('activationAttempt');
+            }
+
+            const logoutAnchors = document.querySelectorAll('a[href="/account/logout"]');
+            for(let i = 0; i < logoutAnchors.length; i++){
+                logoutAnchors[i].addEventListener('click', () => {
+                    /* window.dataLayer.push({
+                        event: 'logoutUser',
+                        userID: customer.id,
+                        date: new Date().toUTCString(),
+                        email: customer.email,
+                        data: JSON.stringify({
+                            url: window.location.href,
+                            pageTitle: document.title,
+                            email: customer.email,
+                        })
+                    }) */
+                    driver.pushEvent('logoutUser', {
+                        date: new Date().toUTCString(),
+                        email: customer.email,
+                        data: {
+                            url: window.location.href,
+                            pageTitle: document.title,
+                            email: customer.email,
+                        }
+                    });
+                })
+            }
+        }else{
+            window.sessionStorage.setItem('notLogged', true);
+        }
+
+        const recoverForm = document.getElementById('recover_customer_password');
+        if(recoverForm){
+            recoverForm.addEventListener('submit', () => {
+                /* window.dataLayer.push({
+                    event: 'changePasswordRequest',
+                    date: new Date().toUTCString(),
+                    email: recoverForm.querySelector('input[name="email"]').value,
+                    data: JSON.stringify({
+                        url: window.location.href,
+                        pageTitle: document.title
+                    })
+                }); */
+                driver.pushEvent('changePasswordRequest', {
+                    date: new Date().toUTCString(),
+                    email: recoverForm.querySelector('input[name="email"]').value,
+                    data: {
+                        url: window.location.href,
+                        pageTitle: document.title
+                    }
+                });
+            });
+        }
+
+        const resetPasswordForm = document.getElementById('reset_customer_password');
+        if(resetPasswordForm){
+            resetPasswordForm.addEventListener('submit', (e) => {
+                const password = resetPasswordForm.querySelector('input[name="customer[password]"]');
+                const passwordConfirm = resetPasswordForm.querySelector('input[name="customer[password_confirmation]"]');
+                if(password.value == passwordConfirm.value){
+                    /* window.dataLayer.push({
+                        event: 'changePassword',
+                        date: new Date().toUTCString(),
+                        userID: window.location.pathname.split('/')[3]
+                    }); */
+                    driver.pushEvent('changePassword', {
+                        date: new Date().toUTCString(),
+                        userID: window.location.pathname.split('/')[3]
+                    })
+                }else{
+                    e.preventDefault();
+                    const errorMessage = resetPasswordForm.querySelector('.different-passwords');
+                    errorMessage.classList.remove('d-none');
+                }
+            })
+        }
+
+        const searchForm = document.querySelector('form[role="search"]');
+        if(searchForm){
+            searchForm.addEventListener('submit', () => {
+                const queryInput = document.querySelector('input.search-bar__input[name="q"]');
+                if(queryInput && queryInput.value.length){
+                    /* window.dataLayer.push({
+                        event: 'search',
+                        data: JSON.stringify({
+                            query: queryInput.value,
+                            url: window.location.href
+                        }),
+                        userID: customer.id,
+                        date: new Date().toUTCString()
+                    }); */
+                    driver.pushEvent('search', {
+                        date: new Date().toUTCString(),
+                        data: {
+                            query: queryInput.value,
+                            url: window.location.href
+                        }
+                    })
+                }
+            })
+        }
+
+        const getAddButtons = () => {
+            const addCartButtons = document.querySelectorAll('.product-item__action-list');
+            for(let i = 0; i < addCartButtons.length; i++){
+                const button = addCartButtons[i].querySelector('.product-item__action-button');
+                button.addEventListener('click', () => {
+                    const infoDiv = addCartButtons[i].parentElement.querySelector('.product-item__info-inner');
+                    const quantityInput = button.parentElement.querySelector('input[name="quantity"]');
+                    const articleInfo = {
+                        title: '',
+                        vendor: '',
+                        quantity: 1
+                    }
+                    if(infoDiv){
+                        articleInfo.vendor = infoDiv.querySelector('.product-item__vendor').innerText;
+                        articleInfo.title = infoDiv.querySelector('.product-item__title').innerText;
+                    }
+                    if(quantityInput){
+                        articleInfo.quantity = quantityInput.value;
+                    }
+                    /* window.dataLayer.push({
+                        event: 'addProduct',
+                        userID: customer.id,
+                        data: JSON.stringify({
+                            title: articleInfo.title,
+                            vendor: articleInfo.vendor,
+                            quantity: articleInfo.quantity
+                        })
+                    }); */
+                    driver.pushEvent('addProduct', {
+                        data: {
+                            title: articleInfo.title,
+                            vendor: articleInfo.vendor,
+                            quantity: articleInfo.quantity
+                        }
+                    });
+                });
+            }
+        }
+        getAddButtons();
+
+        const addCartProductDetail = document.querySelector('.product-form__add-button');
+        if(addCartProductDetail){
+            addCartProductDetail.addEventListener('click', () => {
+                const sku = addCartProductDetail.getAttribute('product-sku');
+                const price = addCartProductDetail.getAttribute('product-price');
+                const infoDiv = addCartProductDetail.parentElement.parentElement.parentElement.querySelector('.product-meta');
+                const infoQuantity = addCartProductDetail.parentElement.parentElement.querySelector('.product-form__info-list .product-form__info-item--quantity .product-form__info-content input[name="quantity"]');
+                const articleInfo = {
+                    title: '',
+                    vendor: '',
+                    quantity: ''
+                };
+                if(infoDiv){
+                    articleInfo.title = infoDiv.querySelector('.product-meta__title').innerText;
+                    articleInfo.vendor = infoDiv.querySelector('#url-to-vendor span').innerText;
+                }
+                if(infoQuantity){
+                    articleInfo.quantity = infoQuantity.value;
+                }
+                /* window.dataLayer.push({
+                    event: 'addProduct',
+                    userID: customer.id,
+                    data: JSON.stringify({
+                        title: articleInfo.title,
+                        vendor: articleInfo.vendor,
+                        quantity: articleInfo.quantity,
+                        sku,
+                        price
+                    })
+                }) */
+                driver.pushEvent('addProduct', {
+                    data: {
+                        title: articleInfo.title,
+                        vendor: articleInfo.vendor,
+                        quantity: articleInfo.quantity,
+                        sku,
+                        price
+                    }
+                });
+            });
+        }
+
+        const cartRemovesButtons = document.querySelectorAll('.remove-button');
+        for(let i = 0; i < cartRemovesButtons.length; i++){
+            cartRemovesButtons[i].addEventListener('click', () => {
+                const id = cartRemovesButtons[i].getAttribute('product-id');
+                const productLine = cartRemovesButtons[i].parentElement.parentElement.parentElement.parentElement.parentElement;
+                const articleInfo = {
+                    title: productLine.querySelector('a p.product-name').innerText || '',
+                    vendor: productLine.getAttribute('vendor') || ''
+                }
+                /* window.dataLayer.push({
+                    event: 'removeProduct',
+                    userID: customer.id,
+                    data: JSON.stringify({
+                        title: articleInfo.title,
+                        vendor: articleInfo.vendor
+                    })
+                }) */
+                driver.pushEvent('removeProduct', {
+                    data: {
+                        title: articleInfo.title,
+                        vendor: articleInfo.vendor
+                    }
+                });
+            });
+        }
+
+        const miniCartToggle = document.querySelector('a.header__cart-toggle[aria-controls="mini-cart"]');
+        if(miniCartToggle){
+            miniCartToggle.addEventListener('click', () => {
+                if(miniCartToggle.getAttribute('aria-expanded') == 'false'){
+                    /* window.dataLayer.push({
+                        event: 'viewMiniCart',
+                        userID: customer.id,
+                        data: JSON.stringify({ url: window.location.pathname })
+                    }) */
+                    driver.pushEvent('viewMiniCart', {
+                        data: JSON.stringify({ url: window.location.pathname })
+                    });
+                }
+            })
+        }
+    }
+})
+
+window.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('click', listenFilterButtons);
+})
+
+function listenFilterButtons(event){
+    const element = event.target;
+    const filter = isChildOf(element, '.filterElement')
+    if(filter){
+        const value = filter.getAttribute('title');
+        const parent = isChildOf(filter, '.gf-option-block');
+        if(parent) {
+            const title = parent.querySelector('.gf-block-title h3 span');
+            if(title && value){
+                driver.pushEvent(filter.classList.contains('checked') ? 'removedFilter' : 'addedFilter', {
+                    date: new Date().toUTCString(),
+                    filter: title.innerText,
+                    value
+                });
+            }
+        }
+    }
+
+    const removeFilter = isChildOf(element, '.gf-option-label');
+    if(removeFilter){
+        const filterName = removeFilter.querySelector('a .selected-item strong');
+        if(filterName){
+            const value = filterName.innerText;
+            driver.pushEvent('removedFilter', {
+                date: new Date().toUTCString(),
+                value
+            });
+        }
+    }
+}
+
+function isChildOf(element, target){
+    const parents = document.querySelectorAll(target);
+    for(let i = 0; i < parents.length; i++){
+        if(parents[i].contains(element)) return parents[i];
+    }
+    return null;
+}
+
+function categoryClicked(category){
+    if(driver) driver.pushEvent('bannerCategory_clicked', {
+        category
+    })
+}

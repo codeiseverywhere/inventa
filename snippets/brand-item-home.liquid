@@ -1,0 +1,63 @@
+{% assign image = product.featured_image %}
+{% assign productVendorName = product.vendor %}
+{% assign productVendorNameEncoded = product.vendor | url_encode %}
+{% assign vendorLink = "/collections/vendors?q=" | append: productVendorNameEncoded %}
+
+{% if product.vendor == "Inventa Comércio" %}
+  {% assign productTags = product.tags | join: "|||" %}
+  {% assign productVendorIdentifier = "Fornecedor_" %}
+  {% if productTags contains "Marca_" %}
+    {% assign productVendorIdentifier = "Marca_" %}
+  {% endif %}
+  {% assign productVendorName = productTags | split: productVendorIdentifier | last | strip | split: "|||" | first %}
+  {% assign vendorNameUrl = productVendorName | handle %}
+  {% assign vendorLink = "/collections/" | append: vendorNameUrl %}
+{% endif %}
+
+<div class="col-10 col-md-2">
+  <div class="brand-item p-2">
+    <div class="spf-product-card__inner custom-radius rounded position-relative">
+      <a class="spf-product-card__image-wrapper" href="{{ vendorLink }}">
+        {%- for tag in product.tags -%}
+          {% assign tagName = tag | downcase %}
+          {% if tagName contains "preco original:"%}
+            {% assign productOriginalPrice = tagName | remove: "preco original:" | times: 100 %}
+          {% endif %}
+        {%- endfor -%}
+        {% assign originalPriceToCompare = product.price %}
+
+        {% if productOriginalPrice > 0 %}
+          {% assign originalPriceToCompare = productOriginalPrice %}
+        {% endif %}
+        {% assign promotionPrice = product.compare_at_price | minus: originalPriceToCompare %}
+        {% assign promotionPercentage = promotionPrice | times: 100.0 | divided_by: product.compare_at_price | round: 1 %}
+
+        {% if product.compare_at_price > originalPriceToCompare %}
+          <span class="sale-text marcas-label rounded-pill p-1 small fw-bold">{{promotionPercentage}}% off</span>
+        {% endif %}
+        <div class="aspect-ratio aspect-ratio--square">
+          <img
+            class="img-fluid"
+            srcset="{%- if image.width >= 100 -%}{{ image.src | img_url: '150x' }} 150w,{%- endif -%}
+              {%- if image.width >= 250 -%}{{ image.src | img_url: '250x' }} 250w{%- endif -%}"
+            src="{{ image.src | img_url: '250x' }}"
+            sizes="(max-width: 100px) 150px, (max-width: 250px) 250px"
+            alt="{{ image.alt | escape }}"
+            loading="lazy"
+            class="motion-reduce"
+            width="{{ image.width }}"
+            height="{{ image.height }}"
+          >
+        </div>
+      </a>
+    </div>
+
+    <div class="spf-product__info">
+      <div class="row">
+        <div class="col-12 lh-sm">
+          <a href="{{ vendorLink }}" class="d-block fw-bold text-black fs-5 mt-3">{{productVendorName | truncate: 30, '...'}}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

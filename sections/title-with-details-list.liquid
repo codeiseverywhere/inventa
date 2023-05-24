@@ -1,0 +1,92 @@
+<section class="container-fluid" data-section-id="{{ section.id }}" data-section-type="title-with-details-list">
+    <div class="row text-white py-5 custom-bg">
+        <div class="col-md-6 p-5">
+          <h2 class="p-md-5 pe-md-0 pe-3 display-4 w-75">{{ section.settings.title }}</h2>
+        </div>
+        <div class="col-md-6 p-5">
+            {%- for block in section.blocks -%}
+                <div class="row m-md-5 pb-4 mb-5">
+                    <h2 class="fw-bolder fs-3">{{ block.settings.title }}</h2>
+                    {% if block.settings.subtitle-1 contains '@' %}
+                      <a href="mailto:{{ block.settings.subtitle-1 }}">
+                    {% endif %}
+                    {% if block.settings.subtitle-1 contains 'vagas' %}
+                      <a href="https://www.linkedin.com/company/inventashop/">
+                    {% endif %}
+                    <p class="fs-5 m-0">{{ block.settings.subtitle-1 }}</p>
+                    {% if block.settings.subtitle-1 contains 'vagas' or block.settings.subtitle-1 contains '@' %}
+                      </a>
+                    {% endif %}
+                    <p class="fs-5 m-0">{{ block.settings.subtitle-2 }}</p>
+                    {% if block.settings.subtitle-3 contains 'WhatsApp' %}
+                      <a href="https://wa.me/55{{ block.settings.subtitle-2 | remove: " " }}">
+                    {% endif %}
+                    <p class="fs-5 m-0">{{ block.settings.subtitle-3 }}</p>
+                    {% if block.settings.subtitle-3 contains 'WhatsApp' %}
+                      </a>
+                    {% endif %}
+                </div>
+            {%- endfor -%}
+        </div>
+  </div>
+</section>
+
+<style>
+  .custom-bg {
+    background-color: #1A1A1A;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Title with details list",
+  "max_blocks": 5,
+  "settings": [
+    {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Título"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Item",
+      "settings": [
+        {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Título"
+        },
+        {
+            "type": "text",
+            "id": "subtitle-1",
+            "label": "Details",
+            "default": "Detalles"
+        },
+        {
+            "type": "text",
+            "id": "subtitle-2",
+            "label": "Details",
+            "default": "Detalles"
+        },
+        {
+            "type": "text",
+            "id": "subtitle-3",
+            "label": "Details",
+            "default": "Detalles"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "category": "Custom Sections",
+      "name": "Title with Details list",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

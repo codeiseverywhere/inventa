@@ -1,0 +1,640 @@
+{%- capture section_settings -%}
+{
+  "showShippingEstimator": {% if template == 'product.quick-view' or product.available == false %}false{% else %}{{ section.settings.show_shipping_estimator | json }}{% endif %},
+  "showQuantitySelector": {{ section.settings.show_quantity_selector | json }},
+  "showPaymentButton": {% if product.template_suffix == 'pre-order' %}false{% else %}{{ section.settings.show_payment_button | json }}{% endif %},
+  "showInventoryQuantity": {% if product.template_suffix != 'pre-order' %}{{ section.settings.show_inventory_quantity | json }}{% else %}false{% endif %},
+  "lowInventoryThreshold": {{ section.settings.low_inventory_threshold | json }},
+  "galleryTransitionEffect": {{ section.settings.carousel_effect | json }},
+  "enableImageZoom": {% if template == 'product.quick-view' %}false{% else %}{{ section.settings.enable_image_zoom | json }}{% endif %},
+  "zoomEffect": {{ section.settings.zoom_effect | json }},
+  "enableVideoLooping": {{ section.settings.enable_video_looping | json }},
+  "productOptions": {{ product.options | json | escape }},
+  "enableHistoryState": {% if template == 'product.quick-view' %}false{% else %}true{% endif %},
+  "infoOverflowScroll": {% if template == 'product.quick-view' %}false{% else %}true{% endif %},
+  "isQuickView": {% if template == 'product.quick-view' %}true{% else %}false{% endif %}
+}
+{%- endcapture -%}
+
+{%- assign dimensions = false -%}
+{%- assign valid_date = false -%}
+{% assign productVendorName = product.vendor %}
+
+{% if product.vendor == "Inventa Comércio" %}
+  {% assign productTags = product.tags | join: "|||" %}
+  {% assign productVendorIdentifier = "Fornecedor_" %}
+  {% if productTags contains "Marca_" %}
+    {% assign productVendorIdentifier = "Marca_" %}
+  {% endif %}
+  {% assign productVendorName = productTags | split: productVendorIdentifier | last | strip | split: "|||" | first %}
+{% endif %}
+
+{%- for tag in product.tags -%}
+  {%- assign tagname = tag | downcase -%}
+  {%- if tagname contains 'tempo de validade_' -%}
+    {%- assign valid_date = tag | split: '_' | last | plus: 0 | at_least: 1 -%}
+    {%- if tagname contains 'indeterminado' -%}
+      {%- assign valid_date = "indeterminado" -%}
+    {%- endif -%}
+  {%- endif -%}
+  {%- if tagname contains 'dimensões do produto (cm x cm x cm)_' -%}
+    {%- assign dimensions = tag | split: '_' | last -%}
+  {%- endif -%}
+{%- endfor -%}
+
+<section data-section-id="{{ section.id }}" data-section-type="product" data-section-settings='{{ section_settings }}'>
+  {%- if template != 'product.quick-view' -%}
+    <div class="container container--flush">
+      <div class="page__sub-header">
+        <nav aria-label="{{ 'general.breadcrumb.title' | t }}" class="breadcrumb">
+          <ol class="breadcrumb__list" role="list">
+            <li class="breadcrumb__item">
+              <a class="breadcrumb__link link" href="{% if customer %}/collections/marcas{% else %}{{ routes.root_url }}{% endif %}">{{ 'general.breadcrumb.home' | t }}</a> {%- render 'icon', icon: 'arrow-right' -%}
+            </li>
+
+            <li class="breadcrumb__item">
+              {%- if collection -%}
+                <a class="breadcrumb__link link" href="{{ collection.url }}">{{ collection.title }}</a> {%- render 'icon', icon: 'arrow-right' -%}
+              {%- else -%}
+                <a class="breadcrumb__link link" href="{{ routes.all_products_collection_url }}">{{- 'collection.general.all_products' | t -}}</a> {%- render 'icon', icon: 'arrow-right' -%}
+              {%- endif -%}
+            </li>
+
+            <li class="breadcrumb__item">
+              <span class="breadcrumb__link" aria-current="page">{{ product.title | truncate: 40 }}</span>
+            </li>
+          </ol>
+        </nav>
+
+        {% comment %}
+        {%- if collection.previous_product or collection.next_product -%}
+          <div class="page__navigation">
+            {%- if collection.previous_product -%}
+              <span class="page__navigation-item page__navigation-item--prev">
+                <a href="{{ collection.previous_product.url }}" class="link" rel="prev">{%- render 'icon', icon: 'arrow-left' -%} {{- 'product.general.previous_product' | t -}}</a>
+              </span>
+            {%- endif -%}
+
+            {%- if collection.next_product -%}
+              <span class="page__navigation-item page__navigation-item--next">
+                <a href="{{ collection.next_product.url }}" class="link" rel="next">{{- 'product.general.next_product' | t -}} {%- render 'icon', icon: 'arrow-right' -%}</a>
+              </span>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+        {% endcomment %}
+      </div>
+
+    {% capture wk_seller_content %}
+    {% include 'wk-seller-listing-variable' %}
+    {% endcapture %}
+    {% assign minimum_order = 0 %}
+    {% assign productVendor = productVendorName| downcase | replace: "+", "" | replace: "/", "" | replace: " ", "-" | replace: "-&", "" | replace: "'", "" | replace: "--", "-" | replace: ".", "" | replace: "&", "-" | replace: "!", "" | replace: ",", "" | replace: "_", "-" | replace: "|", "" %}
+    {% assign productVendor = productVendor | replace: "--", "-" %}
+    {% assign minimum_metafield = shop.metafields.sellers | json %}
+    {% assign split_name = '"' | append: productVendor | append: '":' %}
+    {% if minimum_metafield contains split_name %}
+    {% assign minimum_order = shop.metafields.sellers | json | split: split_name | last | split: ',' | first | plus: 0 | times: 100 %}
+    {% endif %}
+
+      <div class="product-block-list product-block-list--{{ section.settings.image_size }}">
+        <div class="row">
+            {%- if product.media.size > 0 -%}
+            <div class="product-block-list__item product-block-list__item--gallery col-lg-6">
+              {% render 'product-gallery' %}
+            </div>
+            {%- endif -%}
+            <div class="col-lg-6 product-info-section">
+              {% render 'product-info', minimum_order: minimum_order %}
+            </div>
+        </div>
+      </div>
+      {%- if product.description != blank -%}
+            <div class="product-block-list__item product-block-list__item--description row">
+              <div class="col-lg-6">
+                <div class="card">
+                  {%- if section.settings.content_display_mode == 'collapse_all' -%}
+                    <button class="card__collapsible-button" data-action="toggle-collapsible" aria-expanded="false" aria-controls="product-description">
+                      <span class="card__title heading h3">{{ 'product.general.description' | t }} {{ product.title }} no atacado</span>
+                      <span class="plus-button plus-button--large"></span>
+                    </button>
+  
+                    <div id="product-description" class="card__collapsible">
+                      <div class="card__collapsible-content">
+                        <div class="rte text--pull text-color-main">
+                          {{ product.description | remove: 'data-section-type="product"' }}
+                        </div>
+                      </div>
+                    </div>
+                  {%- else -%}
+                    <div class="card__header">
+                      <h2 class="card__title heading h3">{{ 'product.general.description' | t }} {{ product.title }} no atacado</h2>
+                    </div>
+  
+                    {%- if section.settings.content_display_mode == 'show_all_and_expand_description' -%}
+                      <div class="card__section">
+                        <div class="rte text--pull">
+                          {{ product.description | remove: 'data-section-type="product"' }}
+                        </div>
+                      </div>
+
+                      {%- if valid_date or dimensions -%}
+                      <div class="card__header">
+                        <h2 class="card__title heading h3">Informações adicionais</h2>
+                      </div>
+                      <div class="card__section pt-2">
+                        {%- if dimensions -%}
+                          <div class="row mb-2">
+                            <div class="col-6">
+                              <p class="lato">Dimensões (LxCxA)</p>
+                            </div>
+                            <div class="col-6">
+                              <p class="lato text-secondary">{{ dimensions }}</p>
+                            </div>
+                          </div>
+                        {%- endif -%}
+                        {%- if valid_date -%}
+                          <div class="row mb-2">
+                            <div class="col-6">
+                              <p class="lato">Data de Validade</p>
+                            </div>
+                            <div class="col-6">
+                              <p class="lato text-secondary">{% if valid_date == "indeterminado" %} Indeterminada {% else %}{{ valid_date }} {{ valid_date | pluralize: 'dia', 'dias' }}{% endif %}</p>
+                            </div>
+                          </div>
+                        {%- endif -%}
+                      </div>
+                      {%- endif -%}
+
+                    {%- else -%}
+                      <div class="card__section expandable-content" aria-expanded="false">
+                        <div class="rte text--pull">
+                          {{ product.description | remove: 'data-section-type="product"' }}
+                        </div>
+  
+                        <button class="expandable-content__toggle">
+                          <span class="expandable-content__toggle-icon"></span>
+                          <span class="expandable-content__toggle-text" data-view-more="{{ 'product.general.view_more' | t | escape }}" data-view-less="{{ 'product.general.view_less' | t | escape }}">{{- 'product.general.view_more' | t -}}</span>
+                        </button>
+                      </div>
+                    {%- endif -%}
+
+                  {%- endif -%}
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="card p-4">
+                  <div class="card__header p-0">
+                    <h2 class="card__title heading h3 mb-4">Informações de envio direto do fabricante</h2>
+                  </div>
+                  <div class="card__section p-0">
+                    <div class="row">
+                      <div class="img-icon-container col-4 col-sm-2">
+                        <img src="{{ 'location_pin.png' | asset_img_url: 'medium' }}" alt="location_pin" class="icons-info">
+                      </div>
+                      {%- assign origin = '' -%}
+                      {%- for tag in product.tags -%}
+                        {%- if tag contains 'Origem' -%}
+                          {%- assign origin = tag | replace: 'Origem_', '' -%}
+                        {%- endif -%}
+                      {%- endfor -%}
+                      <div class="col-7 d-flex align-items-center">
+                        <span class="text-color-main">Fornecedor envia de {{ origin }}</span>
+                      </div>
+                    </div>
+                    {% comment %}
+                    <div class="row">
+                      <div class="img-icon-container col-4 col-sm-2">
+                        <img src="{{ 'mouse_world.png' | asset_img_url: 'medium' }}" alt="location_pin" class="icons-info">
+                      </div>
+                      <div class="col-7 d-flex align-items-center">
+                        <span class="">Entrega para todo o Brasil</span>
+                      </div>
+                    </div>
+                    {% endcomment %}
+                  </div>
+                  <div class="mt-4 valores-visibility">
+                    <h2 class="card__title heading h3">Valores da marca</h2>
+                  </div>
+                  <div class="card__section p-0 valores-visibility">
+                    <div class="row">
+                      {%- assign found = false -%}
+                      {%- for tag in product.tags -%}
+                        {% comment %}
+                        {%- if tag contains 'Fabricado no Brasil_Sim' -%}
+                        {%- assign found = true -%}
+                        <div class="col-lg-3 col-sm-4 col-6">
+                          <div class="my-3 img-icon-container">
+                            <img src="{{ 'feito_brazil.png' | asset_img_url: 'medium' }}" alt="feito no brazil" class="icons-info">
+                          </div>
+                          <p class="text-center">Feito no Brasil</p>
+                        </div>
+                        {%- endif -%}
+                        {% endcomment %}
+                        {%- if tag contains 'Produto artesanal_Sim' -%}
+                        {%- assign found = true -%}
+                        <div class="col-lg-3 col-sm-4 col-6">
+                          <div class="my-3 img-icon-container">
+                            <img src="{{ 'produto_artesanal.png' | asset_img_url: 'medium' }}" alt="produto artesanal" class="icons-info">
+                          </div>
+                          <p class="text-center text-color-main">Produto Artesanal</p>
+                        </div>
+                        {%- endif -%}
+                        {%- if tag contains 'Livre de sintéticos_Sim' -%}
+                        {%- assign found = true -%}
+                        <div class="col-lg-3 col-sm-4 col-6">
+                          <div class="my-3 img-icon-container">
+                            <img src="{{ 'nao_sinteticos.png' | asset_img_url: 'medium' }}" alt="produto artesanal" class="icons-info">
+                          </div>
+                          <p class="text-center text-color-main">Livre de sintéticos</p>
+                        </div>
+                        {%- endif -%}
+                      {%- endfor -%}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {%- endif -%}
+    </div>
+    <style>
+      .valores-visibility{
+        display: {% if found %}block{% else %}none{% endif %};
+      }
+      .icons-info{
+        height: 50px;
+      }
+      .img-icon-container{
+        margin: 10px 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;        
+      }
+
+      .cart-controls{
+        height: 3.5rem;
+      }
+      @media (min-width: 600px){
+        .product-info-section .quantity-controls{
+          max-width: 35%;
+        }
+      }
+      .quantity-controls button{
+        height: 100%;
+        padding: 0 10px;
+      }
+      .less-product{
+        left: 0;
+      }
+      .add-product{
+        right: 0;
+      }
+      .quantity-controls input{
+        width: 90%;
+      }
+      .quantity-controls input::-webkit-inner-spin-button,
+      .quantity-controls input::-webkit-outer-spin-button{
+        -webkit-appearance: none; 
+        margin: 0; 
+      }
+    </style>
+
+    {%- if section.settings.show_refunds_policy and shop.refund_policy != blank -%}
+      <div id="modal-refunds-policy" class="modal" aria-hidden="true">
+        <div class="modal__dialog" role="dialog">
+          <header class="modal__header">
+            <h3 class="modal__title heading h2">{{ 'product.general.refund_policy' | t }}</h3>
+            <button class="modal__close link" data-action="close-modal" title="{{ 'general.accessibility.close' | t | escape }}">
+              {%- render 'icon', icon: 'close' -%}
+            </button>
+          </header>
+
+          <div class="modal__content">
+            <div class="rte">
+              {{ shop.refund_policy }}
+            </div>
+          </div>
+        </div>
+      </div>
+    {%- endif -%}
+  {%- else -%}
+    {%- comment -%}We display the quick view within the product template so we can re-use the same settings{%- endcomment -%}
+    <div class="featured-product">
+      {%- render 'product-gallery' -%}
+      {%- render 'product-info', minimum_order: minimum_order -%}
+    </div>
+  {%- endif -%}
+</section>
+
+{% schema %}
+{
+  "name": "Product page",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show vendor",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sku",
+      "label": "Show SKU",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_share_buttons",
+      "label": "Show share buttons",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_taxes_included",
+      "label": "Show price taxes notice",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "selector_mode",
+      "label": "Selector type",
+      "options": [
+        {
+          "value": "block",
+          "label": "Block"
+        },
+        {
+          "value": "dropdown",
+          "label": "Dropdown"
+        }
+      ],
+      "default": "block"
+    },
+    {
+      "type": "select",
+      "id": "color_mode",
+      "label": "Color selector type",
+      "info": "Variant image mode requires that all variant has an associated image. [Learn more](https://help.shopify.com/en/manual/products/product-variant-images#add-images-to-existing-variants)",
+      "options": [
+        {
+          "value": "block",
+          "label": "Block"
+        },
+        {
+          "value": "dropdown",
+          "label": "Dropdown"
+        },
+        {
+          "value": "color",
+          "label": "Color swatch"
+        },
+        {
+          "value": "variant_image",
+          "label": "Variant image"
+        }
+      ],
+      "default": "color"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quantity_selector",
+      "label": "Show quantity selector",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_button",
+      "label": "Show dynamic checkout button",
+      "info": "Each customer will see their preferred payment method from those available on your store, such as PayPal or Apple Pay. [Learn more](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_pickup_availability",
+      "label": "Show local pickup availability",
+      "info": "Show customers where they can pick up the product. [Learn more](https://help.shopify.com/en/manual/shipping/setting-up-and-managing-your-shipping/local-methods/local-pickup#show-pickup-availability-to-your-customers)",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Media"
+    },
+    {
+      "type": "paragraph",
+      "content": "Learn more about [media types](https://help.shopify.com/en/manual/products/product-media)"
+    },
+    {
+      "type": "select",
+      "id": "image_size",
+      "label": "Size",
+      "options": [
+        {
+          "value": "small",
+          "label": "Small"
+        },
+        {
+          "value": "medium",
+          "label": "Medium"
+        },
+        {
+          "value": "large",
+          "label": "Large"
+        }
+      ],
+      "default": "small"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_video_looping",
+      "label": "Enable video looping",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_image_zoom",
+      "label": "Enable image zoom",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "zoom_effect",
+      "label": "Desktop zoom effect",
+      "options": [
+        {
+          "value": "inside",
+          "label": "Inside"
+        },
+        {
+          "value": "outside",
+          "label": "Outside"
+        }
+      ],
+      "default": "outside"
+    },
+    {
+      "type": "select",
+      "id": "carousel_effect",
+      "label": "Transition effect",
+      "options": [
+        {
+          "value": "fade",
+          "label": "Fade"
+        },
+        {
+          "value": "slide",
+          "label": "Slide"
+        }
+      ],
+      "default": "fade"
+    },
+    {
+      "type": "header",
+      "content": "Inventory"
+    },
+    {
+      "type": "paragraph",
+      "content": "You can also add a stock countdown. [Learn more](https://support.maestrooo.com/article/177-product-show-an-stock-countdown-bar)."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_inventory_quantity",
+      "label": "Show inventory quantity",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "low_inventory_threshold",
+      "label": "Low inventory threshold",
+      "info": "Use low stock color when quantity is below the threshold. Choose 0 to always show in stock.",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "paragraph",
+      "content": "You can also add per-product tabs. [Learn more](http://support.maestrooo.com/article/83-product-adding-different-tabs-per-product)."
+    },
+    {
+      "type": "select",
+      "id": "content_display_mode",
+      "label": "Display mode",
+      "options": [
+        {
+          "value": "show_all",
+          "label": "Show all"
+        },
+        {
+          "value": "show_all_and_expand_description",
+          "label": "Show all and expand description"
+        },
+        {
+          "value": "collapse_all",
+          "label": "Collapse all"
+        },
+        {
+          "value": "collapse_all_except_description",
+          "label": "Collapse all except description"
+        }
+      ],
+      "default": "show_all_and_expand_description"
+    },
+    {
+      "type": "page",
+      "id": "tab_page_1_handle",
+      "label": "First page"
+    },
+    {
+      "type": "page",
+      "id": "tab_page_2_handle",
+      "label": "Second page"
+    },
+    {
+      "type": "page",
+      "id": "tab_page_3_handle",
+      "label": "Third page"
+    },
+    {
+      "type": "header",
+      "content": "Reviews"
+    },
+    {
+      "type": "paragraph",
+      "content": "You need to install [Shopify's free Product Reviews](https://apps.shopify.com/product-reviews) app before enabling those options."
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_reviews",
+      "label": "Enable",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_reviews_badge",
+      "label": "Show badge",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Trust"
+    },
+    {
+      "type": "text",
+      "id": "trust_title",
+      "label": "Heading",
+      "default": "Pagamento e Segurança"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_icons",
+      "label": "Show payment icons",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "custom_security_badge",
+      "label": "Security badge",
+      "info": "800 x 200px .jpg recommended"
+    },
+    {
+      "type": "range",
+      "id": "custom_security_badge_width",
+      "min": 100,
+      "max": 500,
+      "step": 10,
+      "unit": "px",
+      "label": "Security badge width",
+      "default": 200
+    },
+    {
+      "type": "header",
+      "content": "Shipping estimator"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_shipping_estimator",
+      "label": "Show shipping estimator",
+      "info": "Only show if product is available.",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "shipping_estimator_default_country",
+      "label": "Default country",
+      "info": "If the customer is logged in, the country of their shipping address will be used.",
+      "default": "United States"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_refunds_policy",
+      "label": "Show refunds policy",
+      "info": "Refund policy must be added into your store policies. [Learn more](https://help.shopify.com/manual/sell-online/checkout-settings/refund-privacy-tos).",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

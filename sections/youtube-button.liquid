@@ -1,0 +1,159 @@
+{% if section.settings.show_section %}
+  <div class="youtube-container">
+    <a href="{{ section.settings.youtube_url }}" onclick="closeYoutubeText();" class="position-relative text-decoration-none p-3 d-flex align-items-center justify-content-center text-dark" target="_blank" rel="noopener" aria-describedby="a11y-new-window-message">
+      <div class="red-notification-point position-absolute" onclick="event.preventDefault(); closeYoutubeText();">
+        <small class="d-block m-auto text-center">X</small>
+      </div>
+      <i class="text-white fab fa-youtube fs-3"></i>
+      <span class="youtube-text">{{ section.settings.default_message }}</span>
+    </a>
+  </div>
+  <script>
+    function showYoutubeText(text = '{{ section.settings.default_message }}', message = '{{ section.settings.logged_opened }}'){
+      const youtubeText =  document.querySelector('.youtube-text');
+      const youtubeContainer = document.querySelector(".youtube-container");
+      if (youtubeContainer) {
+        youtubeContainer.classList.add("opened");
+      }
+      if (youtubeText) {
+        const isDesktop = window.screen.width >= 768;
+        youtubeText.innerText = !isDesktop ? text : "{{ section.settings.logged_opened }}";
+        youtubeText.classList.add('text-show');
+      }
+      const closerMobile = document.querySelector('.youtube-container .closer-mobile');
+      if (closerMobile) closerMobile.classList.add('show');
+    }
+
+    function closeYoutubeText(){
+      const youtubeText = document.querySelector('.youtube-text');
+      const youtubeContainer = document.querySelector(".youtube-container");
+      if (youtubeContainer) {
+        youtubeContainer.classList.remove("opened");
+      }
+      if (youtubeText) youtubeText.classList.remove('text-show');
+      sessionStorage.setItem("block-youtube", true);
+    }
+  </script>
+
+  <style>
+    .youtube-container .closer-mobile {
+      padding: 2px 8px;
+      top: 0;
+      border-radius: 12px;
+      left: -1.5rem;
+      background: rgba(256,256,256, 0.4);
+      display: none;
+    }
+
+    .youtube-container .closer-mobile.show {
+      display: block;
+    }
+
+    .youtube-container .custom-message-wrapper .closer {
+      left: -0.5rem;
+      bottom: calc(58px - 0.5rem);
+      z-index: 1;
+    }
+
+    .red-notification-point {
+      top: 2px;
+      left: 3px;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background-color: #C4C4C4BF;
+      display: none;
+    }
+
+    .youtube-container > a {
+      background-color: #D62445;
+      border-radius: 40px;
+      min-width: 55px;
+      height: 55px;
+    }
+
+    .youtube-container a .youtube-text {
+      overflow: hidden;
+      white-space: nowrap;
+      max-width: 0;
+      font-size: 1.3rem;
+      color: transparent;
+      transition: color 2.5s ease-out;
+    }
+
+    .youtube-container a .youtube-text.text-show {
+      max-width: 280px;
+      padding-right: 0.5rem;
+      padding-left: 0.5rem;
+      white-space: normal;
+      animation: showYoutubeText 2s ease-out;
+      color: #fff;
+    }
+
+    @keyframes showYoutubeText {
+      0% {
+        width: 0;
+        padding-right: 0;
+        padding-left: 0;
+      }
+      100% {
+        width: 280px;
+        padding-right: 0.5rem;
+        padding-left: 0.5rem;
+      }
+    }
+
+    .youtube-container {
+      position: fixed;
+      z-index: 4;
+      bottom: 150px;
+      right: 1.5%;
+      margin: 0;
+    }
+
+    .youtube-container.opened {
+      right: 0;
+      width: 280px;
+    }
+
+    .youtube-container.opened > a {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    .youtube-container.opened .red-notification-point {
+      display: block !important;
+    }
+  </style>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Youtube-button",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_section",
+      "label": "Show section",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "default_message",
+      "label": "Default message",
+      "default": "Acompanhe nossa live"
+    },
+    {
+      "type": "text",
+      "id": "logged_opened",
+      "label": "Default message",
+      "default": "Acompanhe nossa live"
+    },
+    {
+      "type": "url",
+      "id": "youtube_url",
+      "label": "URL"
+    }
+  ]
+}
+{% endschema %}

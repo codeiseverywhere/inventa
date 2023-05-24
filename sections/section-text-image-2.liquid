@@ -1,0 +1,63 @@
+<section class="section m-0 container-fluid" data-section-id="{{ section.id }}" data-section-type="text-and-image">
+{% comment %}
+<section class="px-md-5 position-relative mt-5 container-fluid">
+  {% endcomment %}
+  <div class="row my-5 mt-lg-0 px-md-5 pb-lg-0 d-flex align-items-center">
+    <div class="col-lg-4 offset-lg-1 px-lg-0 px-5 pt-lg-5 {% if section.settings.image-first %}order-2{% endif %}">
+      <h2 class="py-3 display-5 color-main-100">
+        <span>{{ section.settings.title }}</span>
+      </h2>
+      <p class="fs-4 color-main-100">
+        <span>{{ section.settings.content }}</span>
+      </p>
+    </div>
+    <div class="image-container col-lg-5 offset-lg-1 p-5">
+      <img src="{{ section.settings.image | img_url: "master" }}" class="img-fluid w-100 lazyload image--fade-in border-radius-sm">
+    </div>
+  </div>
+</section>
+
+<style>
+  .image-container img {
+    box-shadow: {% if section.settings.image-first %}-11{% else %}9{% endif %}px 11px #FFD93D;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Text and Image",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "image-first",
+      "label": "Show image first",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Título"
+    },
+    {
+      "type": "textarea",
+      "id": "content",
+      "label": "Content",
+      "default": "Conteúdo"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+      "info": "Imagem"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Custom Sections",
+      "name": "Text and Image",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

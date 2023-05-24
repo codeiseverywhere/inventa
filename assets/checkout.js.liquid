@@ -1,0 +1,166 @@
+const onReady = () => {
+  const inputProvince = document.querySelector('div[data-address-field="province"]');
+  const inputZip = document.querySelector('div[data-address-field="zip"]');
+  const inputAdressLabel = document.querySelector('div[data-address-field="address1"] .field__label');
+  const inputAdress = document.querySelector('div[data-address-field="address1"] input');
+  const inputAdressNumberLabel = document.querySelector('div[data-address-field="address2"] .field__label');
+  const inputAdressNumber = document.querySelector('div[data-address-field="address2"] input');
+  const inputCnpj = document.querySelector('.edit_checkout #checkout_localized_fields_tax_credential_br');
+  const btnReturnToShop = document.querySelector('.page--thank-you .step__footer__continue-btn');
+  const paymentForm = document.querySelector(".edit_checkout");
+  const buyButton = document.querySelector("#continue_button");
+  
+  setTimeout(function() {
+    if (inputProvince) {
+      inputProvince.classList.remove('field--third');
+      inputProvince.classList.add('field--half');
+    }
+    
+    if (inputZip) {
+      inputZip.classList.remove('field--third');
+      inputZip.classList.add('field--half');
+    }
+    
+    if (inputAdressLabel) {
+      inputAdressLabel.innerHTML = "Rua *";
+      inputAdress.placeholder = "Rua";
+    }
+    
+    if (inputAdressNumberLabel) {
+      inputAdressNumberLabel.innerHTML = "Número *";
+      inputAdressNumber.placeholder = "Número";
+     }
+
+    if (inputCnpj) {
+      const inputCnpjContainer = inputCnpj.closest(".section__content");
+      const newElement = document.createElement('div');
+      newElement.classList.add('fieldset');
+      newElement.innerHTML = `<div class="field field--show-floating-label inscricaoEstadualContainer">
+        <div class="field__input-wrapper">
+          <label class="field__label field__label--visible" for="checkout_inscricao_stadual">Inscrição Estadual</label>
+          <input placeholder="Inscrição Estadual" class="field__input" type="text" name="checkout[inscricao_stadual]" id="checkout_inscricao_stadual">
+        </div>
+      </div>`;
+      // inputCnpj.closest(".fieldset").classList.add("invisibleContainer");
+
+      {% comment %}
+      //Commented for ebanx integration, if needed we need to test more if this broke the transparent checkout
+      if (cnpjInfo) {
+        inputCnpj.value = cnpjInfo;
+      } else {
+        inputCnpj.value = 11111;
+      }
+      {% endcomment %}
+
+      inputCnpj.closest(".field--required").classList.add("field--show-floating-label");
+
+      {% unless customer.tags contains 'cpf-user' %}
+        if (!inscricaoEstadualInfo){
+          inputCnpjContainer.append(newElement);
+        }
+      {% endunless %}
+
+    }
+    
+    if (btnReturnToShop) {
+      btnReturnToShop.href = `${shopifyShopUrl}/collections/marcas`;
+    }
+
+    if (Shopify.Checkout.step === 'payment_method' && !inscricaoEstadualInfo) {
+
+      buyButton.addEventListener("click", function(e) {
+        const inscricaoEstadualContainer = document.querySelector(".inscricaoEstadualContainer");
+        const inscricaoEstadualInput = document.querySelector("#checkout_inscricao_stadual");
+        let inscricaoEstadual = inscricaoEstadualInput.value.trim();
+        if (inscricaoEstadual != "") {
+          e.preventDefault();
+
+          if (inscricaoEstadual.length >= 1) {
+            if (inscricaoEstadualContainer.classList.contains('field--error')) {
+              inscricaoEstadualContainer.classList.remove('field--error');
+              inscricaoEstadualError.remove();
+            }
+            buyButton.classList.add("btn--loading");
+            fetch(`${corsUrl}${shopifyApiUrl}/data/shopify/inscricao_estadual/${customerId}`, {
+              method: 'POST',
+              body: JSON.stringify({inscricao_estadual: inscricaoEstadual}),
+              headers: {
+                'Content-Type': 'application/json',
+                'origin': 'shopify',
+                'api-key': shopifyApiKey,
+                'secret-key': shopifyApiSecretKey
+              }
+            })
+            .then( () => {
+              inscricaoEstadualInput.value = "";
+              buyButton.click();
+            });
+          } else {
+            const errorMessageContainer = `<p class="field__message field__message--error inscricaoEstadualError">Insira um valor de inscrição estadual com mais de 9 caracteres</p>`
+            const errorContainer = document.querySelector(".inscricaoEstadualError");
+            if (errorContainer) {
+              errorContainer.remove();
+            }
+            inscricaoEstadualContainer.classList.add('field--error');
+            inscricaoEstadualContainer.insertAdjacentHTML('beforeend', errorMessageContainer);
+            inscricaoEstadualInput.focus();
+            inscricaoEstadualInput.scrollIntoView();
+          }
+        }
+      });
+    }
+
+    if (inscricaoEstadualInfo) {
+      const iEContainer = document.querySelector(".inscricaoEstadualContainer");
+      if (iEContainer) {
+        iEContainer.classList.add("invisibleContainer");
+      }
+    }
+  }, 2000);
+}
+
+if (document.readyState == 'loading') {
+  document.addEventListener('DOMContentLoaded', onReady);
+} else {
+  onReady();
+}
+
+const updateCart = async (updates) => {
+  await fetch('/cart/update.js', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      updates
+    })
+  }).then(res => {
+    window.location.reload();
+  })
+}
+
+const current_step = document.querySelector('div.step').getAttribute('data-step');
+if(invalidProducts.length && current_step != 'thank_you'){
+  const noMinProds = window.localStorage.getItem('noMinProds');
+  if(noMinProds){
+    const parsedProds = JSON.parse(noMinProds);
+    for(let i = 0; i < allProducts.length; i++){
+      const product_exist = parsedProds.some(e => {
+        if(e.variant_id == allProducts[i].variant_id) e.quantity += allProducts[i].quantity;
+        return e.variant_id == allProducts.variant_id;
+      });
+      if(!product_exist) parsedProds.push(allProducts[i]);
+    }
+    window.localStorage.setItem('noMinProds', JSON.stringify(parsedProds));
+    window.location.replace('/cart');
+  }else{
+    window.localStorage.setItem('noMinProds', JSON.stringify(invalidProducts));
+    document.body.classList.add('invisible-loading');
+    let updates = {};
+    for(let i = 0; i < invalidProducts.length; i++){
+      const { variant_id } = invalidProducts[i];
+      updates[variant_id] = 0;
+    }
+    updateCart(updates);
+  }
+}

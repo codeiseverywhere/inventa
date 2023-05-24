@@ -1,0 +1,86 @@
+{
+  "sections": {
+    "header": {
+      "type": "promotion-page-header",
+      "blocks": {
+        "a60f51f5-38b5-492b-aa60-4853c73723e3": {
+          "type": "banner",
+          "disabled": true,
+          "settings": {
+            "promotion-banner-image": "shopify:\/\/shop_images\/oldinventa-comercio.png",
+            "banner_link": ""
+          }
+        },
+        "c2278bee-ebae-48f3-bd43-6cc3129a4777": {
+          "type": "banner",
+          "disabled": true,
+          "settings": {
+            "promotion-banner-image": "shopify:\/\/shop_images\/Slideshow_FLASH_PROMO_DESK_9f8f35b4-9464-404c-84c6-d33d5dec9226.png",
+            "banner_link": "shopify:\/\/collections\/promocao-relampago-banner"
+          }
+        }
+      },
+      "block_order": [
+        "a60f51f5-38b5-492b-aa60-4853c73723e3",
+        "c2278bee-ebae-48f3-bd43-6cc3129a4777"
+      ],
+      "settings": {
+        "show-promo-banner": false,
+        "autoplay-promo-banner": true,
+        "autoplay-time": 3
+      }
+    },
+    "description": {
+      "type": "promotion-page-description",
+      "settings": {
+        "title": "Promoções",
+        "content": "Nessa página você encontra milhares de produtos com promoções incríveis! Toda semana, diversas marcas disponibilizam descontos exclusivos para você aproveitar por tempo limitado!"
+      }
+    },
+    "carousal": {
+      "type": "promotion-product-carousal",
+      "settings": {
+        "show-priority-collection": true,
+        "title": "Principais Marcas em Promoção",
+        "collection": "marcas-em-promocao"
+      }
+    },
+    "main": {
+      "type": "collection-template",
+      "blocks": {
+        "bc29b24f-f099-44a7-aef9-ea648232e009": {
+          "type": "seller_priority",
+          "settings": {
+            "seller-name": "seller"
+          }
+        }
+      },
+      "block_order": [
+        "bc29b24f-f099-44a7-aef9-ea648232e009"
+      ],
+      "settings": {
+        "show_collection_image": true,
+        "collapse_collection_description": false,
+        "collection_image_size": "small",
+        "products_per_row": "4",
+        "default_products_per_page": 24,
+        "default_view_layout": "grid",
+        "show_quick_buy": "list",
+        "show_quick_view": "list",
+        "quick_links": "",
+        "quick_links_show_products_count": true,
+        "show_filters": true,
+        "show_filter_color_swatch": true,
+        "filter_type": "tag",
+        "open_group_filters_mode": "all_closed",
+        "filter_group_order": ""
+      }
+    }
+  },
+  "order": [
+    "header",
+    "description",
+    "carousal",
+    "main"
+  ]
+}

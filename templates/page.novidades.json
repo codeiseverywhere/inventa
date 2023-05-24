@@ -1,0 +1,26 @@
+{
+  "sections": {
+    "header": {
+      "type": "promotion-page-header",
+      "settings": {}
+    },
+    "description": {
+      "type": "promotion-page-description",
+      "settings": {}
+    },
+    "carousal": {
+      "type": "promotion-product-carousal",
+      "settings": {}
+    },
+    "collections": {
+      "type": "promotion-page-collections",
+      "settings": {}
+    }
+  },
+  "order": [
+    "header",
+    "description",
+    "carousal",
+    "collections"
+  ]
+}

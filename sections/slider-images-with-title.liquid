@@ -1,0 +1,154 @@
+<section class="section position-relative container-fluid" data-section-id="{{ section.id }}" data-section-type="slider-images-with-title">
+  {%- if section.settings.no-text != true -%}
+  <div class="row justify-content-center container-fluid pb-md-5 mb-5">
+    <div class="col-md-6 text-center">
+      <h2 class="pt-5 custom-heading-5 color-main-100">
+        <span>{{ section.settings.title }}</span>
+      </h2>
+      <p class="body-3-density-2 color-main-100">
+        <span>{{ section.settings.content }}</span>
+      </p>
+    </div>
+  </div>
+  {%- endif -%}
+  {% if section.blocks.size > 0 %}
+  <div class="photo-slider row justify-content-center mt-5 g-0 text-center">
+    {%- for block in section.blocks -%}
+      <div class="col-12 col-md-2 position-relative p-4 {% if section.settings.round-images %}round-image{% endif %}">
+        <a {% if block.settings.link-url %}href="{{ block.settings.link-url }}" {% endif %}>
+          <img src="{{ block.settings.image | img_url: '288x288' }}" class="img-fluid border-radius-sm">
+          <p class="text-secondary fw-normal mt-3 fs-5 text-center">{{ block.settings.title }}</p>
+        </a>
+      </div>
+    {%- endfor -%}
+  </div>
+  {% endif %}
+</section>
+
+{%- if section.settings.round-images -%}
+<style>
+  .round-image img{
+    width: 100%;
+    border-radius: 50%;
+  }
+</style>
+{%- endif -%}
+
+{% if section.blocks.size > 0 %}
+<script defer>
+  // window.addEventListener('load', function() {
+    const photoSliderContainer = document.querySelector('.photo-slider');
+
+    // photoSliderContainer.addEventListener('glider-loaded', function() {
+    //   document.querySelector('section[data-section-type="slider-images-with-title"]').removeAttribute("style");
+    // });
+
+    new Glider(photoSliderContainer, {
+      type: 'carousel',
+      focusAt: 'center',
+      rewind: true,
+      slidesToShow: 2,
+      slidesToScroll: 2,
+      draggable: true,
+      arrows: {
+        prev: 'section[data-section-type="slider-images-with-title"] .previous-slide',
+        next: 'section[data-section-type="slider-images-with-title"] .next-slide'
+      },
+      responsive: [
+      {
+        breakpoint: 767,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 3
+        }
+      },
+      {
+        breakpoint: 1023,
+        settings: {
+          slidesToShow: 4,
+          slidesToScroll: 4
+        }
+      },
+      {
+        breakpoint: 1280,
+        settings: {
+          slidesToShow: {%- if section.settings.center and section.blocks.size < 5 -%}{{ section.blocks.size }}{%- else -%}5{%- endif -%},
+          slidesToScroll: {%- if section.settings.center and section.blocks.size < 5 -%}{{ section.blocks.size }}{%- else -%}5{%- endif -%}
+        }
+      }
+      ]
+    })
+  // })
+</script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Slider images with title",
+  "max_blocks": 10,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "no-text",
+      "label": "No text",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "round-images",
+      "label": "Round images",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "center",
+      "label": "Center",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Título"
+    },
+    {
+      "type": "textarea",
+      "id": "content",
+      "label": "Content",
+      "default": "Conteúdo"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Item",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "Profile image"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Título"
+        },
+        {
+          "type": "url",
+          "id": "link-url",
+          "label": "Link URL"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "category": "Custom Sections",
+      "name": "Slider images with title",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

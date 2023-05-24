@@ -1,0 +1,48 @@
+<section id="home-video-section" class="section my-0 py-5" data-section-id="home-video-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-lg-6">
+        <span class="small d-block pt-lg-5 mt-lg-4">Histórias de sucesso</span>
+        <h2 class="display-6 fw-bold my-2">Ganho tempo comprando meus produtos</h2>
+        <p class="fs-5">A Inventa nos ajudou demais. Já não precisamos entrar em contato com cada fornecedor, temos tudo isso em um único local.</p>
+        <span class="small fw-bold">Felipe Micheleto</span>
+      </div>
+      <div class="col-12 col-lg-6 mt-3 mt-md-0">
+        <iframe class="custom-radius w-100" width="680" height="390" src="https://www.youtube.com/embed/Izt3eCzUmZ4?controls=0&rel=0" title="Inventa - O atacado para o varejo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  #home-video-section {
+    background-color: #EDFBF4;
+  }
+
+  @media (max-width: 480px) {
+    #home-video-section iframe {
+      height: 200px !important;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "home-video-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Título"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Custom Sections",
+      "name": "home-video-section",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

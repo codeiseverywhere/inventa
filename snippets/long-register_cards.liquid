@@ -1,0 +1,7 @@
+<div data-value="{{ title }}" onclick="{% if onclick %}{{ onclick }}{% else %}longRegister_interestCategories('{{ title }}');{% endif %}" class="border text-center p-3 loja-prod-box common-style position-relative">
+    <i class="fas fa-check position-absolute top-0 start-0 mt-2 ms-2"></i>
+    <div class="image-wrapper mx-auto">
+        <img src="{{ url | asset_img_url: 'master' }}" alt="">
+    </div>
+    <p class="lh-1 mb-0 mt-2">{{ title }}</p>
+</div>

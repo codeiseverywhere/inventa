@@ -1,0 +1,86 @@
+<section id="home-promo-section" class="section my-0 pb-5" data-section-id="home-promo-section">
+  <div class="container">
+    {% render 'brands-carousel-home', wrapperName: 'home-promo-wrapper', containerName: 'home-promo-slider', custom_title: 'Marcas em promoção', collectionArray: collections.marcas-em-promocao.products %}
+  </div>
+</section>
+
+<style>
+  .home-promo-wrapper-container .spf-product__info a {text-align:center;}
+  .home-promo-wrapper .previous-slide,
+  .home-promo-wrapper .next-slide {
+    position: absolute;
+    padding: 0 12px;
+    z-index: 1;
+    font-size: 1.7rem;
+    width: auto;
+    top: 0;
+    bottom: 0;
+  }
+
+  .home-promo-wrapper .next-slide svg,
+  .home-promo-wrapper .previous-slide svg {
+    width: 35px;
+    height: 35px;
+    padding: 7px;
+  }
+
+  .home-promo-wrapper .previous-slide svg path,
+  .home-promo-wrapper .next-slide svg path {
+    stroke-width: 1;
+  }
+
+  .home-promo-wrapper .next-slide {
+    right: -30px;
+  }
+
+  .home-promo-wrapper .previous-slide {
+    left: -30px;
+  }
+
+  #home-promo-section .sale-text {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    color: #1472E4;
+    background-color: #EDF4FD;
+    width: 70px;
+    text-align: center;
+    z-index: 1;
+  }
+
+  #home-promo-section .brand-item .spf-product-card__inner {
+    border: 1px solid #C7D3D9;
+    overflow: hidden;
+  }
+
+  .home-promo-slider {
+    padding-right: 0!important;
+    padding-left: 0!important;
+  }
+</style>
+
+<script>
+  
+
+</script>
+
+{% schema %}
+{
+  "name": "home-promo-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Título"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Custom Sections",
+      "name": "home-promo-section",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

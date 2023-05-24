@@ -1,0 +1,60 @@
+<section class="section m-3 mt-5 text-banner" id="section-{{ section.id }}" data-section-id="{{ section.id }}" data-section-type="text-banner">
+  <div class="container-fluid p-5">
+    <div class="row">
+      <div class="col-12 col-md-9">
+        <span class="d-block fs-4 fst-italic fw-light px-md-5 py-3">{{ section.settings.content }}</span>
+      </div>
+      <div class="col-12 col-md-3">
+        <a href="{{ section.settings.button-url }}" class="btn btn-dark px-5 py-3 mt-1 fw-bold">
+          <span>{{ section.settings.button-title }}</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .text-banner {
+    background-color: {{ section.settings.background-color }};
+    {% if section.settings.background-image %}
+      background-image: url({{ section.settings.background-image | img_url: 'master' }});
+    {% endif %}
+  }
+
+</style>
+
+{% schema %}
+{
+  "name": "Text banner",
+  "settings": [
+    {
+      "type": "color",
+      "id": "background-color",
+      "label": "Background color",
+      "default": "#EFE2C1"
+    },
+    {
+      "type": "image_picker",
+      "id": "background-image",
+      "label": "Background image"
+    },
+    {
+      "type": "textarea",
+      "id": "content",
+      "label": "Content",
+      "default": "Conteúdo"
+    },
+    {
+      "type": "text",
+      "id": "button-title",
+      "label": "Button",
+      "default": "Título do botao"
+    },
+    {
+      "type": "url",
+      "id": "button-url",
+      "label": "Link URL"
+    }
+  ]
+}
+{% endschema %}

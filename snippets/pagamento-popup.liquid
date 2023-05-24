@@ -1,0 +1,204 @@
+<div class="pagamento-popup justify-content-center" style="display: none;">
+    <div class="pagamento-inner px-5 py-4 position-relative rounded">
+        <div class="pagamento_desktop-closebtn position-absolute" onclick="closePagamentoPopup();">
+            <svg class="modal-closer" width="23" height="21" viewBox="0 0 23 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M9.75806 10.2688L0 1.48659L1.33793 0L11.2529 8.92348L21.1679 0L22.5058 1.48659L12.7478 10.2688L22.5058 19.0511L21.1679 20.5377L11.2529 11.6142L1.33793 20.5377L2.08616e-06 19.0511L9.75806 10.2688Z" fill="white"/>
+            </svg>
+        </div>
+
+        <div class="pagamento-header py-3 px-lg-3 color-main-100">
+            <h4 class="mb-1 custom-heading-6 color-main-100">Como eu posso pagar minhas compras na Inventa?</h4>
+        </div>
+        <div class="pagamento-body py-3 px-lg-5 border-bottom">
+            <div class="d-lg-flex mb-4">
+                <div class="mb-3 icon-payment">
+                    {% comment %}{% render 'icon-money' %}{% endcomment %}
+                    <svg width="53" height="37" viewBox="0 0 53 37" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1.17658 37H40.3792C41.0493 37 41.5519 36.436 41.5519 35.8155V13.2546C41.5519 12.5777 40.9935 12.0701 40.3792 12.0701H1.17658C0.506454 12.0701 0.00385613 12.6341 0.00385613 13.2546V35.8155C-0.0519881 36.436 0.506454 37 1.17658 37ZM2.34931 14.439H39.1506V34.6311H2.34931V14.439ZM25.0221 26.6219C25.0221 28.3704 23.6818 29.8369 21.9506 29.9497V30.7957C21.9506 31.4726 21.3922 31.9802 20.7779 31.9802C20.1636 31.9802 19.6052 31.4162 19.6052 30.7957V29.9497H18.3208C17.6506 29.9497 17.148 29.3857 17.148 28.7652C17.148 28.1448 17.7065 27.5808 18.3208 27.5808H21.7831C22.2857 27.5808 22.7324 27.186 22.7324 26.6219C22.7324 26.1143 22.3415 25.6631 21.7831 25.6631H19.7727C17.9298 25.6631 16.4779 24.1966 16.4779 22.3354C16.4779 20.5869 17.8182 19.1204 19.5493 19.0076V18.1616C19.5493 17.4848 20.1078 16.9771 20.7221 16.9771C21.3363 16.9771 21.8948 17.5412 21.8948 18.1616V19.0076H23.1234C23.7935 19.0076 24.2961 19.5716 24.2961 20.1921C24.2961 20.8689 23.7376 21.3765 23.1234 21.3765H19.7727C19.2701 21.3765 18.8234 21.7713 18.8234 22.3354C18.8234 22.843 19.2143 23.2942 19.7727 23.2942H21.6714C23.5143 23.2942 25.0221 24.7607 25.0221 26.6219ZM13.1831 24.4787C13.1831 25.1555 12.6246 25.6631 12.0104 25.6631H8.71555C8.04542 25.6631 7.54282 25.0991 7.54282 24.4787C7.54282 23.8018 8.10127 23.2942 8.71555 23.2942H12.0104C12.6805 23.2942 13.1831 23.8018 13.1831 24.4787ZM44.9026 29.7805V8.40396H6.87269C6.20256 8.40396 5.69996 7.83994 5.69996 7.21951C5.69996 6.54268 6.25841 6.03506 6.87269 6.03506H46.0753C46.7454 6.03506 47.248 6.59908 47.248 7.21951V29.7805C47.248 30.4573 46.6896 30.9649 46.0753 30.9649C45.461 30.9649 44.9026 30.4009 44.9026 29.7805ZM12.6246 0H51.8273C52.4974 0 53 0.564023 53 1.18445V23.7454C53 24.4223 52.4416 24.9299 51.8273 24.9299C51.1571 24.9299 50.6545 24.3659 50.6545 23.7454V2.4253H12.6246C11.9545 2.4253 11.4519 1.86128 11.4519 1.24085C11.3961 0.564024 11.9545 0 12.6246 0ZM33.9571 24.4787C33.9571 25.1555 33.3987 25.6631 32.7844 25.6631H29.4896C28.8195 25.6631 28.3169 25.0991 28.3169 24.4787C28.3169 23.8018 28.8753 23.2942 29.4896 23.2942H32.7844C33.3987 23.2942 33.9571 23.8018 33.9571 24.4787Z" fill="#C7D3D9"></path>
+                    </svg>
+                </div>
+                <div class="ps-lg-4">
+                    <h4 class="custom-heading-6 color-main-100">À vista</h4>
+                    <p class="body-2-density-2 color-main-080">Via boleto, cartão de crédito, ou Pix! Você paga logo após finalizar o pedido.</p>
+                </div>
+            </div>
+            <div class="d-lg-flex mb-4">
+                <div class="mb-3 icon-payment">
+                    {% comment %}{% render 'icon-cartao' %}{% endcomment %}
+                    <svg width="50" height="48" viewBox="0 0 50 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M14.7191 28.5352H21.1476C21.7849 28.5352 22.3054 29.0557 22.3054 29.6931V32.9552C22.3054 33.5925 21.7849 34.1131 21.1476 34.1131H14.7191C14.0824 34.1131 13.5613 33.5925 13.5613 32.9552V29.6931C13.5613 29.0557 14.0824 28.5352 14.7191 28.5352ZM39.5551 8.91593L4.16648 18.3983L7.59559 31.1988V20.198L7.59622 20.1554L7.59686 20.1129L7.59812 20.071V20.0704L7.60003 20.0291V20.0285L7.60574 19.9453V19.944L7.60892 19.9034V19.9021C7.68001 19.1087 8.03295 18.3939 8.56681 17.8607L8.59474 17.8327L8.6233 17.8055L8.6525 17.7782V17.7775L8.6817 17.7509L8.7109 17.7248V17.7242L8.74074 17.6982L8.77121 17.6728V17.6721L8.80168 17.6468L8.83215 17.622L8.86325 17.5972L8.89499 17.5731V17.5725L8.92673 17.549V17.5484L8.95847 17.5249L8.99084 17.502L9.02322 17.4792V17.4785L9.05622 17.4563L9.08923 17.4341L9.12288 17.4125L9.1908 17.37C9.22444 17.3497 9.25936 17.3294 9.29427 17.3097L9.32918 17.2906V17.29L9.3641 17.2716L9.39964 17.2532V17.2526L9.47201 17.217L9.50819 17.1999L9.54437 17.1834L9.58119 17.1669L9.61801 17.151V17.1504L9.65546 17.1351L9.73037 17.1059V17.1053C10.0954 16.9663 10.4902 16.8901 10.9041 16.8901H41.6911L39.5551 8.91593ZM2.98388 13.9847L38.3725 4.50227L37.9999 3.11146C37.8926 2.71154 37.4857 2.47794 37.0858 2.58522L3.13749 11.6811C2.75726 11.7832 2.48494 12.2143 2.61189 12.5951L2.98388 13.9847ZM44.3426 16.8901H46.0496C47.8657 16.8901 49.3581 18.3818 49.3581 20.198V43.8856C49.3581 45.708 47.872 47.1941 46.0496 47.1941H10.9041C9.08923 47.1941 7.59559 45.7011 7.59559 43.8856V39.9778C7.30549 39.6147 7.09284 39.2142 6.97032 38.7584L0.138137 13.2566C-0.423013 11.5738 0.798947 9.65736 2.47605 9.20729L36.425 0.111466C38.1776 -0.35764 40.0039 0.698007 40.4736 2.45001L44.3426 16.8901ZM10.9041 19.454C10.8628 19.454 10.8222 19.4572 10.7828 19.4641L10.7467 19.4711V19.4718L10.7022 19.4826L10.6756 19.4908L10.6584 19.4965L10.6502 19.4997L10.633 19.506V19.5067L10.6248 19.5098L10.6165 19.513L10.6 19.5206L10.5918 19.5244L10.5753 19.5321L10.567 19.5365L10.5511 19.5448L10.5435 19.5492L10.5359 19.5536L10.5283 19.5581L10.52 19.5625V19.5632L10.5124 19.5676L10.5048 19.5721V19.5727L10.4978 19.5771L10.4902 19.5822L10.4826 19.5873L10.4756 19.5924L10.468 19.5981L10.461 19.6032L10.4534 19.6089L10.4464 19.614L10.4394 19.6197L10.4324 19.6254L10.4255 19.6311L10.4191 19.6368V19.6374L10.4121 19.6425V19.6432L10.4058 19.6489L10.3988 19.6552L10.3924 19.6609L10.3861 19.6673L10.3798 19.6736C10.2591 19.7936 10.1792 19.9542 10.1627 20.1307V20.1319L10.162 20.1408V20.1415L10.1614 20.1497V20.151L10.1608 20.1592V20.1605V20.1694L10.1601 20.1789V20.1884V20.198V43.8856C10.1601 44.2995 10.4908 44.6302 10.9041 44.6302H46.0496C46.4565 44.6302 46.7935 44.2925 46.7935 43.8856V20.198C46.7935 19.7853 46.4628 19.454 46.0496 19.454C34.3346 19.454 22.619 19.454 10.9041 19.454ZM24.112 39.4649H43.7866V41.952H24.112V39.4649ZM28.3334 35.0176H43.7866V37.5054H28.3334V35.0176Z" fill="#C7D3D9"></path>
+                    </svg>
+                </div>
+                <div class="ps-lg-4">
+                    <h4 class="custom-heading-6 color-main-100">Parcelado no cartão de crédito</h4>
+                    <p class="body-2-density-2 color-main-080">Você também pode parcelar suas compras em até 3x no cartão de crédito, sem juros!</p>
+                </div>
+            </div>
+            {% comment %}
+       <div class="d-lg-flex mb-4">
+                <div class="mb-3 icon-payment">
+                    {% endcomment %}
+                    {% comment %}<img class="mt-1" width="100" src="{{ 'TruePay-icon.png' | file_img_url: '100x' }}" alt="truepay logo">{% endcomment %}
+                    {% comment %}
+                    <svg width="53" height="37" viewBox="0 0 53 37" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <style type="text/css">
+                            .sttrupay1{fill:#FF7A00;}
+                            .sttrupay2{fill:#C7D3D9;}
+                        </style>
+                        <g>
+                            <path class="sttrupay1" d="M37.7,6.4L32,30.6h7.4L46.3,0H21.9l-1.5,6.4H37.7z"/>
+                            <path class="sttrupay2" d="M15.1,30.6l5.5-24.2h-7.2L6.7,37h23.8l1.4-6.4H15.1z"/>
+                        </g>
+                        </svg>
+                </div>
+                <div class="ps-lg-4">
+                    {% endcomment %}
+                    {%- comment -%}
+                    class="ps-lg-4"
+                    <h4 class="fw-bold mb-1 fs-5">Parcelado no cartão de crédito</h4>
+                    {%- endcomment -%}
+                    {% comment %}
+                    <h4 class="custom-heading-6 color-main-100">Parcelado no Boleto TruePay</h4>
+                    <p class="body-2-density-2 color-main-080">Você poderá parcelar todo o valor aprovado em 3x no prazo de até 90 dias, sem nenhuma taxa. Nessa modalidade de pagamento, o saldo da sua maquininha de cartão funciona como garantia da operação, podendo ser capturado apenas em caso de não pagamento das parcelas.</p>
+                </div>
+            </div>{% endcomment %}
+            {% unless customer.tags contains "cpf-user" %}
+                <div class="d-lg-flex mb-4">
+                    <div class="mb-3 icon-payment">
+                        {% comment %}{% render 'icon-codebars' %}{% endcomment %}
+                        <svg width="53" height="29" viewBox="0 0 53 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M2.78947 0.852941V28.1471C2.78947 28.6588 2.23158 29 1.39474 29C0.557895 29 0 28.6588 0 28.1471V0.852941C0 0.341176 0.557895 0 1.39474 0C2.23158 0 2.78947 0.341176 2.78947 0.852941ZM18.1316 0C17.2947 0 16.7368 0.341176 16.7368 0.852941V28.1471C16.7368 28.6588 17.2947 29 18.1316 29C18.9684 29 19.5263 28.6588 19.5263 28.1471V0.852941C19.5263 0.341176 18.9684 0 18.1316 0ZM29.2895 0C28.4526 0 27.8947 0.341176 27.8947 0.852941V28.1471C27.8947 28.6588 28.4526 29 29.2895 29C30.1263 29 30.6842 28.6588 30.6842 28.1471V0.852941C30.6842 0.341176 30.1263 0 29.2895 0ZM23.7105 0C22.8737 0 22.3158 0.341176 22.3158 0.852941V28.1471C22.3158 28.6588 22.8737 29 23.7105 29C24.5474 29 25.1053 28.6588 25.1053 28.1471V0.852941C25.1053 0.341176 24.5474 0 23.7105 0ZM46.0263 0C45.1895 0 44.6316 0.341176 44.6316 0.852941V28.1471C44.6316 28.6588 45.1895 29 46.0263 29C46.8632 29 47.4211 28.6588 47.4211 28.1471V0.852941C47.4211 0.341176 46.8632 0 46.0263 0ZM51.6053 0C50.7684 0 50.2105 0.341176 50.2105 0.852941V28.1471C50.2105 28.6588 50.7684 29 51.6053 29C52.4421 29 53 28.6588 53 28.1471V0.852941C53 0.341176 52.4421 0 51.6053 0ZM12.5526 0H6.97368C6.13684 0 5.57895 0.341176 5.57895 0.852941V28.1471C5.57895 28.6588 6.13684 29 6.97368 29H12.5526C13.3895 29 13.9474 28.6588 13.9474 28.1471V0.852941C13.9474 0.341176 13.3895 0 12.5526 0ZM40.4474 0H34.8684C34.0316 0 33.4737 0.341176 33.4737 0.852941V28.1471C33.4737 28.6588 34.0316 29 34.8684 29H40.4474C41.2842 29 41.8421 28.6588 41.8421 28.1471V0.852941C41.8421 0.341176 41.2842 0 40.4474 0Z" fill="#C7D3D9"></path>
+                        </svg>
+                    </div>
+                    <div class="ps-lg-4">
+                        <h4 class="custom-heading-6 color-main-100">Parcelado no boleto</h4>
+                        <p class="body-2-density-2 color-main-080">Você poderá parcelar todo o valor aprovado para o seu perfil em até 3x (30/60/90), sem juros! Geramos e enviamos os boletos por e-mail assim que o envio dos produtos for confirmado pelos fabricantes, mas lembrando que a data de vencimento dos boletos é contada a partir da data de realização de seu pedido aqui na plataforma da Inventa.</p>
+                        {% comment %}<p class="body-2-density-2 color-main-080">Assim, você recebe e vende os produtos para seus clientes e só depois precisa pagar a Inventa. Legal, né? E melhor ainda: pagando as contas em dia, você ganha mais limite e prazo para levar mais produtos para sua clientela!</p>{% endcomment %}
+                    </div>
+                </div>
+            {% endunless %}
+        </div>
+        {% comment %}
+        <div class="pagamento-footer d-lg-flex py-4">
+            <div class="col-lg-6 mb-3">
+                <p class="fs-6">Ainda ficou com dúvida, precisa de mais prazo ou limite ou ainda alguma outra ajuda?</p>
+            </div>
+            <div class="col-lg-6 px-lg-5 d-flex justify-content-center">
+                <button type="button" onclick="pagamento_GoToWA()" class="btn w-100 py-3 px-5 fw-bold border-2 btn-outline-dark rounded-pill">
+                    Fale com a gente
+                </button>
+            </div>
+        </div>
+        {% endcomment %}
+    </div>
+</div>
+
+<style>
+    .pagamento-popup{
+        background: rgba(34, 34, 34, 0.8);
+        position: absolute;
+        width: 100vw;
+        height: 100vh;
+        z-index: 9999;
+        top: 0;
+        display: none;
+        opacity: 0;
+        overflow-y: auto;
+    }
+
+    .pagamento-popup .icon-payment {
+        fill: #C7D3D9;
+    }
+
+    @media (min-width: 992px){
+        .truepay-desc-padding{
+            padding-left: calc(53px + 1.5rem);
+        }
+        .pagamento-popup{
+            top: 120px;
+        }
+    }
+    .pagamento-popup_open{
+        display: flex;
+        opacity: 1;
+        animation: fadeIn forwards 1.2s;
+    }
+    @keyframes fadeIn{
+        from{
+            opacity: 0;
+        }
+        to{
+            opacity: 1;
+        }
+    }
+    .pagamento-inner{
+        width: 60%;
+        min-width: 850px;
+        max-height: calc(100vh - 180px);
+        overflow-y: auto;
+        overflow-x: hidden;
+        height: fit-content;
+        background-color: #fff;
+        position: relative;
+        top: 20px;
+        max-width: 900px;
+    }
+    .pagamento_desktop-closebtn{
+        right: -40px;
+        top: 0;
+    }
+    @media (max-width: 900px){
+        .pagamento-inner{
+            width: calc(100vw - 20px);
+            max-height: calc(100vh - 100px);
+            height: max-content;
+            min-width: 0;
+            top: 80px;
+            background-color: #fff;
+            display: block !important;
+        }
+        .pagamento_desktop-closebtn{
+            right: 20px;
+            top: 20px;
+        }
+        .pagamento_desktop-closebtn path{
+            fill: #000;
+        }
+    }
+</style>
+
+<script defer>
+    setTimeout(() => {
+        const popup = document.querySelector('.pagamento-popup');
+        if(popup) popup.removeAttribute('style');
+    }, 500);
+</script>
+
+<script defer>
+    function openPagamentoPopup() {
+        const popup = document.querySelector('.pagamento-popup');
+        if(popup) popup.classList.add('pagamento-popup_open');
+    }
+
+    function closePagamentoPopup() {
+        const popup = document.querySelector('.pagamento-popup');
+        if(popup) popup.classList.remove('pagamento-popup_open');
+    }
+
+    const pagamento_popup = document.querySelector('.pagamento-popup');
+    function initPagamentoPopup() {
+        if(pagamento_popup){
+            const innerModal = document.querySelector('.pagamento-inner');
+            pagamento_popup.addEventListener('click', (e) => {
+                if(!innerModal.contains(e.target)) closePagamentoPopup();
+            })
+        }
+    }
+    
+    function pagamento_GoToWA(){
+        const url = 'https://wa.me/5511974787600';
+        window.open(url, '_blank').focus();
+    }
+
+    initPagamentoPopup();
+</script>

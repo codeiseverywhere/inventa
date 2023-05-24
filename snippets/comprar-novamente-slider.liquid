@@ -1,0 +1,157 @@
+{%- if customer and customer.orders.size > 0 -%}
+    {%- assign maxProducts = 10 -%}
+    {%- assign count = 0 -%}
+    {%- assign products = "" -%}
+    {%- for order in customer.orders -%}
+        {%- if count > 9 -%}{% break %}{%- endif -%}
+        {%- unless order.cancelled -%}
+            {%- for line_item in order.line_items -%}
+                {%- unless products contains line_item.product.handle -%}
+                    {%- if line_item.product.available and line_item.product.published_at != null -%}
+                        {%- assign products = products | append: line_item.product.handle | append: ':' | append: line_item.quantity | append: '||' -%}
+                        {%- assign count = count | plus: 1 -%}
+                        {%- if count > 9 -%}{% break %}{%- endif -%}
+                    {%- endif -%}
+                {%- endunless -%}
+            {%- endfor -%}
+        {%- endunless -%}
+    {%- endfor -%}
+    {%- assign ordered_products = "" -%}
+    {%- assign products = products | split: '||' %}
+    {% if products.size > 1 %}
+    <div class="row justify-content-center ps-2 my-4">
+        <h2 class="ps-4 collection__title fs-2 fw-light">Comprar Novamente</h2>
+        <div class="ps-2 col-12 comprar-novamente-slider_wrapper position-relative" style="visibility: hidden;max-height: 1px!important;">
+            <button class="previous-slide">{%- render 'icon', icon: 'arrow-left' -%}</button>
+            <button class="next-slide">{%- render 'icon', icon: 'arrow-right' -%}</button>
+            <div class="comprar-novamente_slider m-auto">
+                {%- for i in (0..maxProducts) -%}
+                    {%- assign product_high = false -%}
+                    {%- for j in (0..maxProducts) -%}
+                        {%- assign handle = products[j] | split: ':' | first -%}
+                        {%- assign quantity = products[j] | split: ':' | last -%}
+                        {%- unless product_high -%}
+                            {%- unless ordered_products contains handle -%}
+                                {%- assign product_high = products[j] -%}            
+                            {%- endunless -%}
+                        {%- else -%}
+                            {%- unless ordered_products contains handle -%}
+                                {%- assign product_high_qty = product_high | split: ':' | last -%}
+                                {%- assign product_high_handle = product_high | split: ':' | first -%}
+                                {%- if quantity > product_high_qty -%}
+                                    {%- assign product_high = products[j] -%}
+                                {%- elsif quantity == product_high_qty and all_products[handle].price > all_products[product_high_handle] -%}
+                                    {%- assign product_high = products[j] -%}
+                                {%- endif -%}
+                            {%- endunless -%}
+                        {%- endunless -%}
+                    {%- endfor -%}
+                    {%- if product_high -%}
+                        {%- assign handle = product_high | split: ':' | first -%}
+                        <div class="comprar-novamente_item">
+                            {%- render 'product-item', product: all_products[handle], grid_classes: '', show_add_to_cart: true -%}
+                        </div>
+                        {%- assign ordered_products = ordered_products | append: handle | append: '||' -%}
+                    {%- endif -%}
+                {%- endfor -%}
+            </div>
+        </div>
+    </div>
+    {%- comment -%}
+    {%- assign ordered_products = ordered_products | split: '||' -%}
+    {%- endcomment -%}
+<script defer>
+    window.addEventListener('load', function() {
+    const comprarNovamenteContainer = document.querySelector('.comprar-novamente_slider');
+
+    comprarNovamenteContainer.addEventListener('glider-loaded', function() {
+      document.querySelector('.comprar-novamente-slider_wrapper').removeAttribute("style");
+    });
+
+    new Glider(comprarNovamenteContainer, {
+      type: 'carousel',
+      focusAt: 'center',
+      rewind: true,
+      slidesToShow: 1,
+      slidesToScroll: 1,
+      draggable: true,
+      arrows: {
+        prev: '.comprar-novamente-slider_wrapper .previous-slide',
+        next: '.comprar-novamente-slider_wrapper .next-slide'
+      },
+      responsive: [
+      {
+        breakpoint: 769,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 2
+        }
+      },
+      {
+        breakpoint: 1150,
+        settings: {
+          slidesToShow: 4,
+          slidesToScroll: 4
+        }
+      },
+        {
+        breakpoint: 1500,
+        settings: {
+          slidesToShow: 5,
+          slidesToScroll: 5
+        }
+      }
+      ]
+    })
+  })
+</script>
+<style>
+    /*.comprar-novamente_item{
+        max-width: 220px;
+    }*/
+    .comprar-novamente_slider{
+        width: calc(80vw - 150px);
+        padding-right: 0!important;
+        padding-left: 0!important;
+    }
+    .comprar-novamente-slider_wrapper .previous-slide,
+    .comprar-novamente-slider_wrapper .next-slide{
+        position: absolute;
+        z-index: 1;
+        height: 100%;
+        padding: 0 12px;
+    }
+    .comprar-novamente-slider_wrapper .previous-slide svg,
+    .comprar-novamente-slider_wrapper .next-slide svg{
+        background: #c4c4c4;
+        border-radius: 50%;
+        color: #fff;
+        width: 2rem;
+        height: 2rem;
+        padding: 0.5rem;
+    }
+    .comprar-novamente-slider_wrapper .next-slide{
+        right: 0;
+    }
+    .comprar-novamente-slider_wrapper .previous-slide{
+        left: 0;
+    }
+    @media (max-width: 999px){
+        .comprar-novamente_slider {
+            width: 95vw;
+        }
+    }
+
+    @media (min-width: 2000px){
+        .comprar-novamente_slider {
+            max-width: 69vw;
+        }
+    }
+    @media(max-width: 425px) {
+        .comprar-novamente_slider {
+            width: calc(95vw - 20px);
+        }
+    }
+</style>
+{% endif %}
+{%- endif -%}

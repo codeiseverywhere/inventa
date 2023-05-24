@@ -1,0 +1,1224 @@
+<link rel="stylesheet" href="{{ 'modal-signup-referral.css' | asset_url }}" />
+<div id="modal-popup" class="modal-popup add-fix-width justify-content-center" open-popup="false" style="display: none;">
+    <div class="modal-inner add-layout-banner  d-flex position-absolute">
+        <div class="desktop-closebtn position-absolute">
+            <svg class="modal-closer" width="23" height="21" viewBox="0 0 23 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M9.75806 10.2688L0 1.48659L1.33793 0L11.2529 8.92348L21.1679 0L22.5058 1.48659L12.7478 10.2688L22.5058 19.0511L21.1679 20.5377L11.2529 11.6142L1.33793 20.5377L2.08616e-06 19.0511L9.75806 10.2688Z" fill="grey"/>
+            </svg>
+        </div>
+
+        <div style="display:none;" class=" justify-content-end bg-danger modal_banner gradient-background text-white position-relative" background="1">
+
+            <div class="position-absolute modal_close-btn mb-3">
+                <svg class="modal-closer" width="23" height="21" viewBox="0 0 23 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M9.75806 10.2688L0 1.48659L1.33793 0L11.2529 8.92348L21.1679 0L22.5058 1.48659L12.7478 10.2688L22.5058 19.0511L21.1679 20.5377L11.2529 11.6142L1.33793 20.5377L2.08616e-06 19.0511L9.75806 10.2688Z" fill="grey"/>
+                </svg>
+            </div>
+
+             <div class="container-referral background-position d-none">
+               <div class="content-wrapper">
+                   <div class="content-referral">
+                <div class="position-relative container-modal-referral text-center">
+                    <p class="pt-5 content-vendor"> 
+                        <span class="d-inline-block">Você foi indicado pela <strong class="vendor-name"></strong>!</span>
+                        <strong class="content-yellow d-inline-block">Ganhou R$ 250 de desconto</strong>
+                        <span class="d-inline-block">na sua primeira compra na Inventa</span>
+                    </p>
+                 </div>
+               
+                    <div class="position-relative d-flex flex-row mt-4 justify-content-center">
+                        <div class="position-relative ticket-cupom ticket-left px-3 flex align-items-center ">
+                           {%- comment -%}
+                            <div class="position-absolute circle-dashed circle-right start-0 top-50 translate-middle"></div>
+                           {%- endcomment -%}
+                            <strong>Utilize o cupom</strong> 
+                        </div>
+                        <div class="position-relative ticket-cupom ticket-right px-5">
+                              {%- comment -%}
+                            <div class="position-absolute circle-dashed circle-left start-100 top-50 translate-middle"></div>
+                               {%- endcomment -%}
+                               <strong>PRIMEIRA250</strong>
+                            
+                        </div>
+                    </div>
+
+                    <div class="mt-4 footer-modal-referral text-center">
+                        <span class=""><i class="fa fa-info-circle fs-5 align-middle" aria-hidden="true"></i> Válido para compras acima de <b>R$ 600</b></span>
+                     </div>
+               </div>
+               </div>
+             </div>
+           
+            
+
+             
+            <div class="container-no-referral d-none">
+            <h1 class="mt-md-5 pt-5 pb-4 pt-md-0 px-5 fs-1 text-white fw-bold lh-1">O atacado online exclusivo para lojistas</h1>
+
+            <div class="d-flex justify-content-center d-none d-lg-block">
+                <img class="test-ab_mobile-view testab-mobile lazyload image--fade-in" data-src="{{ promo_popup_mobile | img_url: 'master' }}" alt="discount-banner">
+            </div>
+          
+            <div class="">
+                <img class="lazyload image--fade-in test-ab_desktop-view testab-desktop-popup w-100" data-src="{{ promo_popup_desktop | img_url: 'master' }}" alt="discount-banner">
+            </div>
+            <div class="p-5 pt-0">
+                <h3 class="fs-2 fw-light">Descubra novos produtos sem taxa ou mensalidade</h3>
+                <p class="inLoginMessage fs-5 fw-bold d-none">Portal para lojistas criarem bons negócios e incrementarem a renda.</p>
+                <p class="goToLogin mt-3 d-none">Você já se cadastrou, <span class="text-decoration-underline">Login como lojista</span></p>
+
+            </div>
+                
+          </div>
+
+        </div>
+        
+      <div class="modal_forms py-4 px-5 flex-fill">
+            <div class="codelogin-form d-none popup-form">
+                <form action="#" method="GET">
+                    <header class="mb-3">
+                        <h2 class="form__title h1 fw-bold">Código de verificação</h2>
+                    </header>
+                    <p class="text-secondary">Enviamos um cógido para: <span class="code-address d-block"></span></p>
+                    <p class="alert alert--error d-none" id="codelogin-form-error">Código inválido.</p>
+                    
+                    <div class="form__input-wrapper form__input-wrapper--labelled">
+                        <input type="text" maxlength="4" id="customer[code]" placeholder="0000" class="p-4 form__field form__field--text customer-code" name="customer[code]" required="required">
+                        {%- comment -%}<label for="customer[code]" class="form__floating-label">Código</label>{%- endcomment -%}
+                    </div>
+
+                    <button type="submit" id="codelogin-submit_btn" data-button="sendcode-login" disabled="true" class="button btn bg-accent-yellow rounded fw-bold">
+                        <span class="spinner-border mt-3 d-none loading-spinner"></span>
+                        <p class="btn-text body-1-density-3 fw-bold">Validar código</p>
+                    </button>
+                    
+                    <p class="text-center my-3 fs-5">ou <span class="fw-bold" style="cursor: pointer;" onclick="switchForm('login')">Utilize senha para entrar</span></p>
+                </form>
+
+                <header class="mb-2">
+                    <h1 class="form__title h1 fw-bold">Primeira vez na Inventa?</h1>
+                </header>
+                {%- comment -%}
+                <p><a href="/pages/fornecedor">Cria sua conta como Fornecedor</a></p>                    
+                {%- endcomment -%}
+                <a href="/pages/cadastro" class="goToRegister py-3 button btn-light rounded fw-bold border border-dark">
+                    <span class="body-1-density-3 fw-bold">Cadastre-se como lojista</span>
+                </a>
+                <!-- <p class="text-decoration-underline goToRegister">Cadastre-se como Lojista</p> -->
+            </div>
+            <div class="login-form popup-form">
+                {% assign formClasses = "border-bottom-0 mb-0 pb-0" %}
+
+                {% if shop.metafields.new_marketplace.signin_enabled %}
+                    {% assign formClasses = formClasses | append: " d-none" %}
+                    <section id="pre-login-form">
+                        <header class="mb-3">
+                            <h2 class="form__title h1 fw-bold">Entrar como lojista</h2>
+                        </header>
+                        <div class="form__input-wrapper form__input-wrapper--labelled">
+                            <input type="email" id="pre-login-email" class="p-4 form__field form__field--text" autofocus>
+                            <label class="form__floating-label">{{ 'customer.login.email' | t }}</label>
+                        </div>
+
+                        <button type="button" onclick="preLogin()" disabled="true" class="button btn bg-accent-yellow rounded fw-bold pre-login-button w-100">
+                            <span class="spinner-border mt-3 d-none loading-spinner"></span>
+                            <p class="btn-text body-1-density-3 fw-bold" style="line-height: 3.5rem !important;">Entrar com senha</p>
+                        </button>
+                    </section>
+                {% endif %}
+
+                {%- form 'customer_login', name: 'login', id: 'customer_login', style: login_default_visibility, class: formClasses -%}
+                    <input type="hidden" name="return_to" value="/pages/user-validation">
+
+                    <header class="mb-3">
+                    <h2 class="form__title h1 fw-bold">Entrar como lojista</h2>
+                    </header>
+                    <p class="alert alert--error d-none" id="login-form-error">E-mail ou senha incorretos.</p>
+
+                    <div class="form__input-wrapper form__input-wrapper--labelled">
+                    <input type="email" id="customer[email]" class="p-4 form__field form__field--text" name="customer[email]" required="required" {% if form.errors %}aria-invalid="true" aria-describedby="login-form-error"{% endif %} autofocus>
+                    <label for="customer[email]" class="form__floating-label">{{ 'customer.login.email' | t }}</label>
+                    </div>
+
+                    <div class="form__input-wrapper form__input-wrapper--labelled m-0">
+                    <input type="password" id="customer[password]" class="p-4 form__field form__field--text" name="customer[password]" required="required" autocomplete="current-password" {% if form.errors %}aria-invalid="true" aria-describedby="login-form-error"{% endif %}>
+                    <label for="customer[password]" class="form__floating-label">{{ 'customer.login.password' | t }}</label>
+                    </div>
+              
+                    <p class="modal_forgotPassword text-decoration-underline m-0 small">Esqueci a senha</p>
+                    <p class="modal_forgotPassword text-decoration-underline m-0 small mb-3" onclick="myFunction()">Entrar com outro email</p>
+
+                    <button type="submit" onclick="loginWithPassword(event)" data-button="password-login" disabled="true" class="button btn bg-accent-yellow rounded fw-bold">
+                        <span class="spinner-border mt-3 d-none loading-spinner"></span>
+                        <p class="btn-text body-1-density-3 fw-bold" style="line-height: 3.5rem !important;">Entrar com senha</p>
+                    </button>
+                {%- endform -%}
+
+
+
+                {% comment %}
+                <p class="text-center my-3 fs-5">ou</p>
+              
+                <form action="#" method="get">
+                    <p class="alert alert--error d-none" id="logincode-form-error"></p>
+                    <div class="form__input-wrapper form__input-wrapper--labelled">
+                        <input type="text" id="customer[code-phone]" class="p-4 form__field form__field--text" required="required" name="customer[code-phone]">
+                        <label for="customer[code-email]" class="form__floating-label">Telefone (com DDD) ou Email</label>
+                    </div>
+                    <button type="submit" onclick="startCodeLogin(event)" data-button="code-login" disabled="true" class="button btn-dark rounded fw-bold">
+                        <span class="spinner-border mt-3 d-none loading-spinner"></span>
+                        <p class="btn-text body-1-density-3 fw-bold" style="line-height: 3.5rem !important;">Entrar com código</p>
+                    </button>
+                </form>
+                {% endcomment %}
+
+
+                <div class="test-ab_no-view mt-5 pt-5">
+                    <hr />
+                    <header class="mb-2">
+                        <h3 class="form__title h1 fw-bold">Primeira vez na Inventa?</h3>
+                    </header>
+                    <a href="/pages/cadastro" class="goToRegister py-3 button btn-light rounded fw-bold border border-dark">
+                        <span class="body-1-density-3 fw-bold">Cadastre-se como lojista</span>
+                    </a>
+                    <!-- <p class="text-decoration-underline goToRegister">Cadastre-se como Lojista</p> -->
+                </div>
+
+                {%- comment -%}
+                <header class="mb-3">
+                    <h1 class="form__title h1 fw-bold">Sou uma marca e gostaria de vender na Inventa</h1>
+                </header>
+                <p class="text-decoration-underline"><a href="/pages/fornecedor">Cadastre-se como Fornecedor</a></p>
+                {%- endcomment -%}
+
+            </div>
+            <div class="forgotPassword-form d-none popup-form">
+                {%- form 'recover_customer_password', name: 'recover', id: 'recover_customer_password', style: recover_default_visibility -%}
+                    <header class="mb-3">
+                        <h2 class="form__title h1 fw-bold">Esqueci a senha</h2>
+                    </header>
+
+                    <p class="alert alert--center alert--success d-none">{{ 'customer.recover_password.success' | t }}</p>
+                    <p class="alert alert--error d-none">Algo deu errado, tente mais tarde por favor</p>
+
+                    {%- if form.errors -%}
+                    <p class="alert alert--error" id="recovery-form-error">{{ form.errors.messages['form'] }}</p>
+                    {%- endif -%}
+                    <div class="form__input-wrapper form__input-wrapper--labelled">
+                        <input type="email" id="customer[recover_email]" class="p-4 form__field form__field--text" name="email" required="required" {% if form.errors %}aria-invalid="true" aria-describedby="recovery-form-error"{% endif %}>
+                        <label for="customer[recover_email]" class="form__floating-label">{{ 'customer.recover_password.email' | t }}</label>
+                    </div>
+
+                    <button type="submit" class="button btn bg-accent-yellow rounded fw-bold">
+                        <span class="spinner-border mt-3 d-none loading-spinner"></span>
+                        <p class="btn-text body-1-density-3 fw-bold" style="line-height: 3.5rem !important;">{{ 'customer.recover_password.submit' | t }}</p>
+                    </button>
+                    <p class="goToLogin mt-3">Lembrou a sua senha? <span class="text-decoration-underline">Voltar para o login</span></p>
+                {%- endform -%}
+
+                <header class="mb-3">
+                    <h3 class="form__title h1 fw-bold">Ainda não possui uma conta na Inventa?</h3>
+                </header>
+                <p class="text-decoration-underline goToRegister">Cadastre-se como lojista</p>
+                <p class="text-decoration-underline"><a href="/pages/fornecedor">Sou Fornecedor</a></p>
+
+            </div>
+
+            <div class="register-form d-none popup-form form-container">
+                <header class="mb-3 mt-4">
+                    <h3 class="form__title h1 fw-bold">Criar conta de lojista</h3>
+                </header>
+                <div class="position-relative register-form_wrapper" id="form_testab">
+                    {%- comment -%}
+                    {% if shop.name contains "DEV" %}
+                        {% render "customer-fields", form_id: "mMt8G5" %}
+                    {% else %}
+                        {% render "customer-fields", form_id: "X1tymw" %}
+                    {% endif %}
+                    {%- endcomment -%}
+                    <div class="spinner-container">
+                        {% render 'spinner' %}
+                    </div>
+                </div>
+
+                <div class="test-ab_image">
+                    <header class="mb-2">
+                        <h3 class="form__title h3 fw-bold">Já possui uma conta na Inventa? Acesse:</h3>
+                    </header>
+                    <p class="fs-6"><span class="text-decoration-underline me-3 goToLogin text-nowrap"><a class="btn-login-lojista" onclick="openModal();
+                        switchForm();">Login lojista</a></span> <span class="text-nowrap">ou <span class="ms-3 text-decoration-underline"><a href="/pages/fornecedor">Cadastre-se como Fornecedor</a></span></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% capture cf_formA %}
+{% if shop.name contains "DEV" %}{% render "customer-fields", form_id: "mMt8G5" %}{% else %}{% render "customer-fields", form_id: "ewt69Y" %}{% endif %}
+{% endcapture %}
+{% capture cf_formB %}
+{% if shop.name contains "DEV" %}{% render "customer-fields", form_id: "pvtlAL" %}{% else %}{% render "customer-fields", form_id: "dGtVak" %}{% endif %}
+{% endcapture %}
+
+<script>
+  function getForm() {
+    const searchParams = new URLSearchParams(window.location.search);
+    let test = 0;
+    /*if(searchParams.has('register-ab')){
+      test = !Number.isNaN(searchParams.get('register-ab')) ? parseInt(searchParams.get('register-ab')) : 0;
+    }*/
+    const form_test = [ {{ cf_formA | json }} ];
+    const element = document.getElementById('form_testab');
+    if(element) {
+        element.innerHTML += form_test[test] ? form_test[test] : form_test[0];
+    }
+    const new_timestamp = new Date().getTime();
+    const style_url = '//cdn.shopify.com/s/files/1/0556/2440/1049/t/128/assets/customer-fields.css?v=' + new_timestamp;
+    const style = document.createElement('link');
+    style.setAttribute('rel', 'stylesheet');
+    style.setAttribute('type', 'text/css');
+    style.href = style_url;
+    document.head.append(style);
+    const script_url = '//cdn.shopify.com/s/files/1/0556/2440/1049/t/128/assets/customer-fields.js?v=' + new_timestamp;
+    const script = document.createElement('script');
+    script.src = script_url;
+    document.body.append(script);
+  }
+  window.addEventListener('DOMContentLoaded', getForm);
+</script>
+<script>
+    try {
+      document.addEventListener('cf:ready', () => {
+        const register_form = document.getElementById('create_customer');
+        let discountType = "Teste2_primeira_0";
+        let agentType = "Teste2_agente_0";
+        const url = new URLSearchParams(window.location.search);
+        const banner = url.get('bannerab');
+        const bannerUser = url.get('userab');
+      
+        const getIpFromAws = async () => {
+            await fetch("https://cors.inventashop.com.br/https://checkip.amazonaws.com/")
+            .then(res => res.text())
+            .then(data => {
+                if (data) register_form.cfForm.setFieldValue("customer_ip", data);
+            });
+        }
+
+        getIpFromAws();
+
+        if (banner) {
+          if (parseInt(banner) == 1) discountType = "Teste2_primeira_5";
+          register_form.cfForm.setFieldValue("tipo_de_desconto", discountType);
+        }
+
+        if (bannerUser) {
+          switch(parseInt(bannerUser)) {
+            case 87591:
+              agentType = "Teste2_agente_5";
+              break;
+            case 79582:
+              agentType = "Teste2_agente_10";
+              break;
+            case 58973:
+              agentType = "Teste2_agente_15";
+              break;
+            case 95874:
+              agentType = "Teste2_agente_20";
+              break;
+          }
+          register_form.cfForm.setFieldValue("desconto_por_agente", agentType);
+        }
+
+        register_form.addEventListener("cf:form_submission_failed", (e) => {
+            for(const error in e.detail.errors){
+                let message;
+                switch(error){
+                case "phone":
+                    if(e.detail.errors[error][0] === "has already been taken") message = "Número de telefone já cadastrado";
+                    if(e.detail.errors[error][0] === "is invalid") message = "Erro, entre em contato pelo nosso Whatsapp para prosseguir com o cadastro";
+                break;
+                case "email":
+                    if(e.detail.errors[error][0] === "has already been taken") message = "E-mail já cadastrado";
+                    break;
+                }
+                try {
+                    const field = {};
+                    field[error] = register_form.cfForm.getFieldValue(error);
+                    saveEvent('/data/shopify/create/failure/register', 'POST', {
+                        ...field,
+                        date: new Date().toLocaleString('pt-BR').split(' ')[0], url: window.location.href,
+                        pageTitle: document.title, errorMsg: message
+                    });
+                    const event_value = {};
+                    if(error == "phone") event_value["telephone"] = field[error];
+                    if(error == "email") event_value["email"] = field[error];
+                    driver.pushEvent('sendForm_error-' + (error == "phone" ? "firstStep" : "secondStep"), event_value);
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+        })
+
+        const cnpj_formatValidation = {
+          comparator: validCNPJ,
+          errorMessage: 'CNPJ é inválido, favor validar os números informados',
+          async: false
+        }
+        register_form.cfForm.addValidator(cnpj_formatValidation, "cnpj");
+        const validation = {
+          comparator: async (value) => {
+            return new Promise((resolve, reject) => {
+              const pageHost = {{ request.host | json }};
+              const corsUrl = "https://cors.inventashop.com.br/";
+              let shopifyShopUrl = "https://inventa.shop";
+              let shopifyApiUrl = "https://api.inventa.tec.br";
+              let shopifyApiKey = "LmRkuO9OI9";
+              let shopifyApiSecretKey = "42Ipvjz39M";
+  
+              if (pageHost.includes("dev")) {
+                shopifyShopUrl = "https://inventa-dev.myshopify.com";
+                shopifyApiUrl = "https://api.inventa.dev.br";
+                shopifyApiKey = "LMYzUdD0Wq";
+                shopifyApiSecretKey = "GHrI6Xg0Qc";
+              }
+  
+              const cnpj = value.replace(/\D/g, '');
+              const cnpj_url = `${corsUrl}${shopifyApiUrl}/data/shopify/retailer_data/${cnpj}`;
+  
+              fetch(cnpj_url, {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'origin': 'shopify',
+                  'api-key': shopifyApiKey,
+                  'secret-key': shopifyApiSecretKey
+                }
+              }).then(res => {
+                if(res.status == 403) {
+                  resolve(false);
+                  return {
+                    message: "CNPJ já cadastrado."
+                  };
+                }
+                else res.json()
+              })
+              .then(res => {
+                if(res && res.message == "CNPJ já cadastrado.") resolve(false);
+                else resolve(true);
+              })
+            }) 
+          },
+          errorMessage: 'O CNPJ já foi utilizado',
+          async: true
+        }
+        register_form.cfForm.addValidator(validation, "cnpj");
+  
+        /* Form information object */
+        let actual_step = 0;
+        const user_info = {};
+        /* Form events */
+        register_form.addEventListener('cf:field_changed', (e) => {
+          user_info[e.detail.columnKey] = {
+            value: e.detail.value,
+            step: actual_step
+          }
+        })
+
+        register_form.addEventListener('cf:step_changed', (e) => {
+          actual_step = e.detail.toIndex;
+          if(actual_step === 1){
+            let readyTo = false;
+            const submit_button = register_form.querySelector('button[type="submit"]');
+            submit_button.addEventListener("click", (e) => { 
+                if(!readyTo){
+                    e.preventDefault();
+                    checkConnection().then(ok => {
+                        if(ok){
+                            readyTo = true;
+                            submit_button.click();
+                        } else {
+                            readyTo = false;
+                            noConnectionAvailable();
+                        }
+                    })
+                }
+            });
+          }
+          
+          let intervalTimer;
+          function noConnectionAvailable() {
+            const submit_button = register_form.querySelector('button[type="submit"]');
+            submit_button.classList.add("d-none");
+            const container = register_form.querySelector(".no-connection_container") || document.createElement("div");
+            container.classList.add("no-connection_container");
+            container.innerHTML = `
+              <div class="invalid mb-3 px-2">
+                <p class="error_element">Sua internet esta instável, necessário estar ligado a alguma rede para prosseguir, tentando de novo em: <span class="fw-bold text-nowrap"><span class="timer">10</span> segs</span></p>
+              </div>
+              <div>
+                <button id="connection-tryagain" class="btn w-100 button">
+                  <span>Tente agora</span>
+                  <div class="spinner-border spinner-border-sm d-none form-loading">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                </button>
+              </div>
+            `;
+            container.querySelector("#connection-tryagain").onclick = (e) => {
+                e.preventDefault();
+                tryAgainConnection();
+            }
+            register_form.append(container);
+            const timer = container.querySelector(".timer");
+            let time = 15;
+            timer.innerText = time;
+            try {
+                clearInterval(intervalTimer);
+            } catch (error) {}
+            intervalTimer = setInterval(() => {
+                time--;
+                if(!time){
+                    tryAgainConnection();
+                    try {
+                        clearInterval(intervalTimer);
+                    } catch (error) {}
+                }
+                if(time >= 0) timer.innerText = time;
+            }, 1000);
+          }
+          async function tryAgainConnection(){
+            const tryAgain_button = document.getElementById('connection-tryagain');
+            const span = tryAgain_button.querySelector("span");
+            const spinner = tryAgain_button.querySelector(".form-loading");
+            span.classList.add("d-none");
+            spinner.classList.remove("d-none");
+
+            const connectionAvailable = await checkConnection();
+            if(!connectionAvailable){
+                setTimeout(() => {
+                    noConnectionAvailable()
+                }, 1000);
+            }else{
+                try {
+                    clearInterval(intervalTimer);
+                    const noConnection_container = document.querySelector(".no-connection_container");
+                    const normalSubmit = register_form.querySelector('button[type="submit"]');
+                    normalSubmit.classList.remove('d-none');
+                    noConnection_container.parentElement.removeChild(noConnection_container);
+                    normalSubmit.click();
+                } catch (error) {}
+            }
+          }
+        })
+        register_form.addEventListener('cf:form_submitted', (e) => {
+          window.localStorage.setItem('cf_form_details', JSON.stringify(e.detail));
+        })
+        register_form.addEventListener('cf:form_submission_failed', (e) => {
+          let step = actual_step;
+          for(const error in e.detail.errors){
+            if(user_info[error].step < step) step = user_info[error].step;
+          }
+          register_form.cfForm.goToStep(step);
+        })
+      })
+    } catch (error) {
+      console.log(error);
+    }
+      
+      function validCNPJ(cnpj) {
+        cnpj = cnpj.replace(/[^\d]+/g, '');
+        if(cnpj.length !== 14) return false;
+        {% comment %}
+          verificando se tem a quantidade certa de caracter e se não tem todos caracteres iguais
+          {% endcomment %}
+          if(/^(\d)\1+$/.test(cnpj))
+              return false;
+          let t = cnpj.length - 2,
+              d = cnpj.substring(t),
+              d1 = parseInt(d.charAt(0)),
+              d2 = parseInt(d.charAt(1)),
+              calc = x => {
+                  let n = cnpj.substring(0, x),
+                      y = x - 7,
+                      s = 0,
+                      r = 0;
+                  for (let i = x; i >= 1; i--) {
+                      s += n.charAt(x - i) * y--;
+                      if (y < 2)
+                          y = 9;
+                  }
+                  r = 11 - s % 11;
+                  return r > 9 ? 0 : r;
+              }
+          return calc(t) === d1 && calc(t + 1) === d2;
+        }
+  </script>
+
+
+<script defer>
+    setTimeout(() => {
+        const popup = document.querySelector('.modal-popup');
+        if(popup) popup.removeAttribute('style');
+
+        {%- unless request.page_type == 'index'-%}
+            const redirectLogin = document.querySelector('.login-form input[name="return_to"]');
+            if(redirectLogin) redirectLogin.value = window.location.pathname + window.location.search;
+        {%- endunless -%}
+    }, 500);
+
+    /* function testab_noresellPrice(){
+        const resells = document.querySelectorAll('.resell-price');
+        for(let i = 0; i < resells.length; i++){
+            const parent = resells[i].parentElement;
+            parent.removeChild(resells[i]);
+        }
+    }
+    function testab_noresellPriceScroll(){
+        setTimeout(testab_noresellPrice, 500)
+        let y = window.scrollY;
+        window.addEventListener('scroll', () => {
+            if(window.scrollY - y > 50) {
+                y = window.scrollY;
+                testab_noresellPrice();
+            }
+        })
+    }
+    testab_noresellPriceScroll(); */
+</script>
+
+{%- comment -%}
+Script for code login in popup
+{%- endcomment -%}
+<script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@5.1.0/dist/amazon-cognito-identity.min.js"></script>
+<script src="https://sdk.amazonaws.com/js/aws-sdk-2.149.0.min.js"></script>
+<script defer>
+    const code_input = document.getElementById('customer[code]');
+    if(code_input) {
+        code_input.addEventListener('keydown', (e) => {
+            if(isNaN(e.key) && e.key != 'Backspace' && e.key != 'Enter' && e.key != 'Delete') e.preventDefault();
+        })
+        code_input.addEventListener('input', (e) => {
+            const error_message = document.getElementById('codelogin-form-error');
+            if(error_message) error_message.classList.add('d-none');
+            const code_value = code_input.value;
+            const sendCode_btn = document.getElementById('codelogin-submit_btn');
+            if(code_value && validCode(code_value)) sendCode_btn.removeAttribute('disabled');
+            else sendCode_btn.setAttribute('disabled', 'true');
+        });
+    }
+
+    {% if shop.name contains 'DEV' %}
+    const COGNITO_USER_POOL_ID = 'us-east-2_kxxdsFvla';
+    const CLIENT_ID = '3saceth0fh1j9p1pfaabe9q2pl';
+    {% else %}
+    const COGNITO_USER_POOL_ID = 'us-east-1_Gn9H5xdeq';
+    const CLIENT_ID = '686qkl0ucf7smvr26t9deliea7';
+    {% endif %}
+
+    function getPoolData() {
+        return {
+            UserPoolId: COGNITO_USER_POOL_ID,
+            ClientId: CLIENT_ID
+        }
+    }
+
+    function getUserPool() {
+        if ((typeof userPool === 'undefined')) {
+            userPool = new AmazonCognitoIdentity.CognitoUserPool(getPoolData())
+        }
+        return userPool
+    }
+
+    function authenticateUser(username) {
+        switchForm('codelogin');
+        const code_input = document.getElementById('customer[code]');
+        if(code_input){
+            code_input.value = '';
+            code_input.setAttribute('value', '');
+            code_input.focus();
+        }
+        const user_contact = document.querySelector('.code-address');
+        if(user_contact) user_contact.innerHTML = censoreData(username);
+
+        const authenticationData = {
+            Username: username,
+            ClientMetadata: {'validationData': 'recaptchaToken', 'x1': 'y'}
+        }
+        const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
+        const userData = {
+            Username: username,
+            Pool: getUserPool()
+        }
+        cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+        cognitoUser.setAuthenticationFlowType('CUSTOM_AUTH');
+        let attemps = 0;
+        cognitoUser.initiateAuth(authenticationDetails, {
+            onSuccess: function(result) {
+                if(driver) driver.pushEvent('codeLogin_loginSuccess', {
+                    userName: username,
+                    url: window.location.href,
+                    pageTitle: document.title
+                });
+                buttonsToLoading();
+                const jwtToken = result.idToken.jwtToken; 
+                const corsUrl = "https://cors.inventashop.com.br/";
+                {% if shop.name contains 'DEV' %}
+                const inventaUrl = "https://auth.inventa.dev.br/login/shopify";
+                {% else %}
+                const inventaUrl = "https://auth.inventa.tec.br/login/shopify";
+                {% endif %}
+                fetch(`${corsUrl}${inventaUrl}`, {
+                    method: "GET",
+                    headers: {
+                        origin: "shopify",
+                        "Authorization": jwtToken,
+                    }
+                })
+                .then((res) => {
+                    return res.json();
+                })
+                .then((res) => {
+                    const redirectUrl = res.result;
+                    window.sessionStorage.setItem('inventa_redirect-url', JSON.stringify({url: window.location.href}));
+                    window.location.replace(redirectUrl);
+                })
+            },
+            onFailure: function(err) {
+                if(attemps > 2 || attemps == 0) {
+                    if(typeof showWppText == 'function') showWppText();
+                    switchForm('login');
+                    const error = document.getElementById('logincode-form-error');
+                    error.classList.remove('d-none');
+                    if(attemps > 2){
+                        error.innerText = 'Código incorreto. Solicite um novo código.';
+                    }else{
+                        const code_btn = document.querySelector('button[data-button="code-login"]');
+                        if(code_btn) code_btn.setAttribute('disabled', 'true');
+                        error.innerText = 'E-mail ou número de telefone inválido';
+                    }
+                }
+                buttonsToNormal();
+            },
+            customChallenge: function(challengeParameters) {
+                const { masked_email, masked_phone_number } = challengeParameters;
+                const userData = document.querySelector('.code-address');
+                if(userData){
+                    const data = [];
+                    if(masked_phone_number) data.push(masked_phone_number);
+                    if(masked_email) data.push(masked_email);
+                    if(data.length) userData.innerHTML = data.join(', ');
+                }
+                buttonsToNormal();
+                if (attemps > 0) {
+                    if(driver) driver.pushEvent('codeLogin_wrongCode', {
+                        userName: username,
+                        url: window.location.href,
+                        pageTitle: document.title
+                    });
+                    const code_btn = document.querySelector('button[data-button="sendcode-login"]');
+                    if(code_btn) code_btn.setAttribute('disabled', 'true');
+                    const error = document.getElementById('codelogin-form-error');
+                    if(error) error.classList.remove('d-none');
+                }
+                showFormAnswer(this);
+                attemps++;
+            },
+        });
+    }
+
+    function showFormAnswer(auth) {
+        const code_btn = document.getElementById('codelogin-submit_btn');
+        code_btn.onclick = (e) => {
+            e.preventDefault();
+            buttonsToLoading();
+            const code = document.getElementById('customer[code]');
+            if(code && validCode(code.value)){
+                cognitoUser.sendCustomChallengeAnswer(code.value, auth);
+            }
+        }
+    }
+
+    function startCodeLogin(e){
+        e.preventDefault();
+        const email = document.getElementById('customer[code-phone]');
+        if(email && emailOrBrPhone(email.value)) {
+            buttonsToLoading();
+            if(driver) driver.pushEvent('codeLogin-requestedCode', {
+                url: window.location.href,
+                userName: email,
+                date: new Date().toUTCString()
+            });
+            if(isPhone(email.value)) authenticateUser('+55' + email.value);
+            else authenticateUser(email.value);
+        }
+    }
+
+    function validCode(code){
+        if(code && code.match(/^\d{4}\b/g))return true;
+        else return false;
+    }
+
+    function censoreData(string){
+        const beginning = string.substring(0, 3);
+        const end = string.substring(string.length - 5);
+        const middle = string.substring(3, string.length - 5);
+        let censored = beginning;
+        for(let i = 0; i < middle.length; i ++) censored += '*';
+        censored += end;
+        return censored;
+    }
+</script>
+
+<script defer>
+    {% if shop.metafields.new_marketplace.signin_enabled or content_for_header contains "previewBarInjector.init();" %}
+        window.addEventListener('DOMContentLoaded', () => {
+            const preLoginEmailInput = document.querySelector("#pre-login-email");
+            const preLoginButton = document.querySelector(".pre-login-button");
+
+            preLoginEmailInput.addEventListener("input", (event) => {
+                if (preLoginButton) {
+                    if (regexEmail(event.target.value)) {
+                        preLoginButton.removeAttribute('disabled');
+                    } else {
+                        preLoginButton.setAttribute('disabled', 'true');
+                    }
+                }
+            });
+            
+        });
+
+        async function preLogin() {
+            const USER_ENDPOINT = "https://user.inventashop.com.br/v1/marketplace-users/check-by-email?email=";
+            const API_TOKEN = "rxExWn5qzgGwEWOckeCbkGq9qlcHyyOgukkuoazt00F8BwEHN0311ei3kSkzfOE0cThnRhhG6kF76QdPxhEJJQlQrWukxSrIL4hqxFAlQVpI1WQnDLZSjCpQaGc8D0eH";
+            const params = (new URL(document.location)).searchParams;
+            const utm__medium = params.get("utm_medium");
+            const utm__source = params.get("utm_source");
+            if(utm__medium != null && utm__source != null){
+            var URL_REDIRECT = "https://loja.inventa.shop/login?utm_medium="+utm__medium+"&utm_source="+utm__source+"&q="+utm__source;  
+            }else{
+            var URL_REDIRECT = "https://loja.inventa.shop/login";  
+            }
+            
+            const preLoginForm = document.querySelector("#pre-login-form");
+            const preLoginEmailInput = document.querySelector("#pre-login-email");
+            const customerLoginForm = document.querySelector("#customer_login");
+            const customerLoginEmailInput = document.getElementById('customer[email]');
+            const customerLoginPasswordInput = document.getElementById('customer[password]');
+
+            await fetch(`${USER_ENDPOINT}${preLoginEmailInput.value}`, {
+                method: 'GET',
+                headers: {
+                    'mode': 'cors',
+                    'Accept': '*/*',
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${API_TOKEN}`
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data) {
+                    if (data.newMarketplace === true) {
+                        var now = new Date();
+                        var cookieName = 'marketplace-email';
+                        var cookieValue = preLoginEmailInput.value;
+                        now.setTime(now.getTime() + 1 * 3600 * 1000);
+                        document.cookie = cookieName +"=" + cookieValue + ";expires=" + now.toUTCString() 
+                  + ";domain=.inventa.shop;path=/";
+                        window.location.replace(URL_REDIRECT);
+                    } else {
+                        customerLoginForm.classList.remove("d-none");
+                        customerLoginEmailInput.value = preLoginEmailInput.value;
+                        customerLoginEmailInput.setAttribute('readonly', true);
+                        customerLoginEmailInput.style.background = "#F7F9FC";
+                        preLoginForm.classList.add("d-none");
+                        customerLoginPasswordInput.focus();
+                    }
+                }
+            });
+            
+        }
+    {% endif %}
+    
+    window.addEventListener('cf:ready', () => {
+        const registerForm = document.querySelector('#create_customer');
+
+        registerForm.addEventListener('cf:form_submitted', function(event) {
+            const newRedirect = window.location.pathname + window.location.search;
+            window.location.replace(newRedirect);
+        });
+    });
+
+    function switchForm(formToSwitch = "login"){
+        const inLoginMessage = document.querySelector('p.inLoginMessage');
+        const linkToLogin = document.querySelector('p.goToLogin')
+        if(formToSwitch != 'login' && formToSwitch != 'codelogin'){
+            if(inLoginMessage)inLoginMessage.classList.add('d-none');
+            if(linkToLogin)linkToLogin.classList.remove('d-none');
+        }else{
+            if(inLoginMessage)inLoginMessage.classList.remove('d-none');
+            if(linkToLogin)linkToLogin.classList.add('d-none');
+        }
+        const forms = document.querySelectorAll('.popup-form');
+        for(let i = 0; i < forms.length; i++){
+            forms[i].classList.add('d-none');
+        }
+        const formToShow = document.querySelector(`.${formToSwitch}-form`);
+        if(formToShow){
+            formToShow.classList.remove('d-none');
+        }
+    }
+
+    function openModal() {
+        switchForm('login');
+        modal.setAttribute('open-popup', true);
+        modal.classList.add('modal-popup_open');
+        const popupNativeControls = document.querySelectorAll('[aria-controls="account-popover"]');
+        for(let i = 0; i < popupNativeControls.length; i++){
+            popupNativeControls[i].setAttribute('aria-expanded', true);
+        }
+    }
+
+    setTimeout(() => {
+        const button_submitRegister = document.querySelector('.modal-inner .register-form .cf-form-actions button.cf-submit-form');
+        if(button_submitRegister){
+            button_submitRegister.classList.add('button', 'rounded', 'fw-bold');
+            button_submitRegister.classList.remove('btn');
+
+            const acceptingTerms = document.createElement('p');
+            acceptingTerms.classList.add('fw-bold');
+            acceptingTerms.innerHTML = `Ao se registrar, você concorda com nossos <a href="/pages/termos-e-condicoes-lojistas" target="_blank">Termos e condições</a>`;
+            button_submitRegister.parentElement.prepend(acceptingTerms);
+        }
+    }, 2000);
+    const modal = document.querySelector('.modal-popup');
+    if(modal){
+        const loginBtn = document.querySelectorAll('.landingPage-loginBtn');
+        for(let i = 0; i < loginBtn.length; i++){
+            loginBtn[i].addEventListener('click', (e) => {
+                e.preventDefault();
+                const popupState = modal.getAttribute('open-popup');
+                if(popupState == 'true'){
+                    closeModal();
+                }else{
+                    openModal();
+                }
+            })
+        }
+        const innerModal = document.querySelector('.modal-inner');
+        modal.addEventListener('click', (e) => {
+            /* CF */
+            if(e.target.classList.contains('cf-form-actions') || e.target.classList.contains('cf-next-step') || e.target.parentElement.classList.contains('cf-next-step')) return;
+            if(!innerModal.contains(e.target)) closeModal();
+        })
+
+
+        const closers = document.querySelectorAll('.modal-closer');
+        for(let i = 0; i < closers.length; i++){
+            closers[i].addEventListener('click', (e) => {
+                closeModal();
+            })
+        }
+
+        const forgotPasswordSwitch = document.querySelector('.modal_forgotPassword');
+        if(forgotPasswordSwitch){
+            forgotPasswordSwitch.addEventListener('click', () => {
+                switchForm('forgotPassword');
+            });
+        }
+
+        const backLogin = document.querySelectorAll('.goToLogin');
+        for(let i = 0; i < backLogin.length; i++){
+            backLogin[i].addEventListener('click', () => {
+                switchForm('login');
+            })
+        }
+
+        {%- comment -%}
+        const toRegisterSwitch = document.querySelectorAll('.goToRegister');
+        for(let i = 0; i < toRegisterSwitch.length; i++){
+            toRegisterSwitch[i].addEventListener('click', () => {
+                switchForm('register');
+            })
+        }
+        {%- endcomment -%}
+
+        const popupNativeControls = document.querySelectorAll('[aria-controls="account-popover"]');
+        for(let i = 0; i < popupNativeControls.length; i++){
+            popupNativeControls[i].addEventListener('click', () => {
+                const modalExpanded = popupNativeControls[i].getAttribute('aria-expanded');
+                if(modalExpanded == 'true'){
+                    closeModal();
+                }else{
+                    openModal();
+                }
+            });
+        }
+
+        function closeModal() {
+            modal.setAttribute('open-popup', false);
+            modal.classList.remove('modal-popup_open');
+            const popupNativeControls = document.querySelectorAll('[aria-controls="account-popover"]');
+            for(let i = 0; i < popupNativeControls.length; i++){
+                popupNativeControls[i].setAttribute('aria-expanded', false);
+            }
+        }
+
+        function buttonsToLoading(){
+            const btnTexts = document.querySelectorAll('.btn-text');
+            for(let i = 0; i < btnTexts.length; i++){
+                btnTexts[i].classList.add('d-none')
+            }
+            const btnSpinners = document.querySelectorAll('.loading-spinner');
+            for(let i = 0; i < btnSpinners.length; i++){
+                btnSpinners[i].classList.remove('d-none')
+            }
+        }
+
+        function buttonsToNormal(){
+            const btnTexts = document.querySelectorAll('.btn-text');
+            for(let i = 0; i < btnTexts.length; i++){
+                btnTexts[i].classList.remove('d-none')
+            }
+            const btnSpinners = document.querySelectorAll('.loading-spinner');
+            for(let i = 0; i < btnSpinners.length; i++){
+                btnSpinners[i].classList.add('d-none')
+            }
+        }
+
+        let correct = false;
+        var loginWithPassword = (e) => {
+            if(!correct){
+                e.preventDefault();
+                buttonsToLoading();
+      
+                const USER_ENDPOINT = "https://user.inventashop.com.br/v1/marketplace-users/check-by-email?email=";
+                const API_TOKEN = "rxExWn5qzgGwEWOckeCbkGq9qlcHyyOgukkuoazt00F8BwEHN0311ei3kSkzfOE0cThnRhhG6kF76QdPxhEJJQlQrWukxSrIL4hqxFAlQVpI1WQnDLZSjCpQaGc8D0eH";
+        
+                const customerLoginEmailInput = document.getElementById('customer[email]');
+                const params = (new URL(document.location)).searchParams;
+                const utm__medium = params.get("utm_medium");
+                const utm__source = params.get("utm_source");
+      
+                if(utm__medium != null && utm__source != null ){
+                var URL_REDIRECT = "https://loja.inventa.shop/login?utm_medium="+utm__medium+"&utm_source="+utm__source+"&q="+utm__source;  
+                }else{
+                var URL_REDIRECT = "https://loja.inventa.shop/login";  
+                }
+                fetch(`${USER_ENDPOINT}${customerLoginEmailInput.value}`, {
+                method: 'GET',
+                headers: {
+                    'mode': 'cors',
+                    'Accept': '*/*',
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${API_TOKEN}`
+                }
+                  
+                })
+                  
+                .then(res => res.json())
+                .then(data => {
+                    if (data) {
+                        if (data.newMarketplace === true) {
+                            var now = new Date();
+                            var cookieName = 'marketplace-email';
+                            var cookieValue = customerLoginEmailInput.value;
+                            now.setTime(now.getTime() + 1 * 3600 * 1000);
+                            document.cookie = cookieName +"=" + cookieValue + ";expires=" + now.toUTCString() 
+                      + ";domain=.inventa.shop;path=/";
+                          window.location.replace(URL_REDIRECT);
+                          return false;
+                        } 
+                      else{
+                      const user = document.getElementById('customer[email]').value;
+                      const pass = document.getElementById('customer[password]').value;
+                      const data = {
+                        'customer[email]': user,
+                        'customer[password]': pass,
+                        form_type: 'customer_login',
+                        utf8: '✓'
+                    }
+                      fetch('/account/login', {
+                        method: 'POST',
+                        headers: {
+                            'content-type': 'application/x-www-form-urlencoded'
+                        },
+                        body: new URLSearchParams(data).toString()
+                    }).then(res => res.text())
+                      .then(res => {
+                        const successfulLogin = res.match(/class="customerIsLogged"/);
+                        if(80000 < parseInt(successfulLogin.index)){
+                            const errorMessage = document.getElementById('login-form-error');
+                            if(errorMessage){
+                                buttonsToNormal();
+                                errorMessage.classList.remove('d-none');
+                            }
+                            if(typeof showWppText == 'function') showWppText();
+                            driver.pushEvent('loginFailed', {
+                                email: user
+                            });
+                            saveEvent('/data/shopify/create/failure/login', 'POST', {
+                                email: user,
+                                date: new Date().toLocaleString('pt-BR').split(' ')[0]
+                            });
+                        }else{
+                            userPlatform.signInCallback(pass);
+                            correct = true;
+                            loginForm.submit();
+                        }
+                    })
+                      }
+                    }
+                });
+                
+                
+            }
+        }
+
+        function myFunction() {
+          
+            var LoginForm = document.querySelector("#customer_login");
+            LoginForm.classList.add("d-none");
+            var preLoginForm = document.querySelector("#pre-login-form");
+            preLoginForm.classList.remove("d-none"); 
+          }
+
+        const loginForm = document.getElementById('customer_login');
+        if(loginForm){
+            const login_email = document.getElementById('customer[email]');
+            if(login_email){
+                login_email.addEventListener('input', (e) => {
+                    const email = e.target.value;
+                    const password = document.getElementById('customer[password]');
+                    const button = document.querySelector('button[data-button="password-login"]');
+                    if(email && regexEmail(email) && password && password.value.length) button ? button.removeAttribute('disabled') : '';
+                    else button ? button.setAttribute('disabled', 'true') : '';
+                });
+            }
+            const login_password = document.getElementById('customer[password]');
+            if(login_password){
+                login_password.addEventListener('input', (e) => {
+                    const password = e.target.value;
+                    const email = document.getElementById('customer[email]');
+                    const button = document.querySelector('button[data-button="password-login"]');
+                    if(password && password.length && email && regexEmail(email.value))button ? button.removeAttribute('disabled') : '';
+                    else button ? button.setAttribute('disabled', 'true') : '';
+                })
+            }
+
+            const phoneEmail_input = document.getElementById('customer[code-phone]');
+            if(phoneEmail_input){
+                phoneEmail_input.addEventListener('input', (e) => {
+                    const input_value = e.target.value;
+                    const button = document.querySelector('button[data-button="code-login"]')
+                    if(input_value && emailOrBrPhone(input_value)) button ? button.removeAttribute('disabled') : '';
+                    else button ? button.setAttribute('disabled', 'true') : '';
+                })
+            }
+        }
+
+        const recoverPassword = document.querySelector('.forgotPassword-form form');
+        if(recoverPassword){
+            recoverPassword.addEventListener('submit', (e) => {
+                e.preventDefault();
+                buttonsToLoading();
+                const data = new URLSearchParams(new FormData(recoverPassword));
+                fetch('/account/recover', {
+                    method: 'post',
+                    body: data
+                }).then(res => {
+                    buttonsToNormal();
+                    if(res.status == 200){
+                        const errorMessage = recoverPassword.querySelector('.alert.alert--error');
+                        if(errorMessage){
+                            errorMessage.classList.add('d-none');
+                        }
+                        const successMessage = recoverPassword.querySelector('.alert.alert--success');
+                        if(successMessage){
+                            successMessage.classList.remove('d-none');
+                        }
+                    }else{
+                        const successMessage = recoverPassword.querySelector('.alert.alert--success');
+                        if(successMessage){
+                            successMessage.classList.add('d-none');
+                        }
+                        const errorMessage = recoverPassword.querySelector('.alert.alert--error');
+                        if(errorMessage){
+                            errorMessage.classList.remove('d-none');
+                        }
+                    }
+                })
+            })
+        }
+    }
+
+    function isPhone(string){
+        if(string && string.match(/^\d{10,11}\b/g)) return true;
+        else return false;
+    }
+
+    function emailOrBrPhone(string){
+        if(string && (string.match(/^[\w-\.\+\u00C0-\u017F]+@([\w-]+\.)+[\w-]{2,6}$/g) || string.match(/^\d{10,11}\b/g))) return true;
+        else return false;
+    }
+    function regexEmail(string){
+        if(string && string.match(/^[\w-\.\+\u00C0-\u017F]+@([\w-]+\.)+[\w-]{2,6}$/g)) return true;
+        else return false;
+    }
+
+    
+    
+</script>
+
+<script>
+const validateURL = () => {
+    const currentURL = new URL(window.document.URL);
+    const urlParams = currentURL.searchParams;
+    const mediumParameter = urlParams.get("utm_medium");
+    const sourceParameter = urlParams.get("utm_source");
+    const referralContainer = document.querySelector(".container-referral");
+    const noReferralContainer = document.querySelector(".container-no-referral");
+    const vendorNameContainer = document.querySelector(".container-modal-referral .vendor-name");
+    const spanModal = document.querySelector(".container-modal-referral-mobile .vendor-name");
+
+    noReferralContainer.classList.remove("d-none");
+    if (mediumParameter) {
+      const vendorNameParameter = currentURL.searchParams.get("q");
+      
+      if (vendorNameParameter) {
+          vendorNameContainer.innerText = vendorNameParameter
+          spanModal.innerText = vendorNameParameter
+      };
+      
+      if (referralContainer && sourceParameter && (mediumParameter == 'widget' || mediumParameter == 'ig_referral' || mediumParameter == "ref_link")) {
+          referralContainer.classList.remove("d-none");
+          noReferralContainer.classList.add("d-none");
+      }
+    }
+}
+
+validateURL();
+
+</script>
+
+<script type='text/javascript'>
+    (function() {
+        'use strict';
+        function remoteModal(idModal){
+            var vm = this;
+            vm.modal = $(idModal);
+
+            if( vm.modal.length == 0 ) {
+                return false;
+            }
+
+            if( window.location.hash == idModal ){
+                openModal();
+            }
+        }
+        Window.prototype.remoteModal = remoteModal;
+    })();
+
+    $(function(){
+        window.remoteModal('#modal-popup');
+    });
+</script>

@@ -1,0 +1,387 @@
+{
+  "form": {
+    "id": "4Qtzl7",
+    "name": "Manufacturer compact form",
+    "handle": "manufacturer-phone-contact",
+    "theme_id": "127010570447",
+    "settings": {
+      "locales": {
+        "back": "Atrás",
+        "next": "Próximo",
+        "cancel": "Cancelar",
+        "edit_link": "Edit account",
+        "fix_errors": "Por favor corrija os erros antes de continuar",
+        "is_invalid": "{{label}} é inválido",
+        "email_taken": "O e-mail já foi tomado",
+        "phone_taken": "O número de telefone já foi escolhido",
+        "server_error": "Não foi possível salvar o formulário, tente novamente mais tarde",
+        "step_counter": "Paso {{current}} de {{total}}",
+        "verify_email": "Verifique seu e-mail para obter um link de verificação para ativar sua conta.",
+        "not_available": "Ocorreu um erro ao salvar sua conta, tente novamente em alguns minutos.",
+        "create_account": "Enviar",
+        "update_account": "Enviar",
+        "recaptcha_error": "Challenge verification failed, please try again",
+        "creating_account": "Salvando...",
+        "updating_account": "Salvando...",
+        "invalid_email_domain": "O e-mail contém um nome de domínio inválido"
+      },
+      "whitelistedTags": "",
+      "markRequiredFields": false,
+      "displayCancelButton": false,
+      "redirectAfterSubmit": false,
+      "goBackAfterSubmission": false,
+      "accountApprovalRequired": true,
+      "cancelButtonRedirectUrl": "\/account\/login",
+      "emailVerificationRequired": false,
+      "postSubmissionRedirectUrl": "\/account",
+      "showSuccessStepAfterSubmit": true,
+      "goBackAfterCancelButtonClick": false
+    },
+    "install_locations": [
+      "manual"
+    ],
+    "created_at": "2021-04-07T21:19:41Z",
+    "updated_at": "2021-12-15T16:26:42Z",
+    "revision_ids": [
+      "kdT50lo",
+      "7kTx9X",
+      "evT9N9K",
+      "6XTxaKn",
+      "wDTKl86",
+      "7kTOq5",
+      "yzT36d",
+      "evT9kG4",
+      "vbT7BA",
+      "X1TqyP",
+      "kdTy6n",
+      "Z6TRV8",
+      "p4TLkz",
+      "X1Tq03",
+      "kdTr8E",
+      "p4TLr8",
+      "evT98RO",
+      "K0TqOe",
+      "rATg8k",
+      "p4TZNmG",
+      "X1Tk7Ab",
+      "DRTr12R",
+      "boT5Poa",
+      "6XTxexK",
+      "GYTXLX",
+      "evTXb2",
+      "7kTOD1",
+      "2ETMnV",
+      "VNT071"
+    ]
+  },
+  "revision": {
+    "id": "kdT50lo",
+    "created_at": "2022-01-12T18:25:10Z",
+    "updated_at": "2022-01-12T18:25:10Z",
+    "embed_version": "4.8.4",
+    "published_at": null,
+    "fields": [
+      {
+        "id": 186006,
+        "dataColumn": {
+          "key": "tipo_de_conta",
+          "label": "Tipo de conta",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 0,
+        "type": "dropdown",
+        "stepId": 144809,
+        "default": "Fornecedor",
+        "label": "Tipo de conta",
+        "placeholder": "Selecione um tipo de conta",
+        "description": "",
+        "enum": [
+          {
+            "label": "Fornecedor",
+            "value": "Fornecedor"
+          },
+          {
+            "label": "Lojista",
+            "value": "Lojista"
+          }
+        ],
+        "appearance": {
+          "width": 12,
+          "cssClass": "invisible position-absolute start-0"
+        },
+        "settings": {
+          "end": 10,
+          "start": 1,
+          "enumType": "list",
+          "hideLabel": true,
+          "separateValues": false
+        },
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Insira um tipo de conta"
+          }
+        ],
+        "sensitive": null,
+        "preset": null,
+        "autotag": true
+      },
+      {
+        "id": 171183,
+        "dataColumn": {
+          "key": "first_name",
+          "label": "First name",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 1,
+        "type": "text",
+        "stepId": 144809,
+        "default": "",
+        "label": "Nome",
+        "placeholder": "Nome",
+        "description": null,
+        "enum": null,
+        "appearance": {
+          "width": 6,
+          "cssClass": ""
+        },
+        "settings": {
+          "hideLabel": true
+        },
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Por favor forneça um nome válido"
+          }
+        ],
+        "sensitive": false,
+        "preset": "first_name",
+        "autotag": null
+      },
+      {
+        "id": 481471,
+        "dataColumn": {
+          "key": "phone",
+          "label": "Phone number",
+          "dataType": "phone"
+        },
+        "parentId": null,
+        "position": 2,
+        "type": "phone",
+        "stepId": 144809,
+        "default": "",
+        "label": "Phone number",
+        "placeholder": "Whatsapp",
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 6
+        },
+        "settings": {
+          "hideLabel": true,
+          "defaultCountryCode": "BR"
+        },
+        "validations": [
+          {
+            "operator": "is_valid",
+            "comparand": null,
+            "errorMessage": "O telefone tem um formato incorreto"
+          }
+        ],
+        "sensitive": null,
+        "preset": "phone_number",
+        "autotag": null
+      },
+      {
+        "id": 136272,
+        "dataColumn": {
+          "key": "clients_quantity",
+          "label": "clients_quantity",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 3,
+        "type": "dropdown",
+        "stepId": 144809,
+        "default": "",
+        "label": "Quantidade de lojistas que você atende\n",
+        "placeholder": "Quantidade de lojistas que você atende",
+        "description": "",
+        "enum": [
+          {
+            "label": "1-50",
+            "value": "1-50"
+          },
+          {
+            "label": "51-200",
+            "value": "51-200"
+          },
+          {
+            "label": "201-500",
+            "value": "201-500"
+          },
+          {
+            "label": "Mais de 500",
+            "value": "Mais de 500"
+          }
+        ],
+        "appearance": {
+          "width": 6
+        },
+        "settings": {
+          "end": 10,
+          "start": 1,
+          "enumType": "list",
+          "hideLabel": true,
+          "separateValues": false
+        },
+        "validations": [
+          {
+            "metadata": {
+              "hiddenInApp": true
+            },
+            "operator": "not_blank",
+            "comparand": "",
+            "errorMessage": "Escolha uma opção"
+          }
+        ],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 234711,
+        "dataColumn": {
+          "key": "site_url",
+          "label": "site url",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 4,
+        "type": "text",
+        "stepId": 144809,
+        "default": "",
+        "label": "site url",
+        "placeholder": "Instagram ou site da sua marca",
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 6
+        },
+        "settings": {
+          "hideLabel": true
+        },
+        "validations": [],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 806942,
+        "dataColumn": {
+          "key": "cdigo_de_indicacao",
+          "label": "Código de indicação",
+          "dataType": "text"
+        },
+        "parentId": null,
+        "position": 5,
+        "type": "text",
+        "stepId": 144809,
+        "default": "",
+        "label": "Código de indicação",
+        "placeholder": "Código de indicação",
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "hideLabel": true
+        },
+        "validations": [],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 120793,
+        "dataColumn": null,
+        "parentId": null,
+        "position": 0,
+        "type": "heading",
+        "stepId": 188311,
+        "default": "",
+        "label": "Account request sent heading",
+        "placeholder": null,
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12,
+          "cssClass": "mt-5",
+          "alignment": "center"
+        },
+        "settings": {
+          "size": 1,
+          "content": "Perfeito!",
+          "hideLabel": true,
+          "fontWeight": "bold"
+        },
+        "validations": [],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      },
+      {
+        "id": 220308,
+        "dataColumn": null,
+        "parentId": null,
+        "position": 1,
+        "type": "paragraph",
+        "stepId": 188311,
+        "default": "",
+        "label": "Reviewing submission explanation",
+        "placeholder": null,
+        "description": "",
+        "enum": [],
+        "appearance": {
+          "width": 12
+        },
+        "settings": {
+          "content": "<p style=\"text-align: center;\">Um consultor entrar&aacute; em contato com voc&ecirc; em breve!<\/p>",
+          "fontSize": 14,
+          "hideLabel": true
+        },
+        "validations": [],
+        "sensitive": null,
+        "preset": null,
+        "autotag": null
+      }
+    ],
+    "steps": [
+      {
+        "id": 144809,
+        "title": "Step 1",
+        "description": ""
+      },
+      {
+        "id": 188311,
+        "title": "Submission success",
+        "metadata": {
+          "isSuccessStep": true
+        },
+        "description": ""
+      }
+    ],
+    "rules": []
+  }
+}

@@ -1,0 +1,20 @@
+@media (min-width: 1000px) {
+  .banner-tutorial-slider.glider.draggable p {
+    font-size: 1.2rem!important;
+    width: 140px;
+  }
+
+  .banner-tutorial-slider.glider.draggable .col-7 {
+    margin: 0;
+    text-align: center;
+  }
+
+  .banner-tutorial-slider.glider.draggable .col-3 {
+    margin-left: 8.33333333%;
+  }
+}
+
+span.spf-product__label.marcas-label {
+  left: unset!important;
+  right: 0!important;
+}

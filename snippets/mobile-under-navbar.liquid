@@ -1,0 +1,149 @@
+<div class="{% if customer %}position-absolute{% else %}position-fixed{% endif %} top-0 start-0 vw-100 vh-100 hidden-lap-and-up invisible" style="opacity: 1!important;">
+    {%- if customer -%}
+    <div class="d-flex position-absolute start-0 w-100 flex-sticky-effect">
+        <div class="mobile-phone_navbar-wrapper start-0 w-100 pb-2 visible">
+            <a href="{{ routes.account_url }}" class="mobile-phone_navbar-item{% if request.path == "/account" %} active{% endif %}" {% if request.path == "/account" %}onclick="event.preventDefault();"{% endif %}>
+                {% include 'mobile-navbar-icons', icon_name: 'present' %}
+                <small class="color-main-100 font-family-02 body-5-density-3 fw-bold">Meus Pedidos</small>
+            </a>
+            <a href="{{ routes.account_addresses_url }}" class="mobile-phone_navbar-item{% if request.path == "/account/addresses" %} active{% endif %}" {% if request.path == "/account/addresses" %}onclick="event.preventDefault();"{% endif %}>
+                {% include 'mobile-navbar-icons', icon_name: 'truck' %}
+                <small class="color-main-100 font-family-02 body-5-density-3 fw-bold">Endereços</small>
+            </a>
+            <div onclick="openPagamentoPopup();" class="mobile-phone_navbar-item">
+                {% include 'mobile-navbar-icons', icon_name: 'coin' %}
+                <small class="color-main-100 font-family-02 body-5-density-3 fw-bold">Prazo</small>
+            </div>
+            <div class="mobile-phone_navbar-item">
+                {%- if menu.links.size > 0 -%}
+              <nav class="header__mobile-nav hidden-lap-and-up me-0">
+                <button class="header__mobile-nav-toggle icon-state touch-area" data-action="toggle-menu" aria-expanded="false" aria-haspopup="true" aria-controls="mobile-menu" aria-label="{{ 'header.navigation.open_menu' | t }}">
+                  <span class="icon-state__primary w-100 accent-hover">{% include 'mobile-navbar-icons', icon_name: 'ellipsis' %}</span>
+                  <span class="icon-state__secondary w-100 accent-hover">{%- render 'icon', icon: 'close' -%}</span>
+                </button>
+    
+                {%- render 'mobile-menu', menu: menu -%}
+              </nav>
+            {%- endif -%}
+                <small class="color-main-100 font-family-02 body-5-density-3 fw-bold">Mais</small>
+            </div>
+        </div>
+    </div>
+    {%- else -%}
+    <div class="mobile-phone_navbar-wrapper long-register_no-navbar no-customer position-absolute start-0 w-100 visible">
+        <a href="/pages/cadastro" class="mobile-phone_navbar-button p-2">
+            <button class="btn yellow-btn h-100 w-100 fw-bold font-family-02">Cadastre-se</button>
+        </a>
+        <a href="{{ routes.account_login_url }}" onclick="openLogin(event);" class="mobile-phone_navbar-button p-2">
+            <button class="btn transparent-btn h-100 w-100 fw-bold font-family-02">Entrar</button>
+        </a>
+        <a target="_blank" href="/#faq" class="mobile-phone_navbar-item svg-no-height color-main-100">
+            <div>
+                {% include 'mobile-navbar-icons', icon_name: 'faqs' %}
+            </div>
+            <small class="fw-bold">FAQ Lojista</small>
+        </a>
+    </div>
+    <div class="mobile-phone_navbar-wrapper long-register_navbar position-absolute start-0 w-100 visible d-flex align-items-center px-3 pt-1 d-none">
+        <div class="position-absolute start-0 top-0 long-register_progress-bar" style="width: 0;"></div>
+        <button onclick="window.RegisterDriver.previousStep();" class="long-register_back-button d-flex justify-content-center align-items-center">
+            <svg width="11" height="19" viewBox="0 0 11 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10.3725 18.1554C9.8825 18.639 9.0925 18.639 8.6025 18.1554L0.292501 9.95477C-0.0974979 9.5699 -0.0974979 8.94819 0.292501 8.56332L8.6025 0.362664C9.0925 -0.120888 9.8825 -0.120888 10.3725 0.362664C10.8625 0.846217 10.8625 1.62582 10.3725 2.10938L3.1325 9.26398L10.3825 16.4186C10.8625 16.8923 10.8625 17.6817 10.3725 18.1554Z" fill="black" fill-opacity="0.54"/>
+            </svg>                
+        </button>
+        <div class="flex-grow-1 d-flex justify-content-end align-items-center">
+            <p class="long-register_step-count noto-sanz me-4 mb-0">Página <span class="step_current">1</span>/<span class="step_total">3</span></p>
+            <button onclick="window.RegisterDriver.nextStep();" class="long-register_continue-button btn btn-dark px-4 fs-5 fw-bold roboto">
+                <span class="not-loading">Avançar</span>
+                <div class="spinner-border spinner-border-sm d-none loading text-light">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+            </button>
+        </div>
+    </div>
+    {%- endif -%}
+</div>
+
+<style>
+    .long-register_progress-bar{
+        height: 4px;
+        background-color: #B2C4C7;
+        transition: width 0.5s ease-in-out;
+        -o-transition: width 0.5s ease-in-out;
+        -moz-transition: width 0.5s ease-in-out;
+        -webkit-transition: width 0.5s ease-in-out;
+    }
+    .long-register_continue-button{
+        height: 45px;
+    }
+    .long-register_back-button{
+        border: 2px solid #999;
+        border-radius: 5px;
+        width: 45px;
+        height: 45px;
+    }
+    .mobile-phone_navbar-item .icon-state__secondary svg{
+        width: 18px;
+    }
+    .flex-sticky-effect{
+        align-items: flex-start;
+        height: 118px;
+        bottom: -2px;
+    }
+    .mobile-phone_navbar-wrapper{
+        padding-bottom: 8px;
+        background-color: #fff;
+        height: 76px;
+        bottom: -2px;
+        position: sticky;
+        align-self: flex-end;
+        box-shadow: 0px -5px 10px rgba(0, 0, 0, 0.15);
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+    }
+    .mobile-phone_navbar-wrapper.no-customer{
+        grid-template-columns: repeat(5, 1fr) !important;
+    }
+    .mobile-phone_navbar-item{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        color: #999;
+    }
+    .mobile-phone_navbar-button{
+        font-family: 'Roboto', sans-serif;
+        grid-column: span 2;
+    }
+    .mobile-phone_navbar-item.active{
+        border-bottom: 2px solid #1472E4;
+    }
+    .mobile-phone_navbar-item.active small{
+        color: #1472E4 !important;
+    }
+    .mobile-phone_navbar-item path{
+        fill: #1A1A1A !important;
+    }
+    .mobile-phone_navbar-item:nth-child(2) path {
+        stroke: #1A1A1A !important;
+    }
+    .mobile-phone_navbar-item.active path{
+        fill: #1472E4 !important;
+    }
+    .mobile-phone_navbar-item svg{
+        height: 22px;
+    }
+    .mobile-phone_navbar-item.svg-no-height svg{
+        height: initial !important;
+    }
+    .mobile-phone_navbar-item:hover .accent-hover{
+        stroke: var(--accent-color);
+        fill: var(--accent-color);
+    }
+    .bg-accent-color{
+        background-color: var(--accent-color);
+    }
+    .mobile-phone_navbar-item:hover .accent-hover{
+        color: var(--accent-color);
+    }
+</style>

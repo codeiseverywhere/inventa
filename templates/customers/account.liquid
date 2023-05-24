@@ -1,0 +1,244 @@
+{% include 'rebuy-popup' %}
+{%- assign customerState = '' -%}
+<section data-section-id="account" data-section-type="account" class="border-bottom">
+  <div class="container container--flush">
+    <div class="layout mb-0">
+      <div class="layout__section layout__section--secondary me-0">
+        {%- render "my-account-aside-nav" -%}
+        {%- if customer -%}
+          {% assign credit = 0 %}
+          {%- assign credit_tp = 0 -%}  
+          {% assign spent = 0 %}
+          {%- assign spent_tp = 0 -%} 
+          {% for tag in customer.tags %}
+          {% assign tagname = tag | downcase %}
+            {% if tag contains 'credit:' %}
+              {% assign credit = tag | split: ':' | last %}
+              {% assign creditDue = 90 %}
+            {% endif %}
+            {% if tag contains 'spent:' %}
+              {% assign found-spent = tag | split: ':' %}
+              {% assign spent = spent | plus: found-spent[1] %}
+            {% endif %}
+            {%- if tag contains 'credit-tp:' -%}  
+              {%- unless credit_tp == false -%} 
+                {%- assign credit_tp = tag | split: ':' | last -%}  
+              {%- endunless -%} 
+            {%- endif -%}
+            {%- if tag contains 'spent-tp:' -%} 
+              {%- assign spent_tp = tag | split: ':' | last -%} 
+            {%- endif -%}
+            {% if tag contains 'Block TruePay' %} 
+              {%- assign credit_tp = false -%}  
+            {% endif %} 
+            {% if tagname contains 'estado:' %}
+              {% assign customerState = tagname | remove: "estado:" | upcase %}              
+            {% endif %}
+          {% endfor %}
+          {% if customer.tags contains 'credit30' %}
+            {% assign creditDue = 30 %}
+          {% endif %}
+          {% assign credit = credit | minus: spent %}
+          {% assign cents = credit | modulo: 1 %}
+          {% assign credit = credit | minus: cents %}
+          {%- unless credit_tp == false -%} 
+            {%- assign credit_tp = credit_tp | minus: spent_tp -%}  
+            {%- assign cents = credit_tp | modulo: 1 -%}  
+            {%- assign credit_tp = credit_tp | minus: cents -%} 
+            {%- unless credit_tp > 0 -%}  
+              {%- assign credit_tp = true -%} 
+            {%- endunless -%} 
+          {%- endunless -%} 
+          {% comment %}
+          <div class="mx-4 mx-md-0">
+            <a href="/" class="btn btn-dark w-100 py-3 px-2 fw-bold">Indique Fornecedores</a>
+          </div>
+          {% endcomment %}
+          {% if credit > 0 or credit_tp %}
+            {% unless customer.tags contains "cpf-user" %}
+              <div class="px-sm-0 px-4 mt-5">
+                <div class="p-3 mt-3 fw-bold h4 border-radius-sm color-background-main-030 text-center">
+                  <p class="color-main-080">{{ credit | times: 100 | floor | money }} para pagar no boleto em {{ creditDue }} dias</p>
+                  <a href="/collections/marcas" class="btn color-main-white color-background-main-100 border-radius-sm w-100 py-3 px-2 fw-bold">Comprar</a>
+                </div>
+              </div>
+            {% endunless %}
+          {% endif %}
+        {%- endif -%}
+      </div>
+
+      <div class="layout__section border-start color-background-main-030 mb-0">
+        <div class="card border-0">
+          {%- if customer.orders.size == 0 -%}
+            <div class="card__section p-0 color-background-main-030 pt-5">
+              <div class="empty-state empty-state--extra-tight">
+                <p class="empty-state__icon-description color-main-100 display-5">0 pedidos :(</p>
+                
+                {% if credit > 0 or credit_tp %}
+                  {%- render "my-account-credit-msg", credit: credit, creditDue: creditDue, credit_tp: credit_tp  -%}
+                {% endif %}
+              </div>
+            </div>
+          {%- else -%}
+            {%- paginate customer.orders | where: "cancelled", false by 10 -%}
+              <div class="orders-container container py-4 px-5">
+                <h1 class="fw-light fs-2 ps-2 mb-4">Pedidos</h1>
+                {%- for order in customer.orders -%}
+                  {%- unless order.cancelled -%}
+                    <div class="row pt-4 pb-5 {% if forloop.index > 1 %} border-top{% endif %}">
+                      <div class="col-12 col-md-9">
+                        <div class="row">
+                          <div class="col-12">
+                            <p class="ms-1 fs-2 fw-bold">{{ order.name }}</p>
+                          </div>
+                        </div>
+                        <div class="row mt-4">
+                          <div class="col-6 col-md-3">
+                            <div>
+                              <i class="fas fa-calendar-day me-2 text-center text-grey fs-5 align-middle" aria-hidden="true"></i>
+                              <span class="text-muted small">DATA DO PEDIDO</span>
+                            </div>
+                            <span class="ms-4 ps-1">{{ order.created_at | date: "%d/%m/%Y" }}</span>
+                          </div>
+                          <div class="col-6 col-md-3">
+                            <div>
+                              <i class="fas fa-calendar-day me-2 text-center text-grey fs-5 align-middle" aria-hidden="true"></i>
+                              <span class="text-muted small">DATA DE ENTREGA</span>
+                            </div>
+                            <span class="ms-md-4 ps-1">Ver no detalhe</span>
+                          </div>
+                          <div class="col-12 col-md-5 mt-3 mt-md-0">
+                            <div>
+                              <i class="fas fa-dollar-sign me-2 text-center text-grey fs-5 align-middle" aria-hidden="true"></i>
+                              <span class="text-muted small">RESUMO DO PEDIDO</span>
+                            </div>
+
+                            {% assign orderTotal = order.total_net_amount %}
+                            {% assign paymentGateway = order.transactions[0].gateway %}
+
+                            <span class="d-block ms-4">{{ orderTotal | money }}</span>
+                            <span class="d-block ms-4">{% if paymentGateway == "checkout_via_ebanx_pay" %}Pago com Ebanx{% elsif paymentGateway contains "TruePay" %}Parcelado no Boleto TruePay{% elsif paymentGateway == "mercado_pago" %}Pago com Mercado Pago{% else %}{{ paymentGateway }}{% endif %}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-12 col-md-3">
+                        {%- assign updateElements = "/cart/add?" -%}
+                        {%- for line_item in order.line_items -%}
+                          {%- assign variant = line_item.product.first_available_variant -%}
+                          {%- if variant and line_item.product.available and line_item.product.published_at != null -%}
+                            {%- assign updateElements = updateElements | append: "id=" | append: line_item.product.first_available_variant.id | append: "&quantity=" | append: line_item.quantity | append: "&" -%}
+                          {%- endif -%}
+                        {%- endfor -%}
+                        {%- assign updateElements = updateElements | append: "return_to=/cart" -%}
+                        <a href="{{ updateElements }}" class="btn btn-outline-dark w-100 py-3 px-2 fw-bold mt-3"
+                          onclick="event.preventDefault();if(window.screen.width > 900){openReBuyModal([
+                            {%- assign auxUrl = '' %}
+                            {%- for line_item in order.line_items -%}
+                            {%- assign productQty = 1 -%}
+                            {%- assign stepQty = 1 -%}
+                            {%- assign taxAmount = 0 -%}
+                            {%- assign productOriginalPrice = 0 -%}
+                            {%- for tag in line_item.product.tags -%}
+                              {%- assign tagname = tag | downcase -%}
+                              {%- if tagname contains 'pedido mínimo (produto)' -%}
+                                {%- assign productQty = tag | split: '_' | last | plus: 0 | at_least: 1 -%}
+                              {%- endif -%}
+                              {%- if tagname contains 'quantidade_aumento' -%}
+                                {%- assign stepQty = tag | split: ':' | last | plus: 0 | at_least: 1 -%}
+                              {%- endif -%}
+                              {%- if tagname contains 'impostos' -%}
+                                {%- assign taxAmount = tag | split: customerState | last | split: '|' | first | remove: ':' | plus: 0 -%}
+                              {%- endif -%}
+                              {%- if tagname contains 'preco original:' -%}
+                                {%- assign productOriginalPrice = tagname | remove: 'preco original:' | times: 100 -%}
+                              {%- endif -%}
+                            {%- endfor -%}
+                            {%- if variant and line_item.product.available and line_item.product.published_at != null -%}
+                                {%- assign auxUrl = auxUrl | append: line_item.variant_id | append: ':' | append: line_item.quantity | append: '$!$' -%}
+                            {%- endif -%}
+
+                            {%- assign variant = line_item.product.first_available_variant -%}
+                            {
+                              'image': `{{ line_item.image | img_url: '50x50' }}`,
+                              'id': '{{ line_item.variant_id }}',
+                              'quantity': {{ line_item.quantity | at_least: 1 }},
+                              'title': '{{ line_item.title }}',
+                              'vendor': '{{ line_item.vendor }}',
+                              'available': {%- if variant and line_item.product.available and line_item.product.published_at != null -%}true{%- else -%}false{%- endif -%},
+                              'properties': {
+                                'min_quantity': '{{ productQty }}',
+                                'step_quatity': '{{ stepQty }}',
+                                'original_price': '{{ productOriginalPrice }}',
+                                'taxes': '{{ taxAmount }}',
+                                'price': '{{ line_item.product.price }}',
+                                'compare_at_price': '{{ line_item.product.compare_at_price }}'
+                              },
+                              'customer_estate': '{{ customerState }}'
+                            },
+                            {%- endfor -%}
+                          ]);}else {
+                                    fetch('/cart/add.js', {
+                                  method: 'POST',
+                  headers: {
+                                      'Content-Type': 'application/json'                                    
+                                    },
+                                    body: JSON.stringify({items: [
+                                      {%- assign auxUrl = auxUrl | split: '$!$' -%}
+                                        {%- for item in auxUrl -%}
+                                        { id: {{ item | split: ':' | first }}, quantity: {{ item | split: ':' | last }} },
+                                        {%- endfor -%}
+                                    ]})
+                                }).then(res => window.location.replace('/cart')); }">Comprar novamente</a>
+                        <a href="{{ order.customer_url }}" class="btn btn-dark w-100 py-3 px-2 fw-bold mt-3">Detalhes</a>
+                      </div>
+                    </div>
+                  {%- endunless -%}
+                {%- endfor -%}
+                {% comment %}
+                <table class="table table--loose">
+                  <thead>
+                    <tr>
+                      <th>{{ 'customer.order.order' | t }}</th>
+                      <th>{{ 'customer.order.date' | t }}</th>
+                      <th>{{ 'customer.order.payment_status' | t }}</th>
+                      <th>{{ 'customer.order.fulfillment_status' | t }}</th>
+                      <th class="table__cell--right">{{ 'customer.order.total' | t }}</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {%- for order in customer.orders -%}
+                      <tr>
+                        <td><a href="{{ order.customer_url }}" class="link link--accented">
+                          {{ order.transactions[0].gateway }}
+                        </a></td>
+                        <td>{{ order.created_at | date: format: 'month_day_year' }}</td>
+                        <td>{{ order.financial_status_label }}</td>
+                        <td>{{ order.fulfillment_status_label }}</td>
+                        <td class="table__cell--right">{{ order.total_price | money }}</td>
+                      </tr>
+                    {%- endfor -%}
+                  </tbody>
+                </table>
+                {% endcomment %}
+              </div>
+
+              {% if customer.orders.size == 1 %}
+                {% if credit > 0 or credit_tp %}
+                  <div class="bg-cream text-center p-5">
+                    {%- render "my-account-credit-msg", credit: credit, creditDue: creditDue, credit_tp: credit_tp  -%}
+                  </div>
+                {% endif %}
+              {% endif %}
+
+              {%- render 'pagination', paginate: paginate -%}
+            {%- endpaginate -%}
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% section 'static-promotion-list' %}
+{% section 'destaques-account-page' %}

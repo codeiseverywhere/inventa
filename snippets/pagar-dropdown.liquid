@@ -1,0 +1,144 @@
+<div class="pagar-dropdown_wrapper position-absolute d-flex flex-column w-100 start-0 pb-5 pt-2"></div>
+
+<style>
+    
+    #pagar-button.show .pagar-dropdown_wrapper{
+        visibility: visible;
+        pointer-events: all;
+        opacity: 1;
+    }
+    .pagar-dropdown_wrapper{
+        transition: opacity 0.5s;
+        -o-transition: opacity 0.5s;
+        -moz-transition: opacity 0.5s;
+        -webkit-transition: opacity 0.5s;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        z-index: 4;
+    }
+    .barcode-container{
+        padding: 0.5rem 1rem;
+        max-width: 600px;
+        margin: auto;
+        background-color: #fff;
+        box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.15);
+    }
+    .barcode-container p{
+        margin-bottom: 0.1rem;
+    }
+    .barcode-container p.paid{
+        color: #23DC3D;
+    }
+    .barcode-container p.expired{
+        color: #ff3333;
+    }
+    .barcode-container.barcode-container_expired img,
+    .barcode-container.barcode-container_paid img{
+        opacity: 0.2;
+    }
+  .download:hover {
+   color:#ff3333; 
+    text-decoration:underline;
+    }
+ 
+</style>
+
+<script>
+    function pagarDropdown_copyCode(event, code){
+        const input_aux = document.createElement('input');
+        input_aux.value = code;
+        input_aux.id = 'inputCopy-aux';
+        input_aux.style.opacity = 0;
+        document.body.append(input_aux);
+        const element = document.getElementById('inputCopy-aux');
+        if(element){
+            input_aux.select();
+            document.execCommand('copy');
+            input_aux.parentElement.removeChild(input_aux);
+        }
+
+        const message = 'Copiado!';
+        event.target.focus();
+        if(event.target.innerText != message){
+            const oldText = event.target.innerText;
+            event.target.innerText = message;
+            setTimeout(() => {
+                event.target.innerText = oldText;
+            }, 2500);
+        }
+    }
+
+    function pagarDropdown_toggle(payments = []){
+        if(Array.isArray(payments)){
+            const wrapper = document.querySelector('#pagar-button');
+            const payments_container = document.querySelector('.pagar-dropdown_wrapper');
+            if(payments_container){
+                payments_container.innerHTML = '';
+                for(let i = 0; i < payments.length; i++){
+                    
+                    const linhaDigitavel = payments[i].Linha_Digitavel;
+                    const codigoBarrasb64 = payments[i].Codigo_Barras_b64;
+                    const vencimentoData = payments[i].Vencimento_Data;
+                    const valor =  payments[i].Valor;
+                    const statusPagamento = payments[i].Status_Pagamento;
+                    const urlBoleto = payments[i].url_boleto;
+                  
+                    const link = `data:image/png;base64,${codigoBarrasb64}`;
+                    const title = payments.length > 1 ? `${i + 1}° Pagamento` : `Pagamento único`;
+                    const payment_element = document.createElement('div');
+                    payment_element.classList.add('barcode-container');
+                    if(statusPagamento.toLowerCase() == 'paid') payment_element.classList.add('barcode-container_paid');
+                    const expireDateParts = vencimentoData.split("/");
+                    const expire_date = new Date(parseInt(expireDateParts[2]),(parseInt(expireDateParts[1]) - 1),parseInt(expireDateParts[0]));
+                    const today = new Date('{{ "now" | date: "%Y-%m-%d" }}');
+                    const expired = statusPagamento.toLowerCase() != 'paid' && expire_date.getTime() < today.getTime();
+                    if(expired) payment_element.classList.add('barcode-container_expired');
+                    payment_element.onclick = (e) => e.stopPropagation();
+                    payment_element.innerHTML = `
+                        <div class="d-flex">
+                            <p class="fs-4 flex-grow-1">${title}</p>
+                            ${statusPagamento.toLowerCase() == 'paid' ? `<p class="fs-4 pe-3 paid text-nowrap">
+                                <i class="far fa-check-circle"></i>
+                                Pago
+                            </p>` : ''}
+                            ${statusPagamento.toLowerCase() == 'pending' ? `<p class="fs-4 pe-3 expired text-nowrap">
+                                <i class="far fa-times-circle"></i>
+                                <a class="download" href="${urlBoleto}" >Download</a>
+                            </p>` : ''}
+                            ${
+                                expired ? `
+                                <p class="fs-4 pe-3 expired text-nowrap">
+                                    <i class="far fa-times-circle"></i>
+                                    Vencido
+                                </p>`
+                                : ""
+                            }
+                            
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-12 col-sm-6">
+                                <p class="fs-4 lh-1">Valor: R$ ${valor}</p>
+                                <p>Data de expiração: ${vencimentoData}</p>
+                            </div>
+                            ${
+                    expired || statusPagamento.toLowerCase() == 'paid' ? "" :
+                                `<div class="col-12 col-sm-6 d-sm-flex">
+                                    <button onclick="pagarDropdown_copyCode(event, '${linhaDigitavel}');" class="btn btn-dark py-2 px-3 ms-auto text-nowrap">Copiar codigo</button>
+                                </div>`
+                            }
+                        </div>
+                        
+                        <img src="${link}" />
+                    `;
+                    payments_container.append(payment_element);
+                }
+            }
+            if(wrapper) wrapper.classList.toggle('show');
+        }
+    }
+    function pagarDropdown_close(){
+        const wrapper = document.querySelector('#pagar-button');
+        if(wrapper) wrapper.classList.remove('show');
+    }
+</script>

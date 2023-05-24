@@ -1,0 +1,72 @@
+<section data-section-id="{{ section.id }}" data-section-type="giant-number-and-text">
+    <div class="row d-md-flex align-items-center justify-content-center text-muted py-5" >
+        <div class="text-center col-md-5 mb-5 mb-lg-0">
+            <h2 class="giant-number m-0 lh-1 color-main-100" >{{ section.settings.giantnumber }}</h2>
+            <p class="fs-4 color-main-100">{{ section.settings.giantfooter }}</p>
+        </div>
+        <div class="offset-1 me-4 col-md-5 col-10">
+            <h3 class="display-5 mb-lg-0 mb-4 color-main-100">{{ section.settings.title }}</h3>
+            <p class="fs-4">{{ section.settings.content }}</p>
+        </div>
+    </div>
+</section>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap');
+    .giant-number{
+        font-size: 250px;
+        font-family: 'Lato';
+        font-weight: 200;
+    }
+
+    @media(max-width: 767px){
+        .giant-number{
+            font-size: 70vw;
+        }   
+    }
+</style>
+
+{% schema %}
+{
+    "name": "Text with background",
+    "settings": [
+        {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Título"
+        },
+        {
+            "type": "textarea",
+            "id": "content",
+            "label": "Content",
+            "default": "Conteúdo"
+        },
+        {
+            "type": "text",
+            "id": "giantnumber",
+            "label": "Giant",
+            "default": "0"
+        },
+        {
+            "type": "text",
+            "id": "giantfooter",
+            "label": "GiantFooter",
+            "default": "pé de gigante"
+        },
+        {
+            "type": "color",
+            "id": "numbercolor",
+            "label": "Giant number color",
+            "default": "#C4C4C4"
+        }
+    ],
+    "presets": [
+        {
+            "category": "Custom Sections",
+            "name": "Giant number and text",
+            "settings": {}
+        }
+    ]
+}
+{% endschema %}

@@ -1,0 +1,85 @@
+<section id="home-new-brands-section" class="section my-0 pt-5 mt-3" data-section-id="home-new-brands-section">
+  <div class="container">
+    {% render 'brands-carousel-home', wrapperName: 'home-new-brands-wrapper', containerName: 'home-new-brands-slider', custom_title: 'Marcas adicionadas recentemente', collectionArray: collections.novas-marcas.products %}
+  </div>
+</section>
+
+<style>
+  .home-new-brands-wrapper .previous-slide,
+  .home-new-brands-wrapper .next-slide {
+    position: absolute;
+    padding: 0 12px;
+    z-index: 1;
+    font-size: 1.7rem;
+    width: auto;
+    top: 0;
+    bottom: 0;
+  }
+
+  .home-new-brands-wrapper .next-slide svg,
+  .home-new-brands-wrapper .previous-slide svg {
+    width: 35px;
+    height: 35px;
+    padding: 7px;
+  }
+
+  .home-new-brands-wrapper .previous-slide svg path,
+  .home-new-brands-wrapper .next-slide svg path {
+    stroke-width: 1;
+  }
+
+  .home-new-brands-wrapper .next-slide {
+    right: -30px;
+  }
+
+  .home-new-brands-wrapper .previous-slide {
+    left: -30px;
+  }
+
+  #home-new-brands-section .sale-text {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    color: #1472E4;
+    background-color: #EDF4FD;
+    width: 70px;
+    text-align: center;
+    z-index: 1;
+  }
+
+  #home-new-brands-section .brand-item .spf-product-card__inner {
+    border: 1px solid #C7D3D9;
+    overflow: hidden;
+  }
+
+  .home-new-brands-slider {
+    padding-right: 0!important;
+    padding-left: 0!important;
+  }
+</style>
+
+<script>
+  
+
+</script>
+
+{% schema %}
+{
+  "name": "home-new-brands-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Título"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Custom Sections",
+      "name": "home-new-brands-section",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

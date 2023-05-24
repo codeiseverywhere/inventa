@@ -1,0 +1,85 @@
+<section class="section pb-5 mt-0 px-5 px-lg-0 position-relative my-lg-5 container-fluid" data-section-id="{{ section.id }}" data-section-type="text-and-list">
+  <div class="row justify-content-center pt-md-5 lg-5">
+    <div class="col-lg-4 offset-lg-2 pt-3">
+      <h2 class="pt-5 display-4 color-main-100">
+        <span>{{ section.settings.title }}</span>
+      </h2>
+      <p class="fs-4 color-main-100">
+        <span>{{ section.settings.subtitle }}</span>
+      </p>
+    </div>
+    <div class="col-lg-5 mt-md-5 offset-lg-1 mt-3">
+      {%- for block in section.blocks -%}
+        <div class="row py-3">
+          <span class="list-numbercircled color-{{ forloop.index }} col-1 fs-2 color-main-090">{{ forloop.index }}</span>
+          <p class="col-9 fs-2 text-muted pt-2 mt-2 ms-sm-4 color-main-100">{{ block.settings.content }}</p>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<style>
+  .list-numbercircled {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  {%- for block in section.blocks -%}
+    .list-numbercircled.color-{{ forloop.index }} {
+      background-color: {{ block.settings.background-color }}
+    }
+  {%- endfor-%}
+</style>
+
+{% schema %}
+{
+  "name": "Text and List",
+  "max_blocks": 10,
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Título"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Subtítulo"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Item",
+      "settings": [
+        {
+          "type": "color",
+          "id": "background-color",
+          "label": "Background color",
+          "default": "#ecf0f1"
+        },
+        {
+          "type": "text",
+          "id": "content",
+          "label": "Title",
+          "default": "Título"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "category": "Custom Sections",
+      "name": "Text and List",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

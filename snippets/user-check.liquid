@@ -1,0 +1,26 @@
+{%- assign userData = "" -%}
+{%- if customer %}
+	{%- assign userData = "Oi " | append: customer.first_name | append: ", esta pronto para a sua primeira compra?" -%}
+	{%- if customer.orders_count > 0 -%}
+		{%- assign userData = "Oi " | append: customer.first_name | append: ", vai comprar de novo?" -%}
+	{%- endif -%}
+{%- endif -%}
+
+<script defer>
+	let user = "{{ userData }}";
+	let isNewUser = null;
+	if (user == "") {
+		if (!window.localStorage.getItem("currentUser")) {
+			user = "Ola, bem-vindo pela primeira vez à Inventa!";
+			window.localStorage.setItem("currentUser", true);
+          
+          //First time open register popup
+            if(window.location.pathname != '/') {
+                if(typeof openModal == 'function') openModal();
+                if(typeof switchForm == 'function') switchForm('register');
+            }
+		} else {
+			user = "Ola de novo ;) Ainda não tem conta conozco?";
+		}
+	}
+</script>

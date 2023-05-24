@@ -1,0 +1,208 @@
+<section class="container-fluid contact-section py-5" data-section-id="{{ section.id }}" data-section-type="contact-section">
+  <div class="col-10 offset-1 py-5">
+    <div class="row my-5">
+      <div class="col-md-6 mb-5">
+        <h2 class="display-3 fw-bold">{{ section.settings.title }}</h2>
+      </div>
+      <div class="col-md-5 offset-md-1">
+        {%- comment -%}
+        {%- form 'contact', class: 'form input group' -%}
+          {%- if form.posted_successfully? -%}
+            <p class="alert alert--success">{{ 'contact.form.successfully_sent' | t }}</p>
+          {%- endif -%}
+
+          {%- if form.errors -%}
+            <div class="alert alert--error" id="contact-form-error">
+              <ul class="alert__error-list" role="list">
+                {%- for field in form.errors -%}
+                  {%- if field == 'form' -%}
+                    <li class="alert__error-item">{{ form.errors.messages[field] }}</li>
+                  {%- else -%}
+                    <li class="alert__error-item">{{ form.errors.translated_fields[field] | capitalize }} {{ form.errors.messages[field] }}</li>
+                  {%- endif -%}
+                {%- endfor -%}
+              </ul>
+            </div>
+          {%- endif -%}
+          <input type="text" name="contact[name]" class="form-control mb-2 p-3" placeholder="Nome completo" required title="Por favor forneça um nome válido">
+          <input type="tel" name="contact[telephone]" class="form-control mb-2 p-3" placeholder="Telefone comercial" required title="Por favor forneça um telefone válido">
+          <input type="email" name="contact[email]" class="form-control mb-2 p-3" placeholder="Email comercial" required title="Por favor forneça um email válido">
+          <textarea name="contact[body]" class="form-control mb-1 p-3" rows="4" placeholder="Mensagem" required title="Por favor complete com o seu motivo de contato"></textarea>
+          <div class="d-grid gap-2 col-lg-6">
+            <button type="submit" class="btn btn-dark mt-4 py-3 px-5 d-block">Enviar</button>
+          </div>
+        {%- endform -%}
+        {%- endcomment -%}
+        {% if shop.name contains "DEV" %}
+          {% render "customer-fields", form_id: "Y8t26A" %}
+        {% else %}
+          {% render "customer-fields", form_id: "8btYL7" %}
+        {% endif %}
+      </div>
+    </div>
+    <div class="row my-5 py-5 g-0">
+      {%- for block in section.blocks -%}
+      <div class="col-lg-4 mb-5 listitem-fontcolor-{{ forloop.index }}">
+        <h2 class="display-5 pb-4 border-bottom fw-bold">
+          {%- if block.settings.title != null and block.settings.title != "" -%}
+          {{block.settings.title}}
+          {%- else -%}
+          &nbsp;
+          {%- endif -%}
+        </h2>
+        <h2 class="fw-bolder fs-3 pt-4">{{ block.settings.subtitle }}</h2>
+        {% if block.settings.detail-1 contains '@' %}
+        	<a href="mailto:{{ block.settings.detail-1 }}">
+        {% endif %}
+        {% if block.settings.detail-1 contains 'vagas' %}
+          <a href="https://www.linkedin.com/company/inventashop/">
+        {% endif %}
+        <p class="fs-5 m-0">{{ block.settings.detail-1 }}</p>
+        {% if block.settings.detail-1 contains '@' %}
+        	</a>
+        {% endif %}
+        {% if block.settings.detail-2 contains '+55' %}
+          <a href="https://wa.me/{{ block.settings.detail-2 | remove: "+" | remove: "-" | remove: " " }}?text=Olá%2C+poderia+me+ajudar+com+o+meu+pedido?">
+        {% endif %}
+        <p class="fs-5 m-0">{{ block.settings.detail-2 }}</p>
+        {% if block.settings.detail-2 contains '+55' %}
+          </a>
+        {% endif %}
+        <p class="fs-5 m-0">{{ block.settings.detail-3 }}</p>
+      </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact-section{
+    color: {{ section.settings.font-color }};
+    background-color: {{ section.settings.background }};
+    {%- if section.settings.image -%}
+    background-image: url({{ section.settings.image | img_url: 'master' }});
+    background-size: cover;
+    {%- endif -%}
+  }
+  {% for block in section.blocks -%}
+  .listitem-fontcolor-{{ forloop.index }}{
+    color: {{ block.settings.font-color }};
+  }
+  .listitem-fontcolor-{{ forloop.index }} h2{
+    border-color: {{ block.settings.font-color }} !important;
+  }
+  {% endfor %}
+  div.cf-field h1{
+    font-size: 3rem;
+  }
+  div.cf-field div p{
+    font-size: 1rem;
+  }
+
+  #create_customer input,
+  #create_customer textarea {
+    border-radius: 8px !important;
+    font-size: 16px !important;
+  }
+
+  #create_customer input,
+  #create_customer textarea {
+    color: #777A7C;
+  }
+
+  #create_customer input.is-filled,
+  #create_customer textarea.is-filled {
+    color: #1A1A1A !important;
+  }
+
+  #create_customer .cf-submit-form {
+    border-radius: 8px !important;
+    font-weight: bold;
+    color: #1A1A1A;
+    background-color: #FFD93D;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Contact section",
+  "max_blocks": 3,
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Título"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background color",
+      "default": "#383838"
+    },
+    {
+      "type": "color",
+      "id": "font-color",
+      "label": "Font color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+      "info": "Imagem"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Item",
+      "settings": [
+        {
+          "type": "color",
+          "id": "font-color",
+          "label": "Font color",
+          "default": "#FFFFFF"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Título"
+        },
+        {
+          "type": "textarea",
+          "id": "subtitle",
+          "label": "Subtitle",
+          "default": "Subtítulo"
+        },
+        {
+          "type": "text",
+          "id": "detail-1",
+          "label": "Detail",
+          "default": "Detalle"
+        },
+        {
+          "type": "text",
+          "id": "detail-2",
+          "label": "Detail",
+          "default": "Detalle"
+        },
+        {
+          "type": "text",
+          "id": "detail-3",
+          "label": "Detail",
+          "default": "Detalle"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "category": "Custom Sections",
+      "name": "Contact section",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

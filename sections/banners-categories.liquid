@@ -1,0 +1,272 @@
+{%- assign menu-handle = section.settings.navigation_menu | default: 'categories-banner' -%}
+{%- assign navigation-menu = linklists[menu-handle] -%}
+{%- assign main_categories = "" -%}
+{%- assign sub_categories = "" -%}
+{%- for link in navigation-menu.links -%}    
+{%- assign main_categories = main_categories | append: link.title | append: '::' | append: link.url | append: '$!$' -%}
+{%- if link.links.size > 0 -%}
+{%- assign sub_categories = sub_categories | append: link.title | append: ':' -%}
+{%- for sublink in link.links -%}
+{%- assign sub_categories = sub_categories | append: sublink.title | append: '||' | append: sublink.url  | append: '$!$' -%}
+{%- endfor -%}
+{%- assign sub_categories = sub_categories | append: ';,' -%}
+{%- endif -%}
+{%- endfor -%}
+
+{%- assign onlyShow = false -%}
+{%- if main_categories contains collection.title -%}
+{%- assign splitter = '::' | append: collection.url -%}
+{%- assign onlyShow = main_categories | split: splitter | first | split: '$!$' | last -%}   
+{%- endif -%}
+
+{%- assign count = 0 -%}
+
+{%- comment -%}
+If this is not true then means no category will be shown
+{%- endcomment -%}
+{%- if collection.handle == "all" or onlyShow -%}
+<section class="maxw-1440 position-relative mt-md-3 m-auto" data-section-id="{{ section.id }}" data-section-type="banners-categories" style="visibility: hidden;max-height: 1px!important;">
+  <button class="previous-slide">{%- render 'icon', icon: 'arrow-left' -%}</button>
+  <button class="next-slide">{%- render 'icon', icon: 'arrow-right' -%}</button>
+  <div class="categories-slider">
+    {%- if onlyShow -%}
+    {%- assign splitter = onlyShow | append: ':' -%}
+    {%- assign categories = sub_categories | split: splitter | last | split: ';,' | first -%}
+    {%- for block in section.blocks -%}
+    {%- if count > section.settings.max-categories -%}{% break %}{%- endif -%}
+    {%- if categories contains block.settings.category_title -%}
+    {%- assign splitter = block.settings.category_title | append: '||' -%}
+    {%- assign link = categories | split: splitter | last | split: '$!$' | first -%}
+    <div class="categories-slide{{ count }} category-container">
+      <div class="position-relative rounded-2">
+        <a onclick="categoryClicked('{{ block.settings.category_title }}')" href="{{ link }}">
+          <img src="{{ block.settings.category_image | img_url: 'master' }}" alt="category-{{ block.settings.category_title }}">
+        </a>
+      </div>
+    </div>
+    {%- assign count = count | plus: 1 -%}
+    {%- endif -%}
+    {%- endfor -%}
+    {%- elsif collection.handle == 'all' -%}
+    {%- for block in section.blocks -%}
+    {%- if count > section.settings.max-categories -%}{% break %}{%- endif -%}
+    {%- if main_categories contains block.settings.category_title -%}
+    {%- assign splitter = block.settings.category_title | append: '::' -%}
+    {%- assign link = main_categories | split: splitter | last | split: '$!$' | first -%}
+    <div class="categories-slide{{ count }} category-container">
+      <div class="position-relative rounded-2">
+        <a onclick="categoryClicked('{{ block.settings.category_title }}')" href="{{ link }}">
+          <img src="{{ block.settings.category_image | img_url: 'master' }}" alt="category-{{ block.settings.category_title }}">
+        </a>
+      </div>
+    </div>
+    {%- assign count = count | plus: 1 -%}
+    {%- endif -%}
+    {%- endfor -%}
+    {%- endif -%}
+  </div>
+</section>
+
+{%- comment -%}
+This is true only when at least 1 category banner is spawned, else we are not sending this
+{%- endcomment -%}
+{%- if count > 0 -%}
+<style>
+  section[data-section-type="banners-categories"] {
+    position: relative;
+  }
+  section[data-section-type="banners-categories"] .next-slide svg,
+  section[data-section-type="banners-categories"] .previous-slide svg{
+    background: #c4c4c4;
+    border-radius: 50%;
+    color: #fff;
+    width: 2rem;
+    height: 2rem;
+    padding: 0.5rem;
+  }
+  section[data-section-type="banners-categories"] .next-slide,
+  section[data-section-type="banners-categories"] .previous-slide{
+    position: absolute;
+    z-index: 2;
+    height: 100%;
+  }
+  section[data-section-type="banners-categories"] .next-slide{
+    right: 0;
+    padding-left: 0.75rem;
+  }
+  section[data-section-type="banners-categories"] .previous-slide{
+    left: 0;
+    padding-right: 0.75rem;
+  }
+
+  .category-container{
+    overflow: hidden;
+  }
+  .category-container img{
+    max-width: 100%;
+  }
+  .category-text{
+    padding: 2px;
+    position: absolute;
+    top: 20%;
+    line-height: 1.1;
+  }
+  .category-text.text-position-center{
+    left: 25%;
+    width: 50%;
+  }
+  .category-text.text-position-left{
+    width: 50%;
+    left: 15px;
+  }
+  .category-text.text-position-right{
+    right: 15px;
+    width: 50%;
+  }
+  .category-text p{
+    font-weight: 900;
+  }
+  .category-text span{
+    font-weight: 400;
+  }
+  .category-text .mobile{
+    display: none;
+  }
+
+  .category-container .mobile-label{
+    display: none;
+  }
+
+  @media (max-width: 540px), (min-width: 700px) and (max-width: 767px){
+    .category-text span{
+      display: none;
+    }
+    .category-text .mobile{
+      display: block;
+    }
+    .category-text .not-mobile{
+      display: none;
+    }
+    .category-container .mobile-label{
+      display: block;
+    }
+  }
+
+  @media (min-width: 1000px) {
+    section[data-section-type="banners-categories"] .next-slide,
+    section[data-section-type="banners-categories"] .previous-slide {
+      display: none;
+    }
+  }
+</style>
+
+<script defer>
+  window.addEventListener('load', function() {
+    const categoriesContainer = document.querySelector('.categories-slider');
+
+    categoriesContainer.addEventListener('glider-loaded', function() {
+      document.querySelector('section[data-section-type="banners-categories"]').removeAttribute("style");
+    });
+
+    new Glider(categoriesContainer, {
+      type: 'carousel',
+      focusAt: 'center',
+      rewind: true,
+      slidesToShow: 2,
+      slidesToScroll: 2,
+      draggable: false,
+      arrows: {
+        prev: 'section[data-section-type="banners-categories"] .previous-slide',
+        next: 'section[data-section-type="banners-categories"] .next-slide'
+      },
+      responsive: [
+        {
+          breakpoint: 700,
+          settings: {
+            slidesToShow: 3,
+            slidesToScroll: 3
+          }
+        },
+        {
+          breakpoint: 1000,
+          settings: {
+            slidesToShow: 4,
+            slidesToScroll: 4
+          }
+        }
+      ]
+    })
+  })
+</script>
+{%- endif -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Categories banners",
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "navigation_menu",
+      "label": "Menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "number",
+      "id": "max-categories",
+      "label": "Max categories to show per page",
+      "default": 10
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Category info",
+      "settings": [
+        {
+          "type": "text",
+          "id": "category_title",
+          "label": "Category name(exact as linklist)"
+        },
+        {
+          "type": "text",
+          "id": "category_complement",
+          "label": "Complement under title"
+        },
+        {
+          "type": "select",
+          "id": "category_textPosition",
+          "label": "Text horizontal position",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ],
+          "default": "center"
+        },
+        {
+          "type": "color",
+          "id": "category-textcolor",
+          "label": "Text color",
+          "default": "#FFFFFF"
+        },
+        {
+          "type": "image_picker",
+          "id": "category_image",
+          "label": "Category image",
+          "info": "Recommended 360x160"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

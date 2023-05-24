@@ -1,0 +1,160 @@
+{%- if section.blocks.size > 0 -%}
+<section class="maxw-1440 my-3 position-relative container m-auto" data-section-id="{{ section.id }}" data-section-type="banner-tutorial" style="visibility: hidden;max-height: 1px!important;">
+  <button class="previous-slide">{%- render 'icon', icon: 'arrow-left' -%}</button>
+  <button class="next-slide">{%- render 'icon', icon: 'arrow-right' -%}</button>
+  <div class="banner-tutorial-slider">
+    {%- for block in section.blocks -%}
+    <div class="banner-tutorial-slide{{ forloop.index0 }} d-flex justify-content-start">
+      <div class="col-4 col-sm-3">
+        <div class="icon-wrapper">
+          <img style="width: auto;" src="{{ block.settings.step_icon | img_url: 'small' }}" alt="step-icon">
+        </div>
+      </div>
+      <div class="col-6 col-sm-7 offset-1 d-flex align-items-center">
+        <p class="fs-6">{{ block.settings.step_text }}</p>
+      </div>
+    </div>
+    {%- endfor -%}
+  </div>
+</section>
+
+<style>
+  .banner-tutorial-slider .icon-wrapper{
+    width: 4rem;
+    height: 4rem;
+    padding: 0.9rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background-color: #E1E9EF;
+  }
+  .banner-tutorial-slider p{
+    color: #373D43;
+    font-weight: 700;
+  }
+  section[data-section-type="banner-tutorial"] .next-slide svg,
+  section[data-section-type="banner-tutorial"] .previous-slide svg{
+    background: #c4c4c4;
+    border-radius: 50%;
+    color: #fff;
+    width: 2rem;
+    height: 2rem;
+    padding: 0.5rem;
+  }
+  section[data-section-type="banner-tutorial"] .next-slide,
+  section[data-section-type="banner-tutorial"] .previous-slide{
+    position: absolute;
+    z-index: 2;
+    height: 100%;
+  }
+  section[data-section-type="banner-tutorial"] .next-slide{
+    right: 0;
+    padding-left: 0.75rem;
+  }
+  section[data-section-type="banner-tutorial"] .previous-slide{
+    left: 0;
+    padding-right: 0.75rem;
+  }
+
+  @media (min-width: 1000px) {
+    section[data-section-type="banner-tutorial"] .next-slide,
+    section[data-section-type="banner-tutorial"] .previous-slide {
+      display: none;
+    }
+  }
+</style>
+
+<script defer>
+  window.addEventListener('load', function() {
+    const tutorialBannerContainer = document.querySelector('.banner-tutorial-slider');
+
+    tutorialBannerContainer.addEventListener('glider-loaded', function() {
+      document.querySelector('section[data-section-type="banner-tutorial"]').removeAttribute("style");
+    });
+
+    {% if section.settings.autoplay_tutorial_banner %}
+      gliderAutoplay( 
+    {% endif %}
+      new Glider(tutorialBannerContainer, {
+        type: 'carousel',
+        focusAt: 'center',
+        rewind: true,
+        slidesToShow: 2,
+        slidesToScroll: 2,
+        draggable: true,
+        arrows: {
+          prev: 'section[data-section-type="banner-tutorial"] .previous-slide',
+          next: 'section[data-section-type="banner-tutorial"] .next-slide'
+        },
+        responsive: [
+        {
+          breakpoint: 700,
+          settings: {
+            slidesToShow: 3,
+            slidesToScroll: 3
+          }
+        },
+        {
+          breakpoint: 1000,
+          settings: {
+            slidesToShow: 4,
+            slidesToScroll: 4
+          }
+        }
+        ]
+      })
+    {% if section.settings.autoplay_tutorial_banner %},
+        { interval: {{ section.settings.autoplay_time }}000,}
+      );
+    {% endif %}
+  })
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Banner tutorial",
+  "max_blocks": 4,
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step info",
+      "settings": [
+    {
+          "type":"header",
+          "content":"Banner Settings"
+        },
+        {
+          "type": "checkbox",
+          "id": "autoplay_collection_banner",
+          "label": "Autoplay",
+          "default": true
+        },
+        {
+          "type": "range",
+          "id": "autoplay_time",
+          "min": 3,
+          "max": 8,
+          "step": 1,
+          "unit": "ms",
+          "label": "Autoplay Time",
+          "default": 3
+        }
+      ],
+      "settings": [
+        {
+          "type": "text",
+          "id": "step_text",
+          "label": "Text to show"
+        },
+        {
+          "type": "image_picker",
+          "id": "step_icon",
+          "label": "Step's icon"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

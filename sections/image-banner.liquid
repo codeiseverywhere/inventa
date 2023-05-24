@@ -1,0 +1,47 @@
+<section class="section my-0" id="section-{{ section.id }}" data-section-id="{{ section.id }}" data-section-type="image-banner">
+  <div class="container-fluid">
+    <div class="row">
+      {%- for block in section.blocks -%}
+        <div class="col-12 col-md-6">
+          <a href="{{ block.settings.link-url }}">
+            <img class="img-fluid lazyload image--fade-in rounded-3" data-src="{{ block.settings.image-desktop | img_url: 'master' }}" data-sizes="auto" alt="Banner {{ forloop.index }}">
+          </a>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<style>
+  
+</style>
+
+{% schema %}
+{
+  "name": "Image banner",
+  "max_blocks": 2,
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Item",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image-desktop",
+          "label": "Imagem desktop"
+        },
+        {
+          "type": "image_picker",
+          "id": "image-mobile",
+          "label": "Imagem mobile"
+        },
+        {
+          "type": "url",
+          "id": "link-url",
+          "label": "Url do link"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

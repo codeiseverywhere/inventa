@@ -1,0 +1,888 @@
+{%- assign is_entirely_fulfilled = false -%}
+{%- assign has_one_fulfillment = false -%}
+{%- assign inventaComercioVendors = "" -%}
+
+{%- if order.fulfillment_status == 'fulfilled' -%}
+  {%- assign has_one_fulfillment = true -%}
+  {%- assign is_entirely_fulfilled = true -%}
+  {%- assign tracking_numbers = '' -%}
+
+  {%- assign number_of_fulfillable_items = 0 -%}
+
+  {%- for line_item in order.line_items -%}
+    {%- assign number_of_fulfillable_items = number_of_fulfillable_items | plus: line_item.quantity -%}
+  {%- endfor -%}
+
+  {%- for line_item in order.line_items -%}
+    {%- assign tracking_numbers = tracking_numbers | append: line_item.fulfillment.tracking_number | append: ',' -%}
+
+    {%- if line_item.fulfillment.item_count != number_of_fulfillable_items -%}
+      {%- assign has_one_fulfillment = false -%}
+    {%- endif -%}
+  {%- endfor -%}
+
+  {%- assign tracking_numbers = tracking_numbers | split: ',' | compact | uniq -%}
+{%- endif -%}
+{% include 'rebuy-popup' %}
+<section data-section-id="account" data-section-type="account">
+  <div class="container p-0">
+    <div class="page__sub-header border-bottom py-4 px-5 m-0">
+      <div class="card__navigation m-0">
+        <a href="{{ routes.account_url }}" class="card__navigation-breadcrumb link fw-bold text-grey">
+          <span>{% render 'icon', icon: 'arrow-left' %} Continuar navegando</span>
+        </a>
+      </div>
+      <nav aria-label="{{ 'general.breadcrumb.title' | t }}" class="breadcrumb my-0 mx-auto">
+        <ol class="breadcrumb__list" role="list">
+          <li class="breadcrumb__item">
+            <a class="breadcrumb__link link" href="{% if customer %}/collections/marcas?sort_by=best-selling{% else %}{{ routes.root_url }}{% endif %}">Pagina inicial</a> {%- render 'icon', icon: 'arrow-right' -%}
+          </li>
+
+          <li class="breadcrumb__item">
+            <a class="breadcrumb__link link" href="{{ routes.account_url }}">Meu perfil</a> {%- render 'icon', icon: 'arrow-right' -%}
+          </li>
+
+          <li class="breadcrumb__item">
+            <strong class="breadcrumb__link text-secondary" aria-current="page">Pedido {{ order.name }}</strong>
+          </li>
+        </ol>
+      </nav>
+    </div>
+
+    <div class="layout ps-md-4 border-bottom">
+      <div class="layout__section layout__section--secondary me-0">
+        {%- render "my-account-aside-nav" -%}
+
+        {%- if customer -%}
+          {% assign credit = 0 %}
+          {% assign spent = 0 %}
+          {% for tag in customer.tags %}
+            {% if tag contains 'credit:' %}
+              {% assign credit = tag | split: ':' | last %}
+              {% assign creditDue = 90 %}
+            {% endif %}
+            {% if tag contains 'spent:' %}
+              {% assign found-spent = tag | split: ':' %}
+              {% assign spent = spent | plus: found-spent[1] %}
+            {% endif %}
+          {% endfor %}
+          {% if customer.tags contains 'credit30' %}
+            {% assign creditDue = 30 %}
+          {% endif %}
+          {% assign credit = credit | minus: spent %}
+          {% assign cents = credit | modulo: 1 %}
+          {% assign credit = credit | minus: cents %}
+          {% comment %}
+          <div class="mx-4 mx-md-0"> 
+            <a href="/" class="btn btn-dark w-100 py-3 px-2 fw-bold">Indique Fornecedores</a>
+          </div>
+          {% endcomment %}
+          {% if credit > 0 %}
+            <div class="px-sm-0 px-4 mt-5">
+              <div class="p-3 mt-3 text-secondary bg-cream fw-bold h4 rounded text-center">
+                <p>{{ credit | times: 100 | floor | money }} para pagar no boleto em {{ creditDue }} dias</p>
+                <a href="/collections/marcas" class="btn btn-dark w-100 py-3 px-2 fw-bold">Comprar</a>
+              </div>
+            </div>
+          {% endif %}
+        {%- endif -%}
+      </div>
+
+      <div class="layout__section border-start">
+        <div class="order-summary card border-0">
+          <div class="row border-bottom px-1 px-md-5 py-4 ms-0 position-relative">
+            <div class="col-12 col-md-6">
+              <h1 class="lato fs-2 mt-2">Pedido {{ order.name }}</h1>
+            </div>
+            <div id="pagar-button" style="visibility: hidden; height: 1px;" class="col-12 my-2 my-md-0 col-md-3">
+              <button class="btn btn-dark w-100 py-3 fw-bold">Pagar</button>
+              {% render 'pagar-dropdown' %}
+            </div>
+            <div class="col-12 col-md-3">
+              {%- assign updateElements = "/cart/add?" -%}
+                        {%- for line_item in order.line_items -%}
+                          {%- assign variant = line_item.product.first_available_variant -%}
+                          {%- if variant and line_item.product.available and line_item.product.published_at != null -%}
+                            {%- assign updateElements = updateElements | append: "id=" | append: line_item.product.first_available_variant.id | append: "&quantity=" | append: line_item.quantity | append: "&" -%}
+                          {%- endif -%}
+                        {%- endfor -%}
+                        {%- assign updateElements = updateElements | append: "return_to=/cart" -%}
+                        <a href="{{ updateElements }}" class="btn btn-outline-dark w-100 py-3 px-2 fw-bold"
+                          onclick="event.preventDefault();if(window.screen.width > 900){openReBuyModal([
+                            {%- assign auxUrl = '' %}
+                            {%- for line_item in order.line_items -%}
+                            {%- assign productQty = 1 -%}
+                            {%- assign stepQty = 1 -%}
+                            {%- assign taxAmount = 0 -%}
+                            {%- assign productOriginalPrice = 0 -%}
+                            {%- for tag in line_item.product.tags -%}
+                              {%- assign tagname = tag | downcase -%}
+                              {%- if tagname contains 'pedido mínimo (produto)' -%}
+                                {%- assign productQty = tag | split: '_' | last | plus: 0 | at_least: 1 -%}
+                              {%- endif -%}
+                              {%- if tagname contains 'quantidade_aumento' -%}
+                                {%- assign stepQty = tag | split: ':' | last | plus: 0 | at_least: 1 -%}
+                              {%- endif -%}
+                              {%- if tagname contains 'impostos' -%}
+                                {%- assign taxAmount = tag | split: customerState | last | split: '|' | first | remove: ':' | plus: 0 -%}
+                              {%- endif -%}
+                              {%- if tagname contains 'preco original:' -%}
+                                {%- assign productOriginalPrice = tagname | remove: 'preco original:' | times: 100 -%}
+                              {%- endif -%}
+                            {%- endfor -%}
+                            {%- if variant and line_item.product.available and line_item.product.published_at != null -%}
+                                {%- assign auxUrl = auxUrl | append: line_item.variant_id | append: ':' | append: line_item.quantity | append: '$!$' -%}
+                            {%- endif -%}
+
+                            {%- assign variant = line_item.product.first_available_variant -%}
+                            {
+                              'image': `{{ line_item.image | img_url: '50x50' }}`,
+                              'id': '{{ line_item.variant_id }}',
+                              'quantity': {{ line_item.quantity | at_least: 1 }},
+                              'title': '{{ line_item.title }}',
+                              'vendor': '{{ line_item.vendor }}',
+                              'available': {%- if variant and line_item.product.available and line_item.product.published_at != null -%}true{%- else -%}false{%- endif -%},
+                              'properties': {
+                                'min_quantity': '{{ productQty }}',
+                                'step_quatity': '{{ stepQty }}',
+                                'original_price': '{{ productOriginalPrice }}',
+                                'taxes': '{{ taxAmount }}',
+                                'price': '{{ line_item.product.price }}',
+                                'compare_at_price': '{{ line_item.product.compare_at_price }}'
+                              },
+                              'customer_estate': '{{ customerState }}'
+                            },
+                            {%- endfor -%}
+                          ]);}else {
+                                    fetch('/cart/add.js', {
+                                  method: 'POST',
+                  headers: {
+                                      'Content-Type': 'application/json'                                    
+                                    },
+                                    body: JSON.stringify({items: [
+                                      {%- assign auxUrl = auxUrl | split: '$!$' -%}
+                                        {%- for item in auxUrl -%}
+                                        { id: {{ item | split: ':' | first }}, quantity: {{ item | split: ':' | last }} },
+                                        {%- endfor -%}
+                                    ]})
+                                }).then(res => window.location.replace('/cart')); }">Comprar novamente</a>
+            </div>
+          </div>
+
+          <div class="row px-1 px-md-5 py-4 ms-0 border-bottom">
+            <div class="col-6 col-md-3 mb-4">
+              <div>
+                <i class="fas fa-calendar-day me-2 text-center text-grey fs-5 align-middle" aria-hidden="true"></i>
+                <span class="text-muted small">DATA DO PEDIDO</span>
+              </div>
+              <span class="ms-md-4 ps-md-1">{{ order.created_at | date: "%d/%m/%Y" }}</span>
+            </div>
+            <div class="col-6 col-md-3 mb-4">
+              <div>
+                <i class="fas fa-dollar-sign me-2 text-center text-grey fs-5 align-middle" aria-hidden="true"></i>
+                <span class="text-muted small">RESUMO DO PEDIDO</span>
+              </div>
+
+              {% assign orderTotal = order.total_net_amount %}
+              {% assign paymentGateway = order.transactions[0].gateway %}
+
+              <strong class="d-block ms-md-4">{{ orderTotal | money }}</strong>
+              <span class="d-block ms-md-4">{% if paymentGateway == "checkout_via_ebanx_pay" %}Pago com Ebanx{% elsif paymentGateway contains "TruePay" %}Parcelado no Boleto TruePay{% elsif paymentGateway == "mercado_pago" %}Pago com Mercado Pago{% else %}{{ paymentGateway }}{% endif %}</span>
+            </div>
+            <div class="col-6 col-md-3 mb-4">
+              <div>
+                <i class="fas fa-calendar-day me-2 text-center text-grey fs-5 align-middle" aria-hidden="true"></i>
+                <span class="text-muted small">ENDEREÇO DE ENTREGA</span>
+              </div>
+              {%- if order.shipping_address -%}
+                <span class="d-block ms-md-4 ps-md-1">{{ order.shipping_address.address1 }}, {{ order.shipping_address.address2 }}</span>
+                <span class="d-block ms-md-4 ps-md-1">{{ order.shipping_address.city | split: "|||" | first }}, {{ order.shipping_address.province }} - {{ order.shipping_address.province_code }}</span>
+                <span class="d-block ms-md-4 ps-md-1">CEP {{ order.shipping_address.zip }}</span>
+              {%- else -%}
+                <span class="ms-md-4 ps-md-1">{{ 'customer.order.no_shipping_address' | t }}</span>
+              {%- endif -%}
+            </div>
+            <div class="col-6 col-md-3 mb-4">
+              <div>
+                <i class="fas fa-calendar-day me-2 text-center text-grey fs-5 align-middle" aria-hidden="true"></i>
+                <span class="text-muted small">ENDEREÇO DE COBRANÇA</span>
+              </div>
+                {%- if order.billing_address -%}
+                  <span class="d-block ms-md-4 ps-md-1">{{ order.billing_address.address1 }}, {{ order.billing_address.address2 }}</span>
+                  <span class="d-block ms-md-4 ps-md-1">{{ order.shipping_address.city | split: "|||" | first }}, {{ order.billing_address.province }} - {{ order.billing_address.province_code }}</span>
+                  <span class="d-block ms-md-4 ps-md-1">CEP {{ order.billing_address.zip }}</span>
+                {%- else -%}
+                  <span class="ms-md-4 ps-md-1">{{ 'customer.order.no_billing_address' | t }}</span>
+                {%- endif -%}
+            </div>
+          </div>
+
+          <div class="row px-3 px-md-5 pt-5 ms-0 border-bottom">
+            <div class="col-12">
+              <h2 class="lato fs-2 mb-3">Detalhes de envio</h2>
+            </div>
+            {%- assign manufacturerList = "" -%}
+            {%- assign productList = "" -%}
+            {%- assign products = order.line_items | sort_natural: '_fornecedor' -%}
+            {%- for productElement in products -%}
+              {%- unless manufacturerList contains productElement.vendor -%}
+                {%- assign manufacturerList = manufacturerList | append: productElement.vendor | append: "||" -%}
+                {%- assign productList = productList | append: "||" -%}
+              {%- endunless -%}
+              {%- assign productList = productList | append: productElement.id | append: "," -%}
+            {%- endfor -%}
+            {%- assign manufacturerList = manufacturerList | split: "||" -%}
+            {%- assign productList = productList | split: "||" -%}
+
+            <div class="table-container table-responsive order-details">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th class="border-bottom w-10" style="min-width: 90px">&nbsp;</th>
+                    <th class="border-bottom fw-bold w-25">Fornecedor</th>
+                    <th class="border-bottom fw-bold w-20">Transportadora</th>
+                    <th class="border-bottom fw-bold w-10 ps-1">Rastreio</th>
+                    <th class="border-bottom fw-bold w-10 p-0">Status</th>
+                    <th class="border-bottom fw-bold px-1 w-10">Estimativa entrega</th>
+                    <th class="border-bottom fw-bold text-nowrap w-10 p-0 text-center">Nota fiscal</th>
+                    <th class="border-bottom w-5">&nbsp;</th>
+                  </tr>
+                </thead>
+                <tbody class="accordion accordion-flush" id="accordionProducts">
+                  {%- assign loadedManufacturers = "" -%}
+                  {%- for productElement in products -%}
+                    {% if productElement.vendor == "Inventa Comércio" %}
+                      {% assign productTags = productElement.product.tags | join: "|||" %}
+                      {% assign productVendorIdentifier = "Fornecedor_" %}
+                      {% if productTags contains "Marca_" %}
+                        {% assign productVendorIdentifier = "Marca_" %}
+                      {% endif %}
+                      {% assign productVendorName = productTags | split: productVendorIdentifier | last | strip | split: "|||" | first %}
+                      {% unless inventaComercioVendors contains productVendorName %}
+                        {%- assign inventaComercioVendors = inventaComercioVendors | append: productVendorName | append: ", " -%}
+                      {% endunless %}    
+                    {% endif %}
+                  {%- endfor -%}
+
+                  {%- for productElement in products -%}
+                    {%- assign iterator = forloop.index0 -%}
+                    {%- unless loadedManufacturers contains productElement.vendor -%}
+                      
+                      {%- if iterator > 0 -%}
+                        </tbody>
+                        </table>
+                        </td>
+                        </tr>
+                      {%- endif -%}
+                      <tr>
+                        <td colspan="8" class="p-0">
+                          <table class="accordion-item w-100" data-vendor="{{ productElement.vendor | downcase }}">
+
+                            <thead>
+                              <th class="w-10 ps-2 pe-3 center align-middle">
+                                {% if productElement.vendor == "Inventa"%}
+                                  {% assign imageUrl = productElement.vendor | handleize | append: "-logo.png" %}
+                                {% else %}
+                                  {% assign imageUrl = productElement.vendor | handleize | append: ".png" %}
+                                {% endif %}
+                                <img
+                                  class="img-fluid m-auto"
+                                  src="{{ imageUrl | file_img_url: '75x' }}"
+                                  srcset="{{ imageUrl | file_img_url: '75x' }} 75w"
+                                  sizes="(max-width: 120px) 100px"
+                                  alt="Logo do fornecedor {{  }}"
+                                  loading="lazy"
+                                  class="motion-reduce"
+                                  width="75px"
+                                  height="75px"
+                                >
+                              </th>
+
+                              <th class="w-25">{% if productElement.vendor == 'Inventa Comércio' %} {{ inventaComercioVendors | remove_last: ',' }} {% else %} {{ productElement.vendor }} {% endif %}</th>
+                              <th class="w-20 carrier">-</th>
+                              <th class="w-10 tracking-code ps-1">-</th>
+                              <th class="w-10 p-0 status"><span>-</span></th>
+                              <th class="w-10 p-0 ps-2 shipping-estimate">-</th>
+                              <th class="w-10 p-0 text-center download-nf">
+                                <span class="btn-pdf-container" data-bs-toggle="tooltip" tabindex="0" data-bs-placement="top" title="Não disponível">
+                                  <button disabled class="btn btn-link text-decoration-none">
+                                    <svg width="12" height="20" class="waiting-nf m-auto" viewBox="0 0 12 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                      <path fill-rule="evenodd" clip-rule="evenodd" d="M0 0V6H0.01L0 6.01L4 10L0 14L0.01 14.01H0V20H12V14.01H11.99L12 14L8 10L12 6.01L11.99 6H12V0H0ZM10 14.5V18H2V14.5L6 10.5L10 14.5ZM2 2V5.5L6 9.5L10 5.5V2H2Z" fill="#E0E0E0"/>
+                                    </svg>
+                                    <svg width="20" height="23" class="received-nf m-auto" viewBox="0 0 20 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                      <path d="M16.4286 10.7143H0.714286C0.321429 10.7143 0 11.0357 0 11.4286V18.5714C0 18.9643 0.321429 19.2857 0.714286 19.2857H16.4286C16.8221 19.2857 17.1429 18.9643 17.1429 18.5714V11.4286C17.1429 11.0357 16.8221 10.7143 16.4286 10.7143ZM4.82143 15.995H3.86786V16.7493C3.86786 17.0007 3.70786 17.1429 3.50214 17.1429C3.31357 17.1429 3.11429 17.0007 3.11429 16.7486V13.5336C3.11429 13.345 3.26286 13.1386 3.50214 13.1386H4.82143C5.56429 13.1386 6.23286 13.6357 6.23286 14.5893C6.23214 15.4921 5.56429 15.995 4.82143 15.995ZM8.71071 17.1429H7.35143C7.16286 17.1429 6.95714 17.0393 6.95714 16.7886V13.545C6.95714 13.3393 7.16286 13.1907 7.35143 13.1907H8.65929C11.2693 13.1907 11.2121 17.1429 8.71071 17.1429ZM13.8 13.9329H12.1371V14.8407H13.5936C13.8 14.8407 14.005 15.0464 14.005 15.2464C14.005 15.435 13.8 15.5886 13.5936 15.5886H12.1371V16.7879C12.1371 16.9879 11.995 17.1421 11.795 17.1421C11.5436 17.1421 11.3893 16.9879 11.3893 16.7879V13.5443C11.3893 13.3386 11.5443 13.19 11.795 13.19H13.8C14.0514 13.19 14.1993 13.3386 14.1993 13.5443C14.1993 13.7279 14.0514 13.9329 13.8 13.9329Z" fill="#999999"/>
+                                      <path d="M19.2857 5.41857L14.5814 0.714286C14.1686 0.3 13.4429 0 12.8571 0H5C3.81858 0 2.85715 0.961429 2.85715 2.14286V9.28571C2.85715 9.68071 3.17643 10 3.57143 10C3.96643 10 4.28572 9.68071 4.28572 9.28571V2.14286C4.28572 1.74929 4.60572 1.42857 5 1.42857H11.4286C12.2179 1.42857 12.8571 2.06857 12.8571 2.85714V5.53571C12.8571 6.42 13.5814 7.14286 14.4643 7.14286H17.1429C17.9321 7.14286 18.5714 7.78286 18.5714 8.57143V20.7143C18.5714 21.1079 18.2521 21.4286 17.8571 21.4286H5C4.60572 21.4286 4.28572 21.1079 4.28572 20.7143C4.28572 20.3193 3.96643 20 3.57143 20C3.17643 20 2.85715 20.3193 2.85715 20.7143C2.85715 21.8957 3.81858 22.8571 5 22.8571H17.8571C19.0386 22.8571 20 21.8957 20 20.7143V7.14286C20 6.55786 19.7 5.83214 19.2857 5.41857Z" fill="#999999"/>
+                                    </svg>
+                                    <small class="waiting-nf text-nowrap">Aguardando</small>
+                                    <small class="received-nf text-nowrap">PDF</small>
+                                  </button>
+                                </span>
+                                <span class="btn-xml-container d-none" data-bs-toggle="tooltip" tabindex="0" data-bs-placement="top" title="Baixar nota fiscal em XML">
+                                  <button class="btn btn-link text-decoration-none">
+                                    <svg width="20" height="23" viewBox="0 0 20 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                      <path d="M16.4286 10.7143H0.714286C0.321429 10.7143 0 11.0357 0 11.4286V18.5714C0 18.9643 0.321429 19.2857 0.714286 19.2857H16.4286C16.8221 19.2857 17.1429 18.9643 17.1429 18.5714V11.4286C17.1429 11.0357 16.8221 10.7143 16.4286 10.7143ZM5.47214 16.96L4.42143 15.6121L3.38786 16.9886C3.09643 17.405 2.45071 16.9371 2.77714 16.5486L3.925 15.0921C3.565 14.6414 3.21643 14.2021 2.86857 13.7964C2.50857 13.3679 3.17714 12.9286 3.43929 13.3286L4.43286 14.5621L5.42714 13.3171C5.72357 12.9293 6.30071 13.4257 5.97571 13.7971C5.63357 14.2029 5.27357 14.6429 4.93 15.0929L6.09571 16.5436C6.40857 16.9714 5.78 17.3829 5.47214 16.96ZM10.7157 16.7486C10.7157 17.0007 10.5557 17.1429 10.3729 17.1429C10.1671 17.1429 10.0071 17.0007 10.0071 16.7486V14.6357L9.05857 15.835C8.85357 16.0871 8.59643 16.0871 8.40786 15.835L7.55714 14.6357V16.7486C7.55714 17.0007 7.35143 17.1429 7.14643 17.1429C6.96357 17.1429 6.80357 17.0007 6.80357 16.7486V13.5336C6.80357 13.2364 7.05571 13.1386 7.14643 13.1386C7.31143 13.1386 7.40857 13.2364 7.50571 13.345L8.76286 15.0407L10.0643 13.2814C10.2536 13.0479 10.7164 13.1386 10.7164 13.5336V16.7486H10.7157ZM13.9593 17.1429H12.0693C11.87 17.1429 11.7093 17.0007 11.7093 16.7943V13.5343C11.7093 13.3457 11.87 13.1857 12.0693 13.1857C12.2521 13.1857 12.4071 13.3464 12.4071 13.5343V16.3957H13.96C14.5186 16.395 14.5314 17.1429 13.9593 17.1429Z" fill="#999999"/>
+                                      <path d="M19.2857 5.41857L14.5814 0.714286C14.1686 0.3 13.4429 0 12.8571 0H5C3.81858 0 2.85715 0.961429 2.85715 2.14286V9.28571C2.85715 9.68071 3.17643 10 3.57143 10C3.96643 10 4.28572 9.68071 4.28572 9.28571V2.14286C4.28572 1.74929 4.60572 1.42857 5 1.42857H11.4286C12.2179 1.42857 12.8571 2.06857 12.8571 2.85714V5.53571C12.8571 6.42 13.5814 7.14286 14.4643 7.14286H17.1429C17.9321 7.14286 18.5714 7.78286 18.5714 8.57143V20.7143C18.5714 21.1079 18.2521 21.4286 17.8571 21.4286H5C4.60572 21.4286 4.28572 21.1079 4.28572 20.7143C4.28572 20.3193 3.96643 20 3.57143 20C3.17643 20 2.85715 20.3193 2.85715 20.7143C2.85715 21.8957 3.81858 22.8571 5 22.8571H17.8571C19.0386 22.8571 20 21.8957 20 20.7143V7.14286C20 6.55786 19.7 5.83214 19.2857 5.41857Z" fill="#999999"/>
+                                    </svg>
+                                    <small class="received-nf text-nowrap">XML</small>
+                                  </button>
+                                </span>
+                              </th>
+                              <th class="w-5 p-0 center">
+                                <h2 class="accordion-header" id="product-{{ forloop.index0 }}">
+                                  <button class="accordion-button collapsed py-4" type="button" data-bs-toggle="collapse" data-bs-target="#product-block{{ forloop.index0 }}" aria-expanded="false" aria-controls="product-block{{ forloop.index0 }}">
+                                    <span class="fw-bold text-muted">&nbsp;</span>
+                                  </button>
+                                </h2>
+                              </th>
+                            </thead>
+                            <tbody id="product-block{{ forloop.index0 }}" class="accordion-collapse collapse px-1 px-md-4" aria-labelledby="product-{{ forloop.index0 }}" data-bs-parent="#accordionProducts">
+                            {%- assign loadedManufacturers = loadedManufacturers | append: productElement.vendor -%}
+                    {%- endunless -%}
+                    <tr>
+                      <td class="ps-5 pe-0 text-center">
+                        <img class="ps-3" src="{{ productElement.image | img_url: '50x50' }}" alt="{{ productElement.image.alt | escape }}">
+                      </td>
+                      <td colspan="4">
+                        <p>{{ productElement.quantity }}x {{ productElement.title }}</p>
+                      </td>
+                      <td class="p-0">
+                        <a href="{{ productElement.url }}" class="line-item__title link text--strong text-end">
+                          <u>Comprar</u>
+                        </a>
+                      </td>
+                    </tr>
+                    {%- if forloop.last == true -%}
+                      </tbody>
+                      </table>
+                      </td>
+                      </tr>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </tbody>
+              </table>
+            </div>
+            {% comment %}
+            <div class="col-12 col-md-8 mt-4 pt-md-2">
+              <p class="text-black-50 fs-5">Adicione novamente todos os itens deste pedido ao carrinho de comproas.</p>
+            </div>
+            <div class="col-12 col-md-4 mt-4 mb-4 pb-3">
+              {{ comprarDeNovo }}
+            </div>
+            {% endcomment %}
+          </div>
+
+          <div class="row px-md-5 py-4 ms-0 border-bottom">
+            <div class="col-12 pe-4">
+              <h2 class="lato fs-2 mb-3">Exemplo para entender as etapas do seu pedido</h2>
+              <p class="lato fs-4 text-black-50">Enviamos os pedidos para todos os fornecedores, conheça cada um dos status possíveis para o seu pedido.</p>
+
+              <div class="timeline-container mt-5">
+                <div class="row text-center position-relative m-0">
+                  <hr class="line" />
+                  <div class="col-3 step1 px-2">
+                    <span class="point d-block pt-2">
+                      <small>A confirmar</small>
+                    </span>
+                    <p class="text-muted">
+                      <strong class="d-block">A Confirmar</strong>
+                      <span>Pelo fornecedor</span>
+                    </p>
+                  </div>
+                  <div class="col-3 step2 px-2">
+                    <span class="point d-block pt-2">
+                      <small>Confirmado</small>
+                    </span>
+                    <p class="text-muted">
+                      <strong class="d-block">Confirmado</strong>
+                      <span>Pelo fornecedor</span>
+                    </p>
+                  </div>
+                  <div class="col-3 step3 px-2">
+                    <span class="point d-block pt-2">
+                      <small>Enviado</small>
+                    </span>
+                    <p class="text-muted px-md-4">
+                      <strong class="d-block">Enviado</strong>
+                      <span>Para você</span>
+                    </p>
+                  </div>
+                  <div class="col-3 step4 px-2">
+                    <span class="point d-block pt-2">
+                      <small>Entregue</small>
+                    </span>
+                    <p class="text-muted">
+                      <strong class="d-block">Entregue</strong>
+                      <span>Chegou para você</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row p-5">
+            <div class="col-12 ps-4">
+              <p class="text-black-50 fs-5">Ficou com dúvida? Entre em contato com nosso suporte: <a href="mailto:atendimento@inventa.shop">atendimento@inventa.shop</a></p>
+            </div>
+            {%comment%}
+            <div class="col-4">
+              <div class="rounded-circle circle m-auto d-flex align-items-center justify-content-center">
+                <i class="fab fa-whatsapp"></i>
+              </div>
+            </div>
+            {%endcomment%}
+          </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .download-nf button:disabled .waiting-nf,
+  .download-nf button .received-nf{
+    display: block;
+  }
+
+  .download-nf button .waiting-nf,
+  .download-nf button:disabled .received-nf{
+    display: none;
+  }
+
+  .download-nf button:disabled path,
+  .download-nf button:disabled small{
+    opacity: 0.5;
+  }
+  .download-nf path,
+  .download-nf small{
+    fill: #999;
+    color: #999;
+  }
+  table.table thead{
+    vertical-align: text-top;
+  }
+  .circle
+</style>
+
+<script>
+  (function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    // AMD. Register as an anonymous module.
+    define([], factory);
+  } else if (typeof exports === 'object') {
+    // Node. Does not work with strict CommonJS, but
+    // only CommonJS-like environments that support module.exports,
+    // like Node.
+    module.exports = factory();
+  } else {
+    // Browser globals (root is window)
+    root.download = factory();
+  }
+}(this, function () {
+
+  return function download(data, strFileName, strMimeType) {
+
+    var self = window, // this script is only for browsers anyway...
+      defaultMime = "application/octet-stream", // this default mime also triggers iframe downloads
+      mimeType = strMimeType || defaultMime,
+      payload = data,
+      url = !strFileName && !strMimeType && payload,
+      anchor = document.createElement("a"),
+      toString = function(a){return String(a);},
+      myBlob = (self.Blob || self.MozBlob || self.WebKitBlob || toString),
+      fileName = strFileName || "download",
+      blob,
+      reader;
+      myBlob= myBlob.call ? myBlob.bind(self) : Blob ;
+    
+    if(String(this)==="true"){ //reverse arguments, allowing download.bind(true, "text/xml", "export.xml") to act as a callback
+      payload=[payload, mimeType];
+      mimeType=payload[0];
+      payload=payload[1];
+    }
+
+
+    if(url && url.length< 2048){ // if no filename and no mime, assume a url was passed as the only argument
+      fileName = url.split("/").pop().split("?")[0];
+      anchor.href = url; // assign href prop to temp anchor
+        if(anchor.href.indexOf(url) !== -1){ // if the browser determines that it's a potentially valid url path:
+            var ajax=new XMLHttpRequest();
+            ajax.open( "GET", url, true);
+            ajax.responseType = 'blob';
+            ajax.onload= function(e){ 
+          download(e.target.response, fileName, defaultMime);
+        };
+            setTimeout(function(){ ajax.send();}, 0); // allows setting custom ajax headers using the return:
+          return ajax;
+      } // end if valid url?
+    } // end if url?
+
+
+    //go ahead and download dataURLs right away
+    if(/^data\:[\w+\-]+\/[\w+\-]+[,;]/.test(payload)){
+    
+      if(payload.length > (1024*1024*1.999) && myBlob !== toString ){
+        payload=dataUrlToBlob(payload);
+        mimeType=payload.type || defaultMime;
+      }else{      
+        return navigator.msSaveBlob ?  // IE10 can't do a[download], only Blobs:
+          navigator.msSaveBlob(dataUrlToBlob(payload), fileName) :
+          saver(payload) ; // everyone else can save dataURLs un-processed
+      }
+      
+    }//end if dataURL passed?
+
+    blob = payload instanceof myBlob ?
+      payload :
+      new myBlob([payload], {type: mimeType}) ;
+
+
+    function dataUrlToBlob(strUrl) {
+      var parts= strUrl.split(/[:;,]/),
+      type= parts[1],
+      decoder= parts[2] == "base64" ? atob : decodeURIComponent,
+      binData= decoder( parts.pop() ),
+      mx= binData.length,
+      i= 0,
+      uiArr= new Uint8Array(mx);
+
+      for(i;i<mx;++i) uiArr[i]= binData.charCodeAt(i);
+
+      return new myBlob([uiArr], {type: type});
+     }
+
+    function saver(url, winMode){
+
+      if ('download' in anchor) { //html5 A[download]
+        anchor.href = url;
+        anchor.setAttribute("download", fileName);
+        anchor.className = "download-js-link";
+        anchor.innerHTML = "downloading...";
+        anchor.style.display = "none";
+        document.body.appendChild(anchor);
+        setTimeout(function() {
+          anchor.click();
+          document.body.removeChild(anchor);
+          if(winMode===true){setTimeout(function(){ self.URL.revokeObjectURL(anchor.href);}, 250 );}
+        }, 66);
+        return true;
+      }
+
+      // handle non-a[download] safari as best we can:
+      if(/(Version)\/(\d+)\.(\d+)(?:\.(\d+))?.*Safari\//.test(navigator.userAgent)) {
+        url=url.replace(/^data:([\w\/\-\+]+)/, defaultMime);
+        if(!window.open(url)){ // popup blocked, offer direct download:
+          if(confirm("Displaying New Document\n\nUse Save As... to download, then click back to return to this page.")){ location.href=url; }
+        }
+        return true;
+      }
+
+      //do iframe dataURL download (old ch+FF):
+      var f = document.createElement("iframe");
+      document.body.appendChild(f);
+
+      if(!winMode){ // force a mime that will download:
+        url="data:"+url.replace(/^data:([\w\/\-\+]+)/, defaultMime);
+      }
+      f.src=url;
+      setTimeout(function(){ document.body.removeChild(f); }, 333);
+
+    }//end saver
+
+
+
+
+    if (navigator.msSaveBlob) { // IE10+ : (has Blob, but not a[download] or URL)
+      return navigator.msSaveBlob(blob, fileName);
+    }
+
+    if(self.URL){ // simple fast and modern way using Blob and URL:
+      saver(self.URL.createObjectURL(blob), true);
+    }else{
+      // handle non-Blob()+non-URL browsers:
+      if(typeof blob === "string" || blob.constructor===toString ){
+        try{
+          return saver( "data:" +  mimeType   + ";base64,"  +  self.btoa(blob)  );
+        }catch(y){
+          return saver( "data:" +  mimeType   + "," + encodeURIComponent(blob)  );
+        }
+      }
+
+      // Blob but not URL support:
+      reader=new FileReader();
+      reader.onload=function(e){
+        saver(this.result);
+      };
+      reader.readAsDataURL(blob);
+    }
+    return true;
+  }; /* end download() */
+}));
+</script>
+
+<script>
+  const corsUrl = "https://cors.inventashop.com.br/";
+  const corsUrlPdf = "https://57kopan4b8.execute-api.us-east-1.amazonaws.com";
+  let shopifyApiUrl = "https://api.inventa.tec.br";
+  let shopifyApiKey = "LMYzUdD0Wq";
+  let shopifyApiSecretKey = "GHrI6Xg0Qc";
+  const orderId = "{{ order.id }}";
+  
+  function getBoleto(order_id){
+    fetch(`${corsUrlPdf}/api/shopify/boletos/${order_id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'origin': 'shopify'
+      }
+    }).then(res => res.json()).then(res => {
+      
+      if(res && res.length){
+        const payment_button = document.getElementById('pagar-button');
+        const boletosOrdenados = res.sort((a,b) => parseInt(a.Parcela) - parseInt(b.Parcela));
+        payment_button.onclick = () => pagarDropdown_toggle(boletosOrdenados);
+        if(payment_button) payment_button.removeAttribute('style');
+      }
+    })
+  }
+
+  const onReady = () => {
+    const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    let urlEndpointOM = `${corsUrl}${shopifyApiUrl}/data/shopify/my_orders/${orderId}`;
+    
+    {% if order.tags contains "CPF" %}
+      urlEndpointOM = `https://order-management.inventashop.com.br/v1/legacy/purchase-orders/${orderId}/tracking`;
+    {% endif %}
+
+    for(let i = 0; i < tooltips.length; i++){
+      new bootstrap.Tooltip(tooltips[i]);
+    } 
+
+    getBoleto(orderId);
+
+    fetch(`${urlEndpointOM}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'origin': 'shopify',
+        'api-key': shopifyApiKey,
+        'secret-key': shopifyApiSecretKey
+      }
+    })
+    .then( (res) => {
+      return res.json();
+    })
+    .then( (res) => {
+      
+      let vendorElement = null;
+      let carrierElement = null;
+      let trackingElement = null;
+      let statusElement = null;
+      let shippingElement = null;
+      let newDate = null;
+      let step = null;
+      const accordionItems = document.querySelectorAll(".accordion-item");
+      
+      if (res.length > 0) {
+        
+        for (let i = 0; i < res.length; i++) {
+         
+          let responseVendorName = res[i].vendor.toLowerCase();
+          const inventaComercioVendors = "{{ inventaComercioVendors }}";
+
+          if (inventaComercioVendors.toLowerCase().includes(responseVendorName)) {
+            responseVendorName = inventaComercioVendors;
+          }
+        
+          vendorElement = document.querySelector(`table[data-vendor="${responseVendorName}"]`);
+
+          // vendorElement = [...accordionItems].filter( (item) => {
+          //   const itemVendors = item.dataset.vendor? item.dataset.vendor.toLowerCase() : "";
+          //   if (itemVendors.includes(res[i].vendor.toLowerCase())) return true;
+          // })
+
+          if (vendorElement) {
+             
+            carrierElement = vendorElement.querySelector(".carrier");
+            trackingElement = vendorElement.querySelector(".tracking-code");
+            statusElement = vendorElement.querySelector(".status");
+            shippingElement = vendorElement.querySelector(".shipping-estimate");
+
+            if (carrierElement && res[i].transportadora) {
+              carrierElement.innerHTML = res[i].transportadora;
+            }
+
+            if (trackingElement && res[i].tracking) {
+              trackingElement.innerHTML = res[i].tracking;
+            }
+           
+           
+            
+            if (statusElement && res[i].order_status) {
+ 
+              statusElement.innerHTML = `<span class="py-2 px-3 rounded-pill text-nowrap">${res[i].order_status == "Rejeitada"? "A confirmar" : res[i].order_status}</span>`;
+            }
+
+            if (shippingElement && ( res[i].expected_delivery || res[i].delivery_date)) {
+              newDate = res[i].delivery_date? new Date(res[i].delivery_date) : new Date(res[i].expected_delivery);
+              newDate.setDate(newDate.getDate() + 1);
+              shippingElement.innerHTML = newDate.toLocaleString("pt-BR", {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+              });
+            }
+
+            switch (res[i].order_status) {
+              case 'A confirmar':
+                step = 1;
+                break;
+              case 'Confirmada':
+                step = 2;
+                break;
+              case 'Enviada':
+                step = 3;
+                break;
+              case 'Entregue':
+                step = 4;
+                break;
+              case 'Rejeitada':
+              case 'Cancelada':
+                step = 5;
+                break;
+            }
+
+            const { danfe_zoho, danfe_fp, danfe_erp, vendor, nf_erp, nf_fp, xml_nf } = res[i];
+            let notaFiscal = null;
+            let urlNotaFiscal = null;
+            let notaFiscalXml = null;
+            let urlNotaFiscalXml = null;
+
+            if (danfe_erp) {
+              urlNotaFiscal = danfe_erp;
+            } else if (danfe_fp) {
+              urlNotaFiscal = danfe_fp;
+            } else if (danfe_zoho) {
+              notaFiscal = danfe_zoho;
+            }
+
+            if (nf_erp) {
+              urlNotaFiscalXml = nf_erp;
+            } else if (nf_fp) {
+              urlNotaFiscalXml = nf_fp;
+            } else if (xml_nf) {
+              notaFiscalXml = xml_nf;
+            }
+
+            if (urlNotaFiscal != null) {
+              showPdfButton(vendorElement, urlNotaFiscal);
+            } else {
+              if (notaFiscal != null) {
+                fetch(`${corsUrl}${shopifyApiUrl}/data/shopify/get_nf/${notaFiscal}`, {
+                  method: 'GET',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'origin': shopifyApiUrl,
+                    'api-key': shopifyApiKey,
+                    'secret-key': shopifyApiSecretKey
+                  }
+                }).then(res => res.text())
+                .then(url => {
+                  if (typeof url == 'string') {
+                    showPdfButton(vendorElement, url);
+                  }
+                })
+              }
+            }
+
+            if (urlNotaFiscalXml != null) {
+              showXmlButton(vendorElement, urlNotaFiscalXml);
+            } else {
+              if (notaFiscalXml != null) {
+                fetch(`${corsUrl}${shopifyApiUrl}/data/shopify/get_xml/${notaFiscalXml}`, {
+                  method: 'GET',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'origin': shopifyApiUrl,
+                    'api-key': shopifyApiKey,
+                    'secret-key': shopifyApiSecretKey
+                  }
+                }).then(res => res.text())
+                .then(url => {
+                  if (typeof url == 'string') {
+                    showXmlButton(vendorElement, url);
+                  }
+                })
+              }
+            }
+            const statusStep = vendorElement.querySelector('.status');
+            statusStep.classList.add(`step-${step}`);
+          }
+        }
+      }
+    });
+  }
+
+  if (document.readyState == 'loading') {
+    document.addEventListener('DOMContentLoaded', onReady);
+  } else {
+    onReady();
+  }
+
+  function showPdfButton(vendorElement, url) {
+    const fiscalNote = vendorElement.querySelector('.download-nf .btn-pdf-container');
+    if (fiscalNote) {
+      fiscalNote.setAttribute('title', 'Baixar nota fiscal em PDF');
+      new bootstrap.Tooltip(fiscalNote);
+      const button = fiscalNote.querySelector('button');
+      if (button) {
+        button.onclick = () => {
+          if (url.includes("https://www.bling.com.br")) {
+            window.open(`${url}`, "_blank");
+          } else {
+            download(`${corsUrl}${url}`);
+          }
+        }
+        button.removeAttribute('disabled');
+      }
+    }
+  }
+
+  function showXmlButton(vendorElement, url) {
+    const fiscalNoteXml = vendorElement.querySelector('.download-nf .btn-xml-container');
+    if (fiscalNoteXml) {
+      const buttonXml = fiscalNoteXml.querySelector('button');
+      if (buttonXml) {
+        buttonXml.onclick = () => {
+          download(`${corsUrl}${url}`);
+        }
+        fiscalNoteXml.classList.remove('d-none');
+      }
+    }
+  }
+
+  // function downloadFile(url, filename){
+  //   try {
+  //     fetch(url).then(res => {
+  //       if(res.status == 200){
+  //         return res.blob();
+  //       }else{
+  //         throw 'Access denied';
+  //       }
+  //     }).then(res => {
+  //       const link = document.createElement('a');
+  //       link.href = window.URL.createObjectURL(new Blob([res]));
+  //       link.setAttribute("download", filename);
+  //       document.body.append(link);
+  //       link.click();
+  //       link.parentElement.removeChild(link);
+  //     }).catch(error => {
+  //       console.warn(error);
+  //     })
+  //   } catch (error) {
+  //     console.warn(error);
+  //   }
+  // }
+</script>
+
+{% section 'static-promotion-list' %}
+{% section 'static-recently-viewed-products' %}

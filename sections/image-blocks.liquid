@@ -1,0 +1,114 @@
+<section class="section" data-section-id="{{ section.id }}" data-section-type="image-blocks" style="visibility: hidden;max-height: 1px!important;">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-lg-6 offset-lg-3 text-center">
+        <h2 class="display-5">
+          Apoiamos fornecedores para potencializar oportunidades
+        </h2>
+      </div>
+    </div>
+  </div>
+  <div class="container pt-5 pb-5">
+    {%- if section.blocks.size > 0 -%}
+    <div id="carousel-container" class="row d-flex d-wrap align-items-stretch">
+      {%- for block in section.blocks -%}
+        <div class="col-12 col-sm-6 col-md-3  pb-3">
+          <div class="card h-100 shadow m-2"> 
+            <img src="{{ block.settings.image | img_url: "200x" }}" class="card-img-top" alt="{{ block.settings.image.alt | escape }}">
+            <div class="card-body text-center">
+              <h5 class="card-title fs-3">{{ block.settings.title | escape }}</h5>
+              <p class="card-text">{{ block.settings.content  }}</p>
+            </div>
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+    {%- endif -%}
+    <div class="row">
+      <div class="text-center pt-5">
+        <a href="#contact-section" class="btn btn-dark px-5 py-3 fw-bold">
+          <span>Agende uma apresentação</span>
+        </a>
+      </div>
+    </div> 
+  </div>
+</section>
+
+{%- if section.blocks.size > 0 -%}
+<script defer>
+  window.addEventListener('load', function() {
+    const carouselContainer = document.querySelector('#carousel-container');
+
+    carouselContainer.addEventListener('glider-loaded', function() {
+      document.querySelector('section[data-section-type="image-blocks"]').removeAttribute("style");
+    });
+
+    new Glider(carouselContainer, {
+      type: 'carousel',
+      focusAt: 'center',
+      rewind: true,
+      slidesToShow: 1,
+      slidesToScroll: 1,
+      draggable: true,
+      responsive: [
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 2
+        }
+      },
+      {
+        breakpoint: 1000,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 3
+        }
+      }
+      ]
+    })
+  })
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Image blocks",
+  "max_blocks": 4,
+  "settings": [
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Item",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "Background image"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Titulo"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content",
+          "default": "<p>Conteúdo</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "category": "Custom Sections",
+      "name": "Image blocks",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}
